@@ -1,0 +1,128 @@
+# ---------------------------------------------------------------------------
+# Belajar Redis: MkDocs + Material for MkDocs.
+# Menambah bab: buat file .md di docs/<bagian>/ lalu daftarkan di `nav`.
+# ---------------------------------------------------------------------------
+
+# --- Identitas situs --------------------------------------------------------
+site_name: Belajar Redis
+site_description: Materi Redis untuk pemula, dari dasar sampai penerapan.
+# URL kanonis (GitHub Pages: https://<user>.github.io/<repo>/)
+site_url: https://topekox.github.io/materi-redis/
+
+# --- Tema -------------------------------------------------------------------
+theme:
+  name: material
+  language: id
+  font: false # system fonts; no Google Fonts request
+  features:
+    - navigation.indexes
+    - navigation.path # breadcrumbs
+    - navigation.footer # previous / next links
+    - navigation.top
+    - navigation.tracking
+    - toc.follow
+    - search.highlight
+    - search.suggest
+    - content.code.copy
+    - content.code.annotate
+    - content.tabs.link
+  # Native three-state switcher: System -> Light -> Dark.
+  palette:
+    - media: "(prefers-color-scheme)"
+      toggle:
+        icon: material/brightness-auto
+        name: "Theme: system (click for light)"
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-7
+        name: "Theme: light (click for dark)"
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: indigo
+      accent: indigo
+      toggle:
+        icon: material/brightness-4
+        name: "Theme: dark (click for system)"
+
+# --- Navigasi (tambahkan bab baru di sini) ----------------------------------
+nav:
+  - Home: index.md
+  - Pengenalan:
+      - pengenalan/index.md
+      - Apa itu Redis: pengenalan/apa-itu-redis.md
+      - Instalasi dengan Docker: pengenalan/instalasi-dengan-docker.md
+      - Menjalankan redis-cli pertama kali: pengenalan/menjalankan-redis-cli-pertama-kali.md
+      - Key dan expiry: pengenalan/key-dan-expiry.md
+  - Struktur Data: struktur-data/index.md
+  - Pola Penerapan: pola-aplikasi/index.md
+  - Python dan FastAPI: python/index.md
+  - Operasi: operasi/index.md
+  - Proyek Akhir: proyek-akhir/index.md
+
+# Template bab (aturan di CLAUDE.md) tidak diterbitkan dan tidak masuk nav.
+exclude_docs: |
+  redis/_template-bab.md
+
+# --- Plugins ----------------------------------------------------------------
+plugins:
+  - search
+
+# --- Ekstensi Markdown ------------------------------------------------------
+markdown_extensions:
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.betterem
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.mark
+  - pymdownx.snippets:
+      base_path: [examples]
+      check_paths: true
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.tasklist:
+      custom_checkbox: true
+
+# --- CSS dan JavaScript tambahan --------------------------------------------
+extra_css:
+  - stylesheets/extra.css
+extra_javascript:
+  # Vendored, pinned Mermaid 11.17.2 (docs/assets/vendor/mermaid/VERSION.txt).
+  # Material uses this global instead of fetching Mermaid from unpkg.
+  # Keep it BEFORE the MathJax CDN script so a slow CDN cannot delay diagrams.
+  - assets/vendor/mermaid/mermaid.min.js
+  - javascripts/mermaid-config.js
+  - javascripts/mathjax.js
+  # MathJax dengan versi dipatok; butuh jaringan (CDN). Materi saat ini belum memakai rumus.
+  - https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js
+
+# --- Validasi: tautan/anchor rusak gagal pada `mkdocs build --strict` -------
+validation:
+  omitted_files: warn
+  absolute_links: warn
+  unrecognized_links: warn
+  anchors: warn
