@@ -1,0 +1,2693 @@
+
+<!doctype html>
+<html lang="id" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Materi Redis untuk pemula, dari dasar sampai penerapan.">
+      
+      
+      
+        <link rel="canonical" href="https://topekox.github.io/materi-redis/pengenalan/key-dan-expiry/">
+      
+      
+        <link rel="prev" href="../menjalankan-redis-cli-pertama-kali/">
+      
+      
+        <link rel="next" href="../../struktur-data/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Key dan expiry - Belajar Redis</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#key-dan-expiry" class="md-skip">
+          Lewati ke isi
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Belajar Redis" class="md-header__button md-logo" aria-label="Belajar Redis" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Belajar Redis
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Key dan expiry
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Theme: system (click for light)"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Theme: system (click for light)" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Theme: light (click for dark)"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Theme: light (click for dark)" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Theme: dark (click for system)"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Theme: dark (click for system)" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Cari" placeholder="Cari" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Cari">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Kosongkan" aria-label="Kosongkan" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Mempersiapkan pencarian
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigasi" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Belajar Redis" class="md-nav__button md-logo" aria-label="Belajar Redis" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Belajar Redis
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pengenalan
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Pengenalan
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../apa-itu-redis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Apa itu Redis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../instalasi-dengan-docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Instalasi dengan Docker
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../menjalankan-redis-cli-pertama-kali/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Menjalankan redis-cli pertama kali
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Key dan expiry
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Key dan expiry
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Daftar isi">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Daftar isi
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#tujuan-belajar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tujuan belajar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prasyarat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prasyarat
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#konsep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Konsep
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Konsep">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#expiry-masa-hidup-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Expiry (masa hidup key)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#menelusuri-key-scan-dan-keys" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Menelusuri key: SCAN dan KEYS
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#praktik-langkah-demi-langkah" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Praktik langkah demi langkah
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Praktik langkah demi langkah">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#langkah-1-buat-beberapa-key-dengan-skema" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 1: Buat beberapa key dengan skema
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-2-periksa-dan-hapus-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 2: Periksa dan hapus key
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-3-beri-expiry-dengan-expire-dan-baca-dengan-ttl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 3: Beri expiry dengan EXPIRE dan baca dengan TTL
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-4-lihat-key-hilang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 4: Lihat key hilang
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-5-buat-key-sekaligus-dengan-expiry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 5: Buat key sekaligus dengan expiry
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-6-batalkan-expiry-dengan-persist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 6: Batalkan expiry dengan PERSIST
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-7-perhatikan-jebakan-set-menghapus-expiry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 7: Perhatikan jebakan: SET menghapus expiry
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-8-telusuri-key-dengan-scan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 8: Telusuri key dengan SCAN
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-9-scan-dari-terminal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 9: SCAN dari terminal
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#latihan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Latihan
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ringkasan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ringkasan
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#referensi-resmi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Referensi resmi
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../struktur-data/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Struktur Data
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Struktur Data
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../struktur-data/string/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    String
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../struktur-data/hash/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hash
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../struktur-data/list/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    List
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../struktur-data/set/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Set
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../struktur-data/sorted-set/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sorted Set
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../struktur-data/bitmap-hyperloglog-geo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bitmap, HyperLogLog, dan Geo
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../struktur-data/memilih-struktur-data-yang-tepat/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Memilih struktur data yang tepat
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../pola-aplikasi/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pola Penerapan
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Pola Penerapan
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pola-aplikasi/caching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Caching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pola-aplikasi/session-dan-rate-limiting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Session dan rate limiting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pola-aplikasi/pub-sub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pub/Sub
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pola-aplikasi/streams-consumer-group/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Streams dan consumer group
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pola-aplikasi/transaksi/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transaksi
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pola-aplikasi/lua-script/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lua script
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../python/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python dan FastAPI
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Python dan FastAPI
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/dasar-redis-py/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dasar redis-py
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/struktur-data-di-python/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Struktur data di Python
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/pipeline-dan-connection-pool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pipeline dan connection pool
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/dasar-fastapi-dengan-redis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dasar FastAPI dengan Redis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/fastapi-caching-dan-rate-limit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FastAPI: caching dan rate limit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/fastapi-fitur-realtime-dengan-sse/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FastAPI: fitur realtime dengan SSE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../operasi/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operasi
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Operasi
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operasi/persistence/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Persistence
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operasi/keamanan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Keamanan
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operasi/monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Monitoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operasi/replikasi-sentinel-dan-cluster/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Replikasi, Sentinel, dan Cluster
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../proyek-akhir/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Proyek Akhir
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Proyek Akhir
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../proyek-akhir/perancangan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Perancangan
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../proyek-akhir/implementasi-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Implementasi API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../proyek-akhir/fitur-realtime/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fitur realtime
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../proyek-akhir/operasi-dan-pengujian/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operasi dan pengujian
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Daftar isi">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Daftar isi
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#tujuan-belajar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tujuan belajar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prasyarat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prasyarat
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#konsep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Konsep
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Konsep">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Key
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#expiry-masa-hidup-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Expiry (masa hidup key)
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#menelusuri-key-scan-dan-keys" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Menelusuri key: SCAN dan KEYS
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#praktik-langkah-demi-langkah" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Praktik langkah demi langkah
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Praktik langkah demi langkah">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#langkah-1-buat-beberapa-key-dengan-skema" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 1: Buat beberapa key dengan skema
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-2-periksa-dan-hapus-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 2: Periksa dan hapus key
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-3-beri-expiry-dengan-expire-dan-baca-dengan-ttl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 3: Beri expiry dengan EXPIRE dan baca dengan TTL
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-4-lihat-key-hilang" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 4: Lihat key hilang
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-5-buat-key-sekaligus-dengan-expiry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 5: Buat key sekaligus dengan expiry
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-6-batalkan-expiry-dengan-persist" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 6: Batalkan expiry dengan PERSIST
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-7-perhatikan-jebakan-set-menghapus-expiry" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 7: Perhatikan jebakan: SET menghapus expiry
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-8-telusuri-key-dengan-scan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 8: Telusuri key dengan SCAN
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-9-scan-dari-terminal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 9: SCAN dari terminal
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Troubleshooting
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#latihan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Latihan
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ringkasan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ringkasan
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#referensi-resmi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Referensi resmi
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigasi" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../.." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Home
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Pengenalan
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="key-dan-expiry">Key dan expiry<a class="headerlink" href="#key-dan-expiry" title="Permanent link">&para;</a></h1>
+<h2 id="tujuan-belajar">Tujuan belajar<a class="headerlink" href="#tujuan-belajar" title="Permanent link">&para;</a></h2>
+<p>Setelah bab ini kamu bisa:</p>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Menjelaskan apa itu key dan memberi nama key dengan pola yang rapi.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Memeriksa dan menghapus key dengan <code>EXISTS</code>, <code>TYPE</code>, dan <code>DEL</code>.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Memberi masa hidup pada key dengan <code>EXPIRE</code> atau <code>SET ... EX</code>, lalu membacanya dengan <code>TTL</code>.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Membatalkan expiry dengan <code>PERSIST</code> dan memahami kapan expiry hilang sendiri.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Menelusuri key dengan <code>SCAN</code>, dan menjelaskan kenapa <code>KEYS</code> berbahaya.</li>
+</ul>
+<h2 id="prasyarat">Prasyarat<a class="headerlink" href="#prasyarat" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Sudah membaca <a href="../menjalankan-redis-cli-pertama-kali/">Menjalankan redis-cli pertama kali</a>, terutama <code>SET</code>, <code>GET</code>, dan arti <code>(integer)</code> dan <code>(nil)</code>.</li>
+<li>Container Redis berjalan dan kamu bisa masuk dengan <code>docker exec -it redis redis-cli</code> (lihat <a href="../instalasi-dengan-docker/">Instalasi dengan Docker</a>).</li>
+<li>Versi Redis: <code>SCAN</code> dan nilai <code>-2</code> pada <code>TTL</code> tersedia sejak Redis 2.8,<sup id="fnref2:5"><a class="footnote-ref" href="#fn:5">5</a></sup><sup id="fnref2:6"><a class="footnote-ref" href="#fn:6">6</a></sup> jadi semua perintah di bab ini jalan di versi Redis yang kamu pasang lewat Docker.</li>
+</ul>
+<h2 id="konsep">Konsep<a class="headerlink" href="#konsep" title="Permanent link">&para;</a></h2>
+<h3 id="key">Key<a class="headerlink" href="#key" title="Permanent link">&para;</a></h3>
+<p>Setiap data di Redis disimpan sebagai pasangan <strong>key</strong> dan <strong>value</strong>. Key adalah nama untuk menemukan data, dan value adalah isinya.<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup> Analoginya label di map arsip: label menunjuk ke isi map.</p>
+<p>Redis tidak punya folder atau namespace. Semua key berada di satu ruang yang sama, jadi dua key bernama sama akan saling menimpa. Untuk itu ada konvensi memakai titik dua <code>:</code> sebagai pemisah, misalnya <code>user:1000</code>.<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
+<p>Saran dari dokumentasi resmi:<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
+<table>
+<thead>
+<tr>
+<th>Saran</th>
+<th>Contoh baik</th>
+<th>Contoh buruk</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pakai skema <code>jenis-objek:id</code></td>
+<td><code>user:1000</code></td>
+<td><code>u1000</code></td>
+</tr>
+<tr>
+<td>Cukup deskriptif, jangan terlalu pendek</td>
+<td><code>user:1000:followers</code></td>
+<td><code>u1000flw</code></td>
+</tr>
+<tr>
+<td>Jangan terlalu panjang</td>
+<td>key pendek dan jelas</td>
+<td>key ratusan hingga ribuan byte</td>
+</tr>
+<tr>
+<td>Batas ukuran key</td>
+<td>maksimum 512 MB</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h3 id="expiry-masa-hidup-key">Expiry (masa hidup key)<a class="headerlink" href="#expiry-masa-hidup-key" title="Permanent link">&para;</a></h3>
+<p>Secara bawaan sebuah key hidup selamanya sampai dihapus. Dengan <strong>expiry</strong> (juga disebut <em>TTL</em>, <em>time to live</em>), kamu menentukan berapa lama key boleh hidup. Setelah waktunya habis, Redis menghapus key itu otomatis.<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></p>
+<p>Analogi: makanan dengan tanggal kedaluwarsa. Setelah lewat tanggalnya, makanan dibuang tanpa kamu harus mengingatnya.</p>
+<p>Kenapa penting: data sementara seperti cache, kode verifikasi, dan sesi login tidak perlu disimpan selamanya. Tanpa expiry, memori terus terisi data basi. Pola cache yang memakai ini dibahas di bab Caching.</p>
+<p>Hal-hal yang perlu kamu tahu:</p>
+<ul>
+<li>Expiry bisa diatur dalam detik atau milidetik. Resolusinya 1 milidetik.<sup id="fnref3:3"><a class="footnote-ref" href="#fn:3">3</a></sup></li>
+<li>Redis menghapus key kedaluwarsa dengan dua cara: saat key itu diakses, dan lewat pemeriksaan berkala pada sebagian key secara acak.<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup> Jadi key bisa terhapus sedikit setelah waktunya, tetapi kamu tidak akan melihatnya sebagai data yang masih valid.</li>
+<li>Informasi expiry disimpan juga di disk. Waktu terus berjalan walau server mati.<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+</ul>
+<h3 id="menelusuri-key-scan-dan-keys">Menelusuri key: <code>SCAN</code> dan <code>KEYS</code><a class="headerlink" href="#menelusuri-key-scan-dan-keys" title="Permanent link">&para;</a></h3>
+<p>Kadang kamu perlu melihat key apa saja yang ada. Ada dua cara:</p>
+<table>
+<thead>
+<tr>
+<th>Perintah</th>
+<th>Cara kerja</th>
+<th>Risiko</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>KEYS pola</code></td>
+<td>Mengembalikan semua key yang cocok <strong>sekaligus</strong></td>
+<td>Memblokir server sampai selesai. Berbahaya jika key banyak.<sup id="fnref6:3"><a class="footnote-ref" href="#fn:3">3</a></sup></td>
+</tr>
+<tr>
+<td><code>SCAN kursor</code></td>
+<td>Mengembalikan sedikit demi sedikit, dengan <em>kursor</em> sebagai penanda posisi</td>
+<td>Aman dipakai bertahap, tetapi hasilnya tidak selengkap <code>KEYS</code> pada satu waktu.<sup id="fnref7:3"><a class="footnote-ref" href="#fn:3">3</a></sup></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition warning">
+<p class="admonition-title">Jangan pakai <code>KEYS</code> di server yang dipakai aplikasi</p>
+<p>Dokumentasi resmi menyebut <code>KEYS</code> untuk debugging dan operasi khusus, dan tidak boleh dipakai di kode aplikasi biasa. Untuk mencari subset key, pakai <code>SCAN</code>.<sup id="fnref4:3"><a class="footnote-ref" href="#fn:3">3</a></sup></p>
+</div>
+<h2 id="praktik-langkah-demi-langkah">Praktik langkah demi langkah<a class="headerlink" href="#praktik-langkah-demi-langkah" title="Permanent link">&para;</a></h2>
+<p>Lingkungan: <strong>redis-cli</strong>, kecuali dinyatakan lain. Output di bawah adalah output yang <strong>diharapkan</strong> dari dokumentasi, bukan hasil eksekusi di komputermu. Angka sisa waktu bisa sedikit berbeda.</p>
+<p>Masuk dulu:</p>
+<p><strong>Lingkungan: terminal</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>redis<span class="w"> </span>redis-cli
+</span></code></pre></div>
+<h3 id="langkah-1-buat-beberapa-key-dengan-skema">Langkah 1: Buat beberapa key dengan skema<a class="headerlink" href="#langkah-1-buat-beberapa-key-dengan-skema" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>127.0.0.1:6379&gt; SET user:1:nama "Budi"
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>127.0.0.1:6379&gt; SET user:2:nama "Sari"
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>127.0.0.1:6379&gt; SET sesi:abc123 "login-budi"
+</span></code></pre></div>
+<p>Kita memakai skema <code>jenis:id:atribut</code> agar key mudah dikelompokkan dan dicari nanti. Setiap perintah dibalas <code>OK</code>.</p>
+<h3 id="langkah-2-periksa-dan-hapus-key">Langkah 2: Periksa dan hapus key<a class="headerlink" href="#langkah-2-periksa-dan-hapus-key" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>127.0.0.1:6379&gt; EXISTS user:1:nama
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>127.0.0.1:6379&gt; TYPE user:1:nama
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>127.0.0.1:6379&gt; DEL user:2:nama
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>127.0.0.1:6379&gt; EXISTS user:2:nama
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Perintah</th>
+<th>Fungsi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>EXISTS key</code></td>
+<td><code>1</code> jika ada, <code>0</code> jika tidak.</td>
+</tr>
+<tr>
+<td><code>TYPE key</code></td>
+<td>Mengembalikan jenis value, misalnya <code>string</code>, atau <code>none</code> jika key tidak ada.<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+</tr>
+<tr>
+<td><code>DEL key</code></td>
+<td>Menghapus key dan value-nya. Mengembalikan <code>1</code> jika ada yang terhapus, <code>0</code> jika key tidak ada.<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Diharapkan:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>(integer) 1
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>string
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>(integer) 1
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>(integer) 0
+</span></code></pre></div>
+<div class="admonition danger">
+<p class="admonition-title"><code>DEL</code> tidak bisa dibatalkan</p>
+<p>Key yang dihapus tidak bisa dikembalikan kecuali ada backup. Pastikan nama key benar sebelum menjalankannya.</p>
+</div>
+<h3 id="langkah-3-beri-expiry-dengan-expire-dan-baca-dengan-ttl">Langkah 3: Beri expiry dengan <code>EXPIRE</code> dan baca dengan <code>TTL</code><a class="headerlink" href="#langkah-3-beri-expiry-dengan-expire-dan-baca-dengan-ttl" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>127.0.0.1:6379&gt; EXPIRE sesi:abc123 30
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>127.0.0.1:6379&gt; TTL sesi:abc123
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Bagian</th>
+<th>Penjelasan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>EXPIRE sesi:abc123 30</code></td>
+<td>Atur masa hidup key menjadi 30 detik.</td>
+</tr>
+<tr>
+<td>Balasan <code>1</code></td>
+<td>Expiry berhasil diatur. Balasan <code>0</code> berarti tidak diatur, misalnya karena key tidak ada.<sup id="fnref3:4"><a class="footnote-ref" href="#fn:4">4</a></sup></td>
+</tr>
+<tr>
+<td><code>TTL sesi:abc123</code></td>
+<td>Menampilkan sisa detik. Kita membacanya untuk membuktikan expiry aktif.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Diharapkan:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>(integer) 1
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>(integer) 30
+</span></code></pre></div>
+<p>Angka kedua bisa 30 atau sedikit lebih kecil, tergantung seberapa cepat kamu mengetik. Ulangi <code>TTL</code> beberapa kali dan lihat angkanya turun.</p>
+<h3 id="langkah-4-lihat-key-hilang">Langkah 4: Lihat key hilang<a class="headerlink" href="#langkah-4-lihat-key-hilang" title="Permanent link">&para;</a></h3>
+<p>Tunggu lebih dari 30 detik, lalu:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>127.0.0.1:6379&gt; GET sesi:abc123
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>127.0.0.1:6379&gt; TTL sesi:abc123
+</span></code></pre></div>
+<p><strong>Diharapkan:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>(nil)
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>(integer) -2
+</span></code></pre></div>
+<p>Nilai balik <code>TTL</code> punya makna khusus:<sup id="fnref:5"><a class="footnote-ref" href="#fn:5">5</a></sup></p>
+<table>
+<thead>
+<tr>
+<th>Nilai</th>
+<th>Arti</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Angka positif</td>
+<td>Sisa waktu hidup dalam detik</td>
+</tr>
+<tr>
+<td><code>-1</code></td>
+<td>Key ada, tetapi <strong>tanpa</strong> expiry</td>
+</tr>
+<tr>
+<td><code>-2</code></td>
+<td>Key <strong>tidak ada</strong> (misalnya sudah kedaluwarsa)</td>
+</tr>
+</tbody>
+</table>
+<h3 id="langkah-5-buat-key-sekaligus-dengan-expiry">Langkah 5: Buat key sekaligus dengan expiry<a class="headerlink" href="#langkah-5-buat-key-sekaligus-dengan-expiry" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>127.0.0.1:6379&gt; SET kode:otp "482913" EX 10
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>127.0.0.1:6379&gt; TTL kode:otp
+</span></code></pre></div>
+<p><code>SET ... EX detik</code> menyimpan nilai dan mengatur expiry dalam satu perintah.<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup> Kita pakai ini karena lebih ringkas dan tidak ada jeda di mana key ada tanpa expiry. <strong>Diharapkan:</strong> <code>OK</code>, lalu angka sekitar <code>10</code> atau <code>9</code>.</p>
+<div class="admonition note">
+<p class="admonition-title">Milidetik</p>
+<p>Untuk milidetik tersedia <code>PEXPIRE</code> dan <code>PTTL</code>.<sup id="fnref5:3"><a class="footnote-ref" href="#fn:3">3</a></sup></p>
+</div>
+<h3 id="langkah-6-batalkan-expiry-dengan-persist">Langkah 6: Batalkan expiry dengan <code>PERSIST</code><a class="headerlink" href="#langkah-6-batalkan-expiry-dengan-persist" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>127.0.0.1:6379&gt; SET catatan "sementara"
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>127.0.0.1:6379&gt; EXPIRE catatan 60
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>127.0.0.1:6379&gt; PERSIST catatan
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>127.0.0.1:6379&gt; TTL catatan
+</span></code></pre></div>
+<p><code>PERSIST</code> menghapus expiry sehingga key hidup permanen lagi.<sup id="fnref2:3"><a class="footnote-ref" href="#fn:3">3</a></sup> <strong>Diharapkan:</strong> <code>OK</code>, <code>(integer) 1</code>, <code>(integer) 1</code>, lalu <code>(integer) -1</code> (key ada tanpa expiry).</p>
+<h3 id="langkah-7-perhatikan-jebakan-set-menghapus-expiry">Langkah 7: Perhatikan jebakan: <code>SET</code> menghapus expiry<a class="headerlink" href="#langkah-7-perhatikan-jebakan-set-menghapus-expiry" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>127.0.0.1:6379&gt; SET catatan "baru" 
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>127.0.0.1:6379&gt; EXPIRE catatan 60
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>127.0.0.1:6379&gt; SET catatan "ditimpa"
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>127.0.0.1:6379&gt; TTL catatan
+</span></code></pre></div>
+<p>Menimpa key dengan <code>SET</code> menghapus expiry-nya. Dokumentasi menyatakan timeout dibersihkan oleh perintah yang menghapus atau menimpa isi key, seperti <code>DEL</code> dan <code>SET</code>.<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup> Perintah yang hanya mengubah isi tanpa menggantinya (misalnya <code>INCR</code>, <code>LPUSH</code>, <code>HSET</code>) tidak mengubah expiry.<sup id="fnref2:4"><a class="footnote-ref" href="#fn:4">4</a></sup></p>
+<p><strong>Diharapkan:</strong> <code>TTL</code> yang terakhir mengembalikan <code>(integer) -1</code>.</p>
+<h3 id="langkah-8-telusuri-key-dengan-scan">Langkah 8: Telusuri key dengan <code>SCAN</code><a class="headerlink" href="#langkah-8-telusuri-key-dengan-scan" title="Permanent link">&para;</a></h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>127.0.0.1:6379&gt; SCAN 0 MATCH user:* COUNT 100
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Bagian</th>
+<th>Penjelasan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SCAN 0</code></td>
+<td>Mulai iterasi dengan kursor <code>0</code>.<sup id="fnref3:6"><a class="footnote-ref" href="#fn:6">6</a></sup></td>
+</tr>
+<tr>
+<td><code>MATCH user:*</code></td>
+<td>Hanya key yang cocok pola glob. <code>*</code> berarti apa saja.</td>
+</tr>
+<tr>
+<td><code>COUNT 100</code></td>
+<td>Petunjuk jumlah kerja per panggilan. Bawaannya 10. Ini hanya petunjuk, bukan jaminan jumlah hasil.<sup id="fnref4:6"><a class="footnote-ref" href="#fn:6">6</a></sup></td>
+</tr>
+</tbody>
+</table>
+<p>Balasan berbentuk dua bagian: kursor berikutnya, lalu daftar key. <strong>Diharapkan</strong> (urutan key tidak dijamin):</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>1) "0"
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>2) 1) "user:1:nama"
+</span></code></pre></div>
+<p>Kursor <code>"0"</code> berarti iterasi selesai. Pada database kecil, semua hasil biasanya muncul dalam satu panggilan. Pada database besar, kursor bukan <code>0</code>, dan kamu harus mengulang dengan kursor itu:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>127.0.0.1:6379&gt; SCAN 17
+</span></code></pre></div>
+<p>Aturan iterasi <code>SCAN</code>:<sup id="fnref:6"><a class="footnote-ref" href="#fn:6">6</a></sup></p>
+<ul>
+<li>Mulai dari <code>0</code>, berhenti ketika kursor yang dikembalikan <code>0</code>.</li>
+<li>Satu panggilan boleh mengembalikan <strong>nol</strong> elemen. Jangan anggap selesai selama kursor belum <code>0</code>.</li>
+<li>Satu key bisa muncul <strong>lebih dari sekali</strong>, jadi aplikasi harus siap menanganinya.</li>
+<li>Key yang ada selama seluruh iterasi pasti dikembalikan.</li>
+</ul>
+<h3 id="langkah-9-scan-dari-terminal">Langkah 9: <code>SCAN</code> dari terminal<a class="headerlink" href="#langkah-9-scan-dari-terminal" title="Permanent link">&para;</a></h3>
+<p><strong>Lingkungan: terminal</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>redis<span class="w"> </span>redis-cli<span class="w"> </span>--scan<span class="w"> </span>--pattern<span class="w"> </span><span class="s2">"user:*"</span>
+</span></code></pre></div>
+<p>Opsi <code>--scan</code> di <code>redis-cli</code> memakai <code>SCAN</code> di balik layar dan mengulang kursor untukmu, jadi kamu tidak perlu menulis kursor manual.<sup id="fnref:7"><a class="footnote-ref" href="#fn:7">7</a></sup> <strong>Diharapkan:</strong> daftar nama key, satu per baris, misalnya <code>user:1:nama</code>.</p>
+<h2 id="troubleshooting">Troubleshooting<a class="headerlink" href="#troubleshooting" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Gejala</th>
+<th>Penyebab dan solusi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>EXPIRE</code> membalas <code>(integer) 0</code></td>
+<td>Key tidak ada, atau opsi <code>NX</code>/<code>XX</code>/<code>GT</code>/<code>LT</code> membuat perintah dilewati.<sup id="fnref4:4"><a class="footnote-ref" href="#fn:4">4</a></sup> Cek <code>EXISTS</code>.</td>
+</tr>
+<tr>
+<td><code>TTL</code> membalas <code>-1</code> padahal sudah <code>EXPIRE</code></td>
+<td>Key sempat ditimpa <code>SET</code> sehingga expiry hilang. Atur ulang setelah <code>SET</code>, atau pakai <code>SET ... EX</code>.</td>
+</tr>
+<tr>
+<td><code>TTL</code> membalas <code>-2</code></td>
+<td>Key sudah tidak ada: kedaluwarsa, terhapus, atau salah ketik.</td>
+</tr>
+<tr>
+<td><code>SCAN</code> mengembalikan daftar kosong tetapi kursor bukan <code>0</code></td>
+<td>Wajar. Lanjutkan sampai kursor <code>0</code>.<sup id="fnref5:6"><a class="footnote-ref" href="#fn:6">6</a></sup></td>
+</tr>
+<tr>
+<td>Key muncul dua kali di hasil <code>SCAN</code></td>
+<td>Wajar. Hapus duplikat di sisi aplikasi.<sup id="fnref6:6"><a class="footnote-ref" href="#fn:6">6</a></sup></td>
+</tr>
+<tr>
+<td><code>SCAN</code> tidak menampilkan key yang baru dibuat</td>
+<td>Key yang tidak ada sepanjang iterasi boleh muncul atau tidak.<sup id="fnref7:6"><a class="footnote-ref" href="#fn:6">6</a></sup></td>
+</tr>
+<tr>
+<td><code>EXPIRE key 0</code> atau negatif menghapus key</td>
+<td>Memang begitu: timeout non-positif membuat key langsung terhapus.<sup id="fnref5:4"><a class="footnote-ref" href="#fn:4">4</a></sup></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Status verifikasi</p>
+<p>Sintaks, nilai balik, dan aturan di atas dicocokkan dengan dokumentasi resmi. Blok output belum dijalankan di Redis sungguhan saat bab ini ditulis, jadi bandingkan dengan hasilmu sendiri.</p>
+</div>
+<h2 id="latihan">Latihan<a class="headerlink" href="#latihan" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Buat tiga key dengan skema <code>produk:&lt;id&gt;:nama</code>. Periksa jenis salah satunya dengan <code>TYPE</code>.</li>
+<li>Buat key <code>promo:harian</code>, beri expiry 20 detik, lalu pantau dengan <code>TTL</code> sampai key menghilang. Apa nilai <code>TTL</code> setelah hilang?</li>
+<li>Buat key dengan <code>SET token "rahasia-placeholder" EX 15</code>. Sebelum habis, jalankan <code>SET token "baru"</code> lalu <code>TTL token</code>. Jelaskan hasilnya.</li>
+<li>Jalankan <code>SCAN 0 MATCH produk:* COUNT 1</code> dan ulangi dengan kursor yang dikembalikan sampai kursor <code>0</code>. Berapa panggilan yang dibutuhkan?</li>
+<li>Jelaskan dengan kata-katamu kenapa <code>KEYS *</code> berbahaya di server produksi sedangkan <code>SCAN</code> tidak.</li>
+</ol>
+<details class="success">
+<summary>Petunjuk</summary>
+<ol>
+<li>Lihat tabel nilai balik <code>TTL</code>.</li>
+<li>Ingat aturan menimpa key dengan <code>SET</code>.</li>
+<li><code>COUNT</code> hanya petunjuk, jadi jumlah panggilan tidak harus sama dengan jumlah key.</li>
+</ol>
+</details>
+<h2 id="ringkasan">Ringkasan<a class="headerlink" href="#ringkasan" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Key adalah nama untuk menemukan value. Pakai skema <code>jenis:id:atribut</code> karena Redis tidak punya namespace.</li>
+<li><code>EXISTS</code>, <code>TYPE</code>, dan <code>DEL</code> mengelola key. <code>DEL</code> tidak bisa dibatalkan.</li>
+<li><code>EXPIRE</code> atau <code>SET ... EX</code> memberi masa hidup, <code>TTL</code> membacanya (<code>-1</code> tanpa expiry, <code>-2</code> tidak ada), <code>PERSIST</code> membatalkannya.</li>
+<li><code>SET</code> yang menimpa key menghapus expiry.</li>
+<li><code>SCAN</code> menelusuri key bertahap dengan kursor (mulai dan berakhir di <code>0</code>, hasil bisa duplikat). <code>KEYS</code> memblokir server dan dihindari di aplikasi.</li>
+</ul>
+<p>Berikutnya: bagian Struktur Data, dimulai dari String.</p>
+<h2 id="referensi-resmi">Referensi resmi<a class="headerlink" href="#referensi-resmi" title="Permanent link">&para;</a></h2>
+<p>Bacaan tambahan: <a href="https://redis.io/docs/latest/commands/persist/"><code>PERSIST</code></a>, <a href="https://redis.io/docs/latest/commands/del/"><code>DEL</code></a>, <a href="https://redis.io/docs/latest/commands/keys/"><code>KEYS</code></a>.</p>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>Redis, <em>Keys and values</em>: <a href="https://redis.io/docs/latest/develop/using-commands/keyspace/">https://redis.io/docs/latest/develop/using-commands/keyspace/</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p>Redis, <em>EXPIRE</em> (bagian <em>Appendix: Redis expires</em>): <a href="https://redis.io/docs/latest/commands/expire/">https://redis.io/docs/latest/commands/expire/</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p>Redis, <em>Keys and values</em> (bagian <em>Key expiration</em> dan <em>Navigating the keyspace</em>): <a href="https://redis.io/docs/latest/develop/using-commands/keyspace/">https://redis.io/docs/latest/develop/using-commands/keyspace/</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:4">
+<p>Redis, <em>EXPIRE</em>: <a href="https://redis.io/docs/latest/commands/expire/">https://redis.io/docs/latest/commands/expire/</a>&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:4" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:4" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:4" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:5">
+<p>Redis, <em>TTL</em>: <a href="https://redis.io/docs/latest/commands/ttl/">https://redis.io/docs/latest/commands/ttl/</a>&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 5 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:5" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+</li>
+<li id="fn:6">
+<p>Redis, <em>SCAN</em>: <a href="https://redis.io/docs/latest/commands/scan/">https://redis.io/docs/latest/commands/scan/</a>&#160;<a class="footnote-backref" href="#fnref:6" title="Jump back to footnote 6 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:6" title="Jump back to footnote 6 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:6" title="Jump back to footnote 6 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:6" title="Jump back to footnote 6 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:6" title="Jump back to footnote 6 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:6" title="Jump back to footnote 6 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:6" title="Jump back to footnote 6 in the text">&#8617;</a></p>
+</li>
+<li id="fn:7">
+<p>Redis, <em>Redis CLI</em> (bagian <em>Get a list of keys</em>): <a href="https://redis.io/docs/latest/develop/tools/cli/">https://redis.io/docs/latest/develop/tools/cli/</a>&#160;<a class="footnote-backref" href="#fnref:7" title="Jump back to footnote 7 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Kembali ke atas
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../menjalankan-redis-cli-pertama-kali/" class="md-footer__link md-footer__link--prev" aria-label="Sebelumnya: Menjalankan redis-cli pertama kali">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Sebelumnya
+              </span>
+              <div class="md-ellipsis">
+                Menjalankan redis-cli pertama kali
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../../struktur-data/" class="md-footer__link md-footer__link--next" aria-label="Selanjutnya: Struktur Data">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Selanjutnya
+              </span>
+              <div class="md-ellipsis">
+                Struktur Data
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.indexes", "navigation.path", "navigation.footer", "navigation.top", "navigation.tracking", "toc.follow", "search.highlight", "search.suggest", "content.code.copy", "content.code.annotate", "content.tabs.link"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Tersalin ke clipboard", "clipboard.copy": "Salin ke clipboard", "search.result.more.one": "1 lagi di halaman ini", "search.result.more.other": "# lagi di halaman ini", "search.result.none": "Tidak ada dokumen yang sesuai", "search.result.one": "1 dokumen ditemukan", "search.result.other": "# dokumen ditemukan", "search.result.placeholder": "Ketik untuk mulai pencarian", "search.result.term.missing": "Tidak ada", "select.version": "Pilih versi"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../../assets/vendor/mermaid/mermaid.min.js"></script>
+      
+        <script src="../../javascripts/mermaid-config.js"></script>
+      
+        <script src="../../javascripts/mathjax.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

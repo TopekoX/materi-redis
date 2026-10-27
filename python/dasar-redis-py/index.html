@@ -1,0 +1,2900 @@
+
+<!doctype html>
+<html lang="id" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Materi Redis untuk pemula, dari dasar sampai penerapan.">
+      
+      
+      
+        <link rel="canonical" href="https://topekox.github.io/materi-redis/python/dasar-redis-py/">
+      
+      
+        <link rel="prev" href="../">
+      
+      
+        <link rel="next" href="../struktur-data-di-python/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Dasar redis-py - Belajar Redis</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#dasar-redis-py" class="md-skip">
+          Lewati ke isi
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Belajar Redis" class="md-header__button md-logo" aria-label="Belajar Redis" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Belajar Redis
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Dasar redis-py
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Theme: system (click for light)"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Theme: system (click for light)" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Theme: light (click for dark)"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Theme: light (click for dark)" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Theme: dark (click for system)"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Theme: dark (click for system)" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Cari" placeholder="Cari" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Cari">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Kosongkan" aria-label="Kosongkan" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Mempersiapkan pencarian
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigasi" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Belajar Redis" class="md-nav__button md-logo" aria-label="Belajar Redis" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Belajar Redis
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../pengenalan/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pengenalan
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Pengenalan
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pengenalan/apa-itu-redis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Apa itu Redis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pengenalan/instalasi-dengan-docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Instalasi dengan Docker
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pengenalan/menjalankan-redis-cli-pertama-kali/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Menjalankan redis-cli pertama kali
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pengenalan/key-dan-expiry/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Key dan expiry
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../struktur-data/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Struktur Data
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Struktur Data
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../struktur-data/string/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    String
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../struktur-data/hash/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hash
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../struktur-data/list/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    List
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../struktur-data/set/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Set
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../struktur-data/sorted-set/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sorted Set
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../struktur-data/bitmap-hyperloglog-geo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bitmap, HyperLogLog, dan Geo
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../struktur-data/memilih-struktur-data-yang-tepat/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Memilih struktur data yang tepat
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../pola-aplikasi/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pola Penerapan
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Pola Penerapan
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pola-aplikasi/caching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Caching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pola-aplikasi/session-dan-rate-limiting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Session dan rate limiting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pola-aplikasi/pub-sub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pub/Sub
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pola-aplikasi/streams-consumer-group/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Streams dan consumer group
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pola-aplikasi/transaksi/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transaksi
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pola-aplikasi/lua-script/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lua script
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python dan FastAPI
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Python dan FastAPI
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dasar redis-py
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dasar redis-py
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Daftar isi">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Daftar isi
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#tujuan-belajar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tujuan belajar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prasyarat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prasyarat
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#konsep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Konsep
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Konsep">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#analogi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Analogi
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cara-kerja" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cara kerja
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#praktik-langkah-demi-langkah" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Praktik langkah demi langkah
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Praktik langkah demi langkah">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#langkah-1-siapkan-lingkungan-virtual-dan-pasang-redis-py" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 1: Siapkan lingkungan virtual dan pasang redis-py
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-2-koneksi-pertama-dengan-ping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 2: Koneksi pertama dengan ping()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-3-lihat-bedanya-bytes-dan-str" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 3: Lihat bedanya bytes dan str
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-4-tipe-nilai-balik-perintah-umum" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 4: Tipe nilai balik perintah umum
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-5-opsi-ex-dan-nx-pada-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 5: Opsi ex dan nx pada set
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-6-menangani-responseerror" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 6: Menangani ResponseError
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-7-menangani-connectionerror-dan-timeouterror" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 7: Menangani ConnectionError dan TimeoutError
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-8-alamat-dari-variabel-lingkungan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 8: Alamat dari variabel lingkungan
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#contoh-lengkap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Contoh lengkap
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kesalahan-umum-dan-troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kesalahan umum dan troubleshooting
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#latihan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Latihan
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ringkasan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ringkasan
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#referensi-resmi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Referensi resmi
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../struktur-data-di-python/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Struktur data di Python
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../pipeline-dan-connection-pool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pipeline dan connection pool
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../dasar-fastapi-dengan-redis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dasar FastAPI dengan Redis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../fastapi-caching-dan-rate-limit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FastAPI: caching dan rate limit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../fastapi-fitur-realtime-dengan-sse/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FastAPI: fitur realtime dengan SSE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../operasi/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operasi
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Operasi
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operasi/persistence/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Persistence
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operasi/keamanan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Keamanan
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operasi/monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Monitoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operasi/replikasi-sentinel-dan-cluster/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Replikasi, Sentinel, dan Cluster
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../proyek-akhir/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Proyek Akhir
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Proyek Akhir
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../proyek-akhir/perancangan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Perancangan
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../proyek-akhir/implementasi-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Implementasi API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../proyek-akhir/fitur-realtime/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fitur realtime
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../proyek-akhir/operasi-dan-pengujian/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operasi dan pengujian
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Daftar isi">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Daftar isi
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#tujuan-belajar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tujuan belajar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prasyarat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prasyarat
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#konsep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Konsep
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Konsep">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#analogi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Analogi
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cara-kerja" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cara kerja
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#praktik-langkah-demi-langkah" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Praktik langkah demi langkah
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Praktik langkah demi langkah">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#langkah-1-siapkan-lingkungan-virtual-dan-pasang-redis-py" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 1: Siapkan lingkungan virtual dan pasang redis-py
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-2-koneksi-pertama-dengan-ping" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 2: Koneksi pertama dengan ping()
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-3-lihat-bedanya-bytes-dan-str" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 3: Lihat bedanya bytes dan str
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-4-tipe-nilai-balik-perintah-umum" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 4: Tipe nilai balik perintah umum
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-5-opsi-ex-dan-nx-pada-set" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 5: Opsi ex dan nx pada set
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-6-menangani-responseerror" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 6: Menangani ResponseError
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-7-menangani-connectionerror-dan-timeouterror" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 7: Menangani ConnectionError dan TimeoutError
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-8-alamat-dari-variabel-lingkungan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 8: Alamat dari variabel lingkungan
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#contoh-lengkap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Contoh lengkap
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kesalahan-umum-dan-troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kesalahan umum dan troubleshooting
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#latihan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Latihan
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ringkasan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ringkasan
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#referensi-resmi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Referensi resmi
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigasi" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../.." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Home
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Python dan FastAPI
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="dasar-redis-py">Dasar redis-py<a class="headerlink" href="#dasar-redis-py" title="Permanent link">&para;</a></h1>
+<h2 id="tujuan-belajar">Tujuan belajar<a class="headerlink" href="#tujuan-belajar" title="Permanent link">&para;</a></h2>
+<p>Setelah bab ini kamu bisa:</p>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Memasang <code>redis-py</code> di lingkungan virtual Python dan memeriksa versinya.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Terhubung ke Redis, memeriksa koneksi dengan <code>ping()</code>, dan menjelaskan arti <code>decode_responses</code>.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Menjalankan perintah dasar (<code>set</code>, <code>get</code>, <code>incr</code>, <code>expire</code>, <code>ttl</code>, <code>delete</code>) dan membaca tipe nilai baliknya.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Menangani galat umum: <code>ConnectionError</code>, <code>TimeoutError</code>, dan <code>ResponseError</code>.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Membaca alamat Redis dari variabel lingkungan tanpa menulis kredensial di kode.</li>
+</ul>
+<h2 id="prasyarat">Prasyarat<a class="headerlink" href="#prasyarat" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Sudah membaca <a href="../../pengenalan/key-dan-expiry/">Key dan expiry</a> dan <a href="../../struktur-data/string/">String</a>. Bab ini tidak mengulang arti <code>SET</code>, <code>EX</code>, <code>NX</code>, <code>INCR</code>, dan <code>TTL</code>; kita hanya memindahkannya ke Python.</li>
+<li>Container Redis berjalan dan <code>docker exec -it redis redis-cli</code> bisa masuk (lihat <a href="../../pengenalan/instalasi-dengan-docker/">Instalasi dengan Docker</a>). Port 6379 harus dipetakan ke komputermu, seperti pada perintah <code>docker run -p 6379:6379</code> di bab itu.</li>
+<li>Perangkat lunak: Python 3 (cek persyaratan versi di dokumentasi <code>redis-py</code>) dan <code>pip</code>.</li>
+<li>Pengetahuan dasar Python: variabel, fungsi, <code>try</code>/<code>except</code>, dan menjalankan skrip.</li>
+<li>Kondisi awal: tidak ada key berawalan <code>py:</code> yang kamu perlukan. Semua key di bab ini memakai awalan itu agar mudah dibersihkan.</li>
+</ul>
+<h2 id="konsep">Konsep<a class="headerlink" href="#konsep" title="Permanent link">&para;</a></h2>
+<p><code>redis-cli</code> cocok untuk mencoba perintah, tetapi aplikasi menjalankan perintah dari kode. <strong><code>redis-py</code></strong> adalah pustaka resmi Redis untuk Python. Ia membuka koneksi ke server, mengirim perintah, lalu mengubah balasan Redis menjadi tipe Python.<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
+<p>Hampir semua perintah Redis punya metode dengan nama sama dalam huruf kecil: <code>SET</code> menjadi <code>r.set(...)</code>, <code>INCR</code> menjadi <code>r.incr(...)</code>. Karena itu kamu bisa memakai pengetahuan dari bab-bab sebelumnya langsung.</p>
+<p>Dua hal yang perlu dipahami sejak awal:</p>
+<ol>
+<li><strong>Redis menyimpan byte, bukan tipe Python.</strong> Secara bawaan <code>redis-py</code> mengembalikan <code>bytes</code> (<code>b'Budi'</code>). Opsi <code>decode_responses=True</code> membuatnya mengembalikan <code>str</code>. Kita memakai opsi ini di seluruh materi karena lebih mudah dibaca.<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+<li><strong>Redis tidak tahu tipe aplikasi.</strong> Angka <code>25</code> yang kamu simpan akan kembali sebagai teks <code>'25'</code> saat dibaca dengan <code>get</code>. Perintah numerik seperti <code>incr</code> mengembalikan <code>int</code>.</li>
+</ol>
+<h3 id="analogi">Analogi<a class="headerlink" href="#analogi" title="Permanent link">&para;</a></h3>
+<p><code>redis-py</code> seperti penerjemah di meja resepsionis. Kamu berbicara dalam Python (<code>r.set(...)</code>), penerjemah mengucapkannya dalam bahasa Redis (<code>SET ...</code>), lalu menerjemahkan jawaban kembali ke Python. <code>decode_responses</code> menentukan apakah jawaban disampaikan sebagai teks yang bisa dibaca atau sebagai byte mentah.</p>
+<div class="admonition note">
+<p class="admonition-title">Batas analogi</p>
+<p>Penerjemah tidak memeriksa maksud kalimat. Jika kamu meminta <code>incr</code> pada teks, Redis yang menolak dan <code>redis-py</code> hanya meneruskan galatnya sebagai pengecualian.</p>
+</div>
+<h2 id="cara-kerja">Cara kerja<a class="headerlink" href="#cara-kerja" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart LR
+    A["Kode Python&lt;br/&gt;r.set('py:nama', 'Budi')"] --&gt; B["redis-py&lt;br/&gt;membuat perintah SET"]
+    B --&gt; C[("Redis&lt;br/&gt;localhost:6379")]
+    C --&gt; D["redis-py&lt;br/&gt;mengubah balasan"]
+    D --&gt; E["True / 'Budi' / None / int"]</code></pre>
+<table>
+<thead>
+<tr>
+<th>Perintah Redis</th>
+<th>Metode <code>redis-py</code></th>
+<th>Tipe balikan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>PING</code></td>
+<td><code>r.ping()</code></td>
+<td><code>True</code></td>
+</tr>
+<tr>
+<td><code>SET k v</code></td>
+<td><code>r.set(k, v)</code></td>
+<td><code>True</code></td>
+</tr>
+<tr>
+<td><code>SET k v EX 10</code></td>
+<td><code>r.set(k, v, ex=10)</code></td>
+<td><code>True</code></td>
+</tr>
+<tr>
+<td><code>SET k v NX</code></td>
+<td><code>r.set(k, v, nx=True)</code></td>
+<td><code>True</code>, atau <code>None</code> bila key sudah ada</td>
+</tr>
+<tr>
+<td><code>GET k</code></td>
+<td><code>r.get(k)</code></td>
+<td><code>str</code> (atau <code>bytes</code>), <code>None</code> bila tidak ada</td>
+</tr>
+<tr>
+<td><code>INCR k</code></td>
+<td><code>r.incr(k)</code></td>
+<td><code>int</code></td>
+</tr>
+<tr>
+<td><code>EXPIRE k 10</code></td>
+<td><code>r.expire(k, 10)</code></td>
+<td><code>True</code>/<code>False</code></td>
+</tr>
+<tr>
+<td><code>TTL k</code></td>
+<td><code>r.ttl(k)</code></td>
+<td><code>int</code> (<code>-1</code> tanpa expiry, <code>-2</code> tidak ada)</td>
+</tr>
+<tr>
+<td><code>EXISTS k</code></td>
+<td><code>r.exists(k)</code></td>
+<td><code>int</code> (jumlah key yang ada)</td>
+</tr>
+<tr>
+<td><code>DEL k</code></td>
+<td><code>r.delete(k)</code></td>
+<td><code>int</code> (jumlah key terhapus)</td>
+</tr>
+</tbody>
+</table>
+<p>Objek <code>redis.Redis</code> mengelola koneksi di balik layar lewat <em>connection pool</em>, sehingga satu objek bisa dipakai berulang untuk banyak perintah. Pembahasan lengkapnya ada di bab Pipeline dan connection pool (bab belum ditulis).</p>
+<h2 id="praktik-langkah-demi-langkah">Praktik langkah demi langkah<a class="headerlink" href="#praktik-langkah-demi-langkah" title="Permanent link">&para;</a></h2>
+<p>Output di bawah adalah output yang <strong>diharapkan</strong> berdasarkan dokumentasi, bukan hasil eksekusi di komputermu. Angka sisa TTL bisa sedikit berbeda.</p>
+<h3 id="langkah-1-siapkan-lingkungan-virtual-dan-pasang-redis-py">Langkah 1: Siapkan lingkungan virtual dan pasang <code>redis-py</code><a class="headerlink" href="#langkah-1-siapkan-lingkungan-virtual-dan-pasang-redis-py" title="Permanent link">&para;</a></h3>
+<p><strong>Lingkungan: terminal</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>python<span class="w"> </span>-m<span class="w"> </span>venv<span class="w"> </span>.venv
+</span></code></pre></div>
+<p>Aktifkan lingkungan virtual. Di Windows (PowerShell atau Command Prompt):</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>.venv<span class="se">\S</span>cripts<span class="se">\a</span>ctivate
+</span></code></pre></div>
+<p>Di Linux atau macOS:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nb">source</span><span class="w"> </span>.venv/bin/activate
+</span></code></pre></div>
+<p>Lalu pasang pustakanya dan periksa versinya:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>pip<span class="w"> </span>install<span class="w"> </span>redis
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>pip<span class="w"> </span>show<span class="w"> </span>redis
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Bagian</th>
+<th>Fungsi dan alasan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>python -m venv .venv</code></td>
+<td>Membuat lingkungan Python terpisah agar paket proyek ini tidak bercampur dengan paket sistem.</td>
+</tr>
+<tr>
+<td><code>activate</code></td>
+<td>Membuat <code>python</code> dan <code>pip</code> memakai lingkungan tadi. Tanda berhasil: prompt diawali <code>(.venv)</code>.</td>
+</tr>
+<tr>
+<td><code>pip install redis</code></td>
+<td>Memasang paket <code>redis</code> (nama paket <code>redis</code>, pustakanya bernama <code>redis-py</code>).</td>
+</tr>
+<tr>
+<td><code>pip show redis</code></td>
+<td>Menampilkan versi terpasang; catat untuk bahan pelaporan galat.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Diharapkan:</strong> <code>pip show redis</code> mencetak <code>Name: redis</code>, nomor <code>Version</code>, dan <code>Location</code> di dalam folder <code>.venv</code>. Nomor versinya bergantung pada saat kamu memasang.</p>
+<div class="admonition note">
+<p class="admonition-title">Jangan menaruh <code>.venv</code> di dalam repository materi</p>
+<p>Buat folder proyek latihan di luar repository ini (mis. <code>latihan-redis-py</code>) agar <code>.venv</code> tidak ikut tercatat di Git.</p>
+</div>
+<h3 id="langkah-2-koneksi-pertama-dengan-ping">Langkah 2: Koneksi pertama dengan <code>ping()</code><a class="headerlink" href="#langkah-2-koneksi-pertama-dengan-ping" title="Permanent link">&para;</a></h3>
+<p><strong>Lingkungan: Python</strong> · simpan sebagai <code>koneksi.py</code></p>
+<div class="language-python highlight"><span class="filename">koneksi.py</span><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">redis</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="n">r</span> <span class="o">=</span> <span class="n">redis</span><span class="o">.</span><span class="n">Redis</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s2">"localhost"</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">6379</span><span class="p">,</span> <span class="n">decode_responses</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"ping:"</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">ping</span><span class="p">())</span>
+</span></code></pre></div>
+<p>Cara menjalankan: <code>python koneksi.py</code>.</p>
+<table>
+<thead>
+<tr>
+<th>Baris</th>
+<th>Penjelasan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>redis.Redis(...)</code></td>
+<td>Membuat klien. Belum membuka koneksi sampai perintah pertama dikirim.</td>
+</tr>
+<tr>
+<td><code>host="localhost", port=6379</code></td>
+<td>Alamat Redis di container yang memetakan port 6379 ke komputermu.</td>
+</tr>
+<tr>
+<td><code>decode_responses=True</code></td>
+<td>Balasan berupa <code>str</code>, bukan <code>bytes</code>.</td>
+</tr>
+<tr>
+<td><code>r.ping()</code></td>
+<td>Mengirim <code>PING</code>. Kita pakai ini karena membuat klien tidak membuktikan server hidup.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Diharapkan:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>ping: True
+</span></code></pre></div>
+<p>Cara membaca output: <code>True</code> artinya server menjawab <code>PONG</code> dan <code>redis-py</code> menerjemahkannya menjadi <code>True</code>.</p>
+<h3 id="langkah-3-lihat-bedanya-bytes-dan-str">Langkah 3: Lihat bedanya <code>bytes</code> dan <code>str</code><a class="headerlink" href="#langkah-3-lihat-bedanya-bytes-dan-str" title="Permanent link">&para;</a></h3>
+<p><strong>Lingkungan: Python</strong> · simpan sebagai <code>tipe_data.py</code></p>
+<div class="language-python highlight"><span class="filename">tipe_data.py</span><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">redis</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="n">mentah</span> <span class="o">=</span> <span class="n">redis</span><span class="o">.</span><span class="n">Redis</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s2">"localhost"</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">6379</span><span class="p">)</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="n">teks</span> <span class="o">=</span> <span class="n">redis</span><span class="o">.</span><span class="n">Redis</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s2">"localhost"</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">6379</span><span class="p">,</span> <span class="n">decode_responses</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="n">teks</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">"py:nama"</span><span class="p">,</span> <span class="s2">"Budi"</span><span class="p">)</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a>
+</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"tanpa decode:"</span><span class="p">,</span> <span class="n">mentah</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"py:nama"</span><span class="p">))</span>
+</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"dengan decode:"</span><span class="p">,</span> <span class="n">teks</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"py:nama"</span><span class="p">))</span>
+</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"key tidak ada:"</span><span class="p">,</span> <span class="n">teks</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"py:tidak-ada"</span><span class="p">))</span>
+</span></code></pre></div>
+<p>Kenapa dua klien: untuk membandingkan perilaku keduanya pada key yang sama. <strong>Diharapkan:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>tanpa decode: b'Budi'
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>dengan decode: Budi
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>key tidak ada: None
+</span></code></pre></div>
+<p>Cara membaca output: awalan <code>b'...'</code> menandakan <code>bytes</code>. Key yang tidak ada menghasilkan <code>None</code>, setara dengan <code>(nil)</code> di <code>redis-cli</code>.</p>
+<div class="admonition warning">
+<p class="admonition-title"><code>decode_responses=True</code> tidak cocok untuk data biner</p>
+<p>Bila value berisi byte yang bukan teks UTF-8 yang valid (mis. gambar), pembacaan dengan <code>decode_responses=True</code> dapat memunculkan <code>UnicodeDecodeError</code>. Pakai klien tanpa opsi itu untuk data biner.</p>
+</div>
+<h3 id="langkah-4-tipe-nilai-balik-perintah-umum">Langkah 4: Tipe nilai balik perintah umum<a class="headerlink" href="#langkah-4-tipe-nilai-balik-perintah-umum" title="Permanent link">&para;</a></h3>
+<p><strong>Lingkungan: Python</strong> · simpan sebagai <code>perintah_dasar.py</code></p>
+<div class="language-python highlight"><span class="filename">perintah_dasar.py</span><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">redis</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="n">r</span> <span class="o">=</span> <span class="n">redis</span><span class="o">.</span><span class="n">Redis</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s2">"localhost"</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">6379</span><span class="p">,</span> <span class="n">decode_responses</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"set:"</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">"py:umur"</span><span class="p">,</span> <span class="mi">25</span><span class="p">))</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"get:"</span><span class="p">,</span> <span class="nb">repr</span><span class="p">(</span><span class="n">r</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"py:umur"</span><span class="p">)))</span>
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"incr:"</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">incr</span><span class="p">(</span><span class="s2">"py:umur"</span><span class="p">))</span>
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"exists:"</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="s2">"py:umur"</span><span class="p">))</span>
+</span><span id="__span-8-9"><a id="__codelineno-8-9" name="__codelineno-8-9" href="#__codelineno-8-9"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"ttl tanpa expiry:"</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">ttl</span><span class="p">(</span><span class="s2">"py:umur"</span><span class="p">))</span>
+</span><span id="__span-8-10"><a id="__codelineno-8-10" name="__codelineno-8-10" href="#__codelineno-8-10"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"expire:"</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">expire</span><span class="p">(</span><span class="s2">"py:umur"</span><span class="p">,</span> <span class="mi">30</span><span class="p">))</span>
+</span><span id="__span-8-11"><a id="__codelineno-8-11" name="__codelineno-8-11" href="#__codelineno-8-11"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"ttl:"</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">ttl</span><span class="p">(</span><span class="s2">"py:umur"</span><span class="p">))</span>
+</span><span id="__span-8-12"><a id="__codelineno-8-12" name="__codelineno-8-12" href="#__codelineno-8-12"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"delete:"</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">"py:umur"</span><span class="p">))</span>
+</span><span id="__span-8-13"><a id="__codelineno-8-13" name="__codelineno-8-13" href="#__codelineno-8-13"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"ttl key hilang:"</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">ttl</span><span class="p">(</span><span class="s2">"py:umur"</span><span class="p">))</span>
+</span></code></pre></div>
+<p>Kenapa <code>repr(r.get(...))</code>: agar tanda kutip terlihat dan kamu sadar nilainya <code>str</code> <code>'25'</code>, bukan angka. <strong>Diharapkan:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>set: True
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>get: '25'
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>incr: 26
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>exists: 1
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>ttl tanpa expiry: -1
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>expire: True
+</span><span id="__span-9-7"><a id="__codelineno-9-7" name="__codelineno-9-7" href="#__codelineno-9-7"></a>ttl: 30
+</span><span id="__span-9-8"><a id="__codelineno-9-8" name="__codelineno-9-8" href="#__codelineno-9-8"></a>delete: 1
+</span><span id="__span-9-9"><a id="__codelineno-9-9" name="__codelineno-9-9" href="#__codelineno-9-9"></a>ttl key hilang: -2
+</span></code></pre></div>
+<p>Cara membaca output: <code>set</code> mengembalikan <code>True</code>. <code>get</code> mengembalikan teks <code>'25'</code>, tetapi <code>incr</code> mengembalikan <code>int</code> <code>26</code> karena Redis mengubah teks itu menjadi angka. Nilai <code>-1</code> dan <code>-2</code> pada <code>ttl</code> sama dengan di <a href="../../pengenalan/key-dan-expiry/">Key dan expiry</a>. <code>ttl</code> bisa <code>30</code> atau <code>29</code>.</p>
+<div class="admonition danger">
+<p class="admonition-title"><code>delete</code> tidak bisa dibatalkan</p>
+<p><code>r.delete("py:umur")</code> menghapus key permanen. Selalu sebut nama key lengkap, dan jangan membangun nama key dari input yang belum divalidasi.</p>
+</div>
+<h3 id="langkah-5-opsi-ex-dan-nx-pada-set">Langkah 5: Opsi <code>ex</code> dan <code>nx</code> pada <code>set</code><a class="headerlink" href="#langkah-5-opsi-ex-dan-nx-pada-set" title="Permanent link">&para;</a></h3>
+<p><strong>Lingkungan: Python</strong> · simpan sebagai <code>set_opsi.py</code></p>
+<div class="language-python highlight"><span class="filename">set_opsi.py</span><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">redis</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="n">r</span> <span class="o">=</span> <span class="n">redis</span><span class="o">.</span><span class="n">Redis</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s2">"localhost"</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">6379</span><span class="p">,</span> <span class="n">decode_responses</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a><span class="n">r</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">"py:kunci"</span><span class="p">)</span>
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"pertama:"</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">"py:kunci"</span><span class="p">,</span> <span class="s2">"proses-A"</span><span class="p">,</span> <span class="n">nx</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ex</span><span class="o">=</span><span class="mi">30</span><span class="p">))</span>
+</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"kedua:"</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">"py:kunci"</span><span class="p">,</span> <span class="s2">"proses-B"</span><span class="p">,</span> <span class="n">nx</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ex</span><span class="o">=</span><span class="mi">30</span><span class="p">))</span>
+</span><span id="__span-10-9"><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"isi:"</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"py:kunci"</span><span class="p">))</span>
+</span><span id="__span-10-10"><a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"ttl:"</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">ttl</span><span class="p">(</span><span class="s2">"py:kunci"</span><span class="p">))</span>
+</span><span id="__span-10-11"><a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a>
+</span><span id="__span-10-12"><a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="n">r</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">"py:kunci"</span><span class="p">)</span>
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Baris</th>
+<th>Penjelasan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>r.delete("py:kunci")</code> di awal</td>
+<td>Memastikan key belum ada agar hasilnya sama setiap dijalankan.</td>
+</tr>
+<tr>
+<td><code>nx=True, ex=30</code></td>
+<td>Setara <code>SET ... NX EX 30</code>: simpan hanya bila belum ada, dengan expiry 30 detik.</td>
+</tr>
+<tr>
+<td><code>r.delete("py:kunci")</code> di akhir</td>
+<td>Membersihkan key uji.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Diharapkan:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>pertama: True
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>kedua: None
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>isi: proses-A
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>ttl: 30
+</span></code></pre></div>
+<p>Cara membaca output: <code>True</code> berarti berhasil menyimpan. <code>None</code> berarti <code>SET ... NX</code> ditolak karena key sudah ada; ini bukan galat, hanya penanda gagal bersyarat.</p>
+<h3 id="langkah-6-menangani-responseerror">Langkah 6: Menangani <code>ResponseError</code><a class="headerlink" href="#langkah-6-menangani-responseerror" title="Permanent link">&para;</a></h3>
+<p><strong>Lingkungan: Python</strong> · simpan sebagai <code>galat_respons.py</code></p>
+<div class="language-python highlight"><span class="filename">galat_respons.py</span><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">redis</span>
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a><span class="n">r</span> <span class="o">=</span> <span class="n">redis</span><span class="o">.</span><span class="n">Redis</span><span class="p">(</span><span class="n">host</span><span class="o">=</span><span class="s2">"localhost"</span><span class="p">,</span> <span class="n">port</span><span class="o">=</span><span class="mi">6379</span><span class="p">,</span> <span class="n">decode_responses</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="__span-12-4"><a id="__codelineno-12-4" name="__codelineno-12-4" href="#__codelineno-12-4"></a>
+</span><span id="__span-12-5"><a id="__codelineno-12-5" name="__codelineno-12-5" href="#__codelineno-12-5"></a><span class="n">r</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">"py:teks"</span><span class="p">,</span> <span class="s2">"bukan angka"</span><span class="p">)</span>
+</span><span id="__span-12-6"><a id="__codelineno-12-6" name="__codelineno-12-6" href="#__codelineno-12-6"></a>
+</span><span id="__span-12-7"><a id="__codelineno-12-7" name="__codelineno-12-7" href="#__codelineno-12-7"></a><span class="k">try</span><span class="p">:</span>
+</span><span id="__span-12-8"><a id="__codelineno-12-8" name="__codelineno-12-8" href="#__codelineno-12-8"></a>    <span class="n">r</span><span class="o">.</span><span class="n">incr</span><span class="p">(</span><span class="s2">"py:teks"</span><span class="p">)</span>
+</span><span id="__span-12-9"><a id="__codelineno-12-9" name="__codelineno-12-9" href="#__codelineno-12-9"></a><span class="k">except</span> <span class="n">redis</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">ResponseError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span><span id="__span-12-10"><a id="__codelineno-12-10" name="__codelineno-12-10" href="#__codelineno-12-10"></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">"ditolak Redis:"</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+</span><span id="__span-12-11"><a id="__codelineno-12-11" name="__codelineno-12-11" href="#__codelineno-12-11"></a>
+</span><span id="__span-12-12"><a id="__codelineno-12-12" name="__codelineno-12-12" href="#__codelineno-12-12"></a><span class="n">r</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">"py:teks"</span><span class="p">)</span>
+</span></code></pre></div>
+<p>Kenapa langkah ini diperlukan: Redis menolak perintah yang tidak cocok dengan isi key, dan <code>redis-py</code> mengubah penolakan itu menjadi pengecualian <code>ResponseError</code>. Menangkapnya membuat aplikasi tidak berhenti mendadak. <strong>Diharapkan:</strong> satu baris yang diawali <code>ditolak Redis:</code> diikuti pesan dari server, mirip <code>value is not an integer or out of range</code>. Teks persisnya bisa berbeda antarversi.</p>
+<h3 id="langkah-7-menangani-connectionerror-dan-timeouterror">Langkah 7: Menangani <code>ConnectionError</code> dan <code>TimeoutError</code><a class="headerlink" href="#langkah-7-menangani-connectionerror-dan-timeouterror" title="Permanent link">&para;</a></h3>
+<p><strong>Lingkungan: Python</strong> · simpan sebagai <code>galat_koneksi.py</code></p>
+<div class="language-python highlight"><span class="filename">galat_koneksi.py</span><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">redis</span>
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a><span class="n">r</span> <span class="o">=</span> <span class="n">redis</span><span class="o">.</span><span class="n">Redis</span><span class="p">(</span>
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>    <span class="n">host</span><span class="o">=</span><span class="s2">"localhost"</span><span class="p">,</span>
+</span><span id="__span-13-5"><a id="__codelineno-13-5" name="__codelineno-13-5" href="#__codelineno-13-5"></a>    <span class="n">port</span><span class="o">=</span><span class="mi">6390</span><span class="p">,</span>  <span class="c1"># sengaja salah</span>
+</span><span id="__span-13-6"><a id="__codelineno-13-6" name="__codelineno-13-6" href="#__codelineno-13-6"></a>    <span class="n">decode_responses</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="__span-13-7"><a id="__codelineno-13-7" name="__codelineno-13-7" href="#__codelineno-13-7"></a>    <span class="n">socket_connect_timeout</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+</span><span id="__span-13-8"><a id="__codelineno-13-8" name="__codelineno-13-8" href="#__codelineno-13-8"></a>    <span class="n">socket_timeout</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+</span><span id="__span-13-9"><a id="__codelineno-13-9" name="__codelineno-13-9" href="#__codelineno-13-9"></a><span class="p">)</span>
+</span><span id="__span-13-10"><a id="__codelineno-13-10" name="__codelineno-13-10" href="#__codelineno-13-10"></a>
+</span><span id="__span-13-11"><a id="__codelineno-13-11" name="__codelineno-13-11" href="#__codelineno-13-11"></a><span class="k">try</span><span class="p">:</span>
+</span><span id="__span-13-12"><a id="__codelineno-13-12" name="__codelineno-13-12" href="#__codelineno-13-12"></a>    <span class="n">r</span><span class="o">.</span><span class="n">ping</span><span class="p">()</span>
+</span><span id="__span-13-13"><a id="__codelineno-13-13" name="__codelineno-13-13" href="#__codelineno-13-13"></a><span class="k">except</span> <span class="n">redis</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">TimeoutError</span><span class="p">:</span>
+</span><span id="__span-13-14"><a id="__codelineno-13-14" name="__codelineno-13-14" href="#__codelineno-13-14"></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">"waktu habis"</span><span class="p">)</span>
+</span><span id="__span-13-15"><a id="__codelineno-13-15" name="__codelineno-13-15" href="#__codelineno-13-15"></a><span class="k">except</span> <span class="n">redis</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">ConnectionError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span><span id="__span-13-16"><a id="__codelineno-13-16" name="__codelineno-13-16" href="#__codelineno-13-16"></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">"tidak bisa terhubung:"</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Baris</th>
+<th>Penjelasan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>port=6390</code></td>
+<td>Port yang sengaja tidak dipetakan, untuk memicu galat.</td>
+</tr>
+<tr>
+<td><code>socket_connect_timeout=2</code></td>
+<td>Batas waktu membuka koneksi. Tanpa ini, koneksi ke alamat yang tidak menjawab bisa menunggu lama.</td>
+</tr>
+<tr>
+<td><code>socket_timeout=2</code></td>
+<td>Batas waktu menunggu balasan setelah terhubung.</td>
+</tr>
+<tr>
+<td><code>except ... TimeoutError</code> lebih dulu</td>
+<td>Memeriksa waktu habis sebelum galat koneksi umum.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Diharapkan:</strong> satu baris <code>tidak bisa terhubung:</code> diikuti pesan penolakan koneksi ke <code>localhost:6390</code>. Kalimat persisnya bergantung pada sistem operasi, jadi cocokkan dengan hasilmu.</p>
+<h3 id="langkah-8-alamat-dari-variabel-lingkungan">Langkah 8: Alamat dari variabel lingkungan<a class="headerlink" href="#langkah-8-alamat-dari-variabel-lingkungan" title="Permanent link">&para;</a></h3>
+<p>Alamat dan kredensial tidak boleh ditulis di kode. Bacalah dari variabel lingkungan.</p>
+<p><strong>Lingkungan: terminal</strong> · di PowerShell:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a><span class="nv">$env</span>:REDIS_URL<span class="w"> </span><span class="o">=</span><span class="w"> </span><span class="s2">"redis://localhost:6379/0"</span>
+</span></code></pre></div>
+<p>Di Linux atau macOS:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a><span class="nb">export</span><span class="w"> </span><span class="nv">REDIS_URL</span><span class="o">=</span><span class="s2">"redis://localhost:6379/0"</span>
+</span></code></pre></div>
+<p><strong>Lingkungan: Python</strong> · simpan sebagai <code>dari_env.py</code></p>
+<div class="language-python highlight"><span class="filename">dari_env.py</span><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="kn">import</span><span class="w"> </span><span class="nn">redis</span>
+</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>
+</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a><span class="n">url</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"REDIS_URL"</span><span class="p">,</span> <span class="s2">"redis://localhost:6379/0"</span><span class="p">)</span>
+</span><span id="__span-16-6"><a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a><span class="n">r</span> <span class="o">=</span> <span class="n">redis</span><span class="o">.</span><span class="n">Redis</span><span class="o">.</span><span class="n">from_url</span><span class="p">(</span><span class="n">url</span><span class="p">,</span> <span class="n">decode_responses</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+</span><span id="__span-16-7"><a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a>
+</span><span id="__span-16-8"><a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a><span class="nb">print</span><span class="p">(</span><span class="s2">"ping:"</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">ping</span><span class="p">())</span>
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Bagian</th>
+<th>Penjelasan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>redis://localhost:6379/0</code></td>
+<td>Format URL: skema, host, port, dan nomor database (<code>0</code>).<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup></td>
+</tr>
+<tr>
+<td><code>os.environ.get(..., default)</code></td>
+<td>Membaca variabel; memakai nilai bawaan lokal bila belum diatur.</td>
+</tr>
+<tr>
+<td><code>Redis.from_url(url, ...)</code></td>
+<td>Membuat klien dari URL, sehingga satu variabel cukup untuk host, port, database, dan kredensial.</td>
+</tr>
+</tbody>
+</table>
+<p>Bila Redis memakai kata sandi, URL berbentuk <code>redis://:KATA_SANDI@host:6379/0</code>. Gunakan <strong>placeholder</strong> <code>KATA_SANDI</code> di dokumentasi dan simpan nilai asli hanya di variabel lingkungan atau pengelola rahasia, bukan di kode atau Git. Keamanan Redis dibahas di bagian Operasi.</p>
+<p><strong>Diharapkan:</strong> <code>ping: True</code>.</p>
+<h2 id="contoh-lengkap">Contoh lengkap<a class="headerlink" href="#contoh-lengkap" title="Permanent link">&para;</a></h2>
+<p>Contoh ini menyatukan koneksi dari lingkungan, pemeriksaan <code>ping</code>, perintah dasar, dan penanganan galat dalam satu skrip.</p>
+<p><strong>Lingkungan: Python</strong> · Kebutuhan: Python 3, paket <code>redis</code>, dan Redis berjalan di <code>localhost:6379</code> atau di alamat <code>REDIS_URL</code>.</p>
+<div class="language-python highlight"><span class="filename">dasar_redis_py.py</span><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">os</span>
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>
+</span><span id="__span-17-3"><a id="__codelineno-17-3" name="__codelineno-17-3" href="#__codelineno-17-3"></a><span class="kn">import</span><span class="w"> </span><span class="nn">redis</span>
+</span><span id="__span-17-4"><a id="__codelineno-17-4" name="__codelineno-17-4" href="#__codelineno-17-4"></a>
+</span><span id="__span-17-5"><a id="__codelineno-17-5" name="__codelineno-17-5" href="#__codelineno-17-5"></a>
+</span><span id="__span-17-6"><a id="__codelineno-17-6" name="__codelineno-17-6" href="#__codelineno-17-6"></a><span class="k">def</span><span class="w"> </span><span class="nf">buat_klien</span><span class="p">():</span>
+</span><span id="__span-17-7"><a id="__codelineno-17-7" name="__codelineno-17-7" href="#__codelineno-17-7"></a>    <span class="n">url</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"REDIS_URL"</span><span class="p">,</span> <span class="s2">"redis://localhost:6379/0"</span><span class="p">)</span>
+</span><span id="__span-17-8"><a id="__codelineno-17-8" name="__codelineno-17-8" href="#__codelineno-17-8"></a>    <span class="k">return</span> <span class="n">redis</span><span class="o">.</span><span class="n">Redis</span><span class="o">.</span><span class="n">from_url</span><span class="p">(</span>
+</span><span id="__span-17-9"><a id="__codelineno-17-9" name="__codelineno-17-9" href="#__codelineno-17-9"></a>        <span class="n">url</span><span class="p">,</span>
+</span><span id="__span-17-10"><a id="__codelineno-17-10" name="__codelineno-17-10" href="#__codelineno-17-10"></a>        <span class="n">decode_responses</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+</span><span id="__span-17-11"><a id="__codelineno-17-11" name="__codelineno-17-11" href="#__codelineno-17-11"></a>        <span class="n">socket_connect_timeout</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+</span><span id="__span-17-12"><a id="__codelineno-17-12" name="__codelineno-17-12" href="#__codelineno-17-12"></a>        <span class="n">socket_timeout</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span>
+</span><span id="__span-17-13"><a id="__codelineno-17-13" name="__codelineno-17-13" href="#__codelineno-17-13"></a>    <span class="p">)</span>
+</span><span id="__span-17-14"><a id="__codelineno-17-14" name="__codelineno-17-14" href="#__codelineno-17-14"></a>
+</span><span id="__span-17-15"><a id="__codelineno-17-15" name="__codelineno-17-15" href="#__codelineno-17-15"></a>
+</span><span id="__span-17-16"><a id="__codelineno-17-16" name="__codelineno-17-16" href="#__codelineno-17-16"></a><span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
+</span><span id="__span-17-17"><a id="__codelineno-17-17" name="__codelineno-17-17" href="#__codelineno-17-17"></a>    <span class="n">r</span> <span class="o">=</span> <span class="n">buat_klien</span><span class="p">()</span>
+</span><span id="__span-17-18"><a id="__codelineno-17-18" name="__codelineno-17-18" href="#__codelineno-17-18"></a>
+</span><span id="__span-17-19"><a id="__codelineno-17-19" name="__codelineno-17-19" href="#__codelineno-17-19"></a>    <span class="k">try</span><span class="p">:</span>
+</span><span id="__span-17-20"><a id="__codelineno-17-20" name="__codelineno-17-20" href="#__codelineno-17-20"></a>        <span class="n">r</span><span class="o">.</span><span class="n">ping</span><span class="p">()</span>
+</span><span id="__span-17-21"><a id="__codelineno-17-21" name="__codelineno-17-21" href="#__codelineno-17-21"></a>    <span class="k">except</span> <span class="n">redis</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">ConnectionError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span><span id="__span-17-22"><a id="__codelineno-17-22" name="__codelineno-17-22" href="#__codelineno-17-22"></a>        <span class="nb">print</span><span class="p">(</span><span class="s2">"Redis tidak bisa dihubungi:"</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+</span><span id="__span-17-23"><a id="__codelineno-17-23" name="__codelineno-17-23" href="#__codelineno-17-23"></a>        <span class="k">return</span>
+</span><span id="__span-17-24"><a id="__codelineno-17-24" name="__codelineno-17-24" href="#__codelineno-17-24"></a>
+</span><span id="__span-17-25"><a id="__codelineno-17-25" name="__codelineno-17-25" href="#__codelineno-17-25"></a>    <span class="n">r</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">"py:pengunjung"</span><span class="p">,</span> <span class="s2">"py:salam"</span><span class="p">)</span>
+</span><span id="__span-17-26"><a id="__codelineno-17-26" name="__codelineno-17-26" href="#__codelineno-17-26"></a>
+</span><span id="__span-17-27"><a id="__codelineno-17-27" name="__codelineno-17-27" href="#__codelineno-17-27"></a>    <span class="n">r</span><span class="o">.</span><span class="n">set</span><span class="p">(</span><span class="s2">"py:salam"</span><span class="p">,</span> <span class="s2">"halo"</span><span class="p">,</span> <span class="n">ex</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
+</span><span id="__span-17-28"><a id="__codelineno-17-28" name="__codelineno-17-28" href="#__codelineno-17-28"></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">"salam:"</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"py:salam"</span><span class="p">))</span>
+</span><span id="__span-17-29"><a id="__codelineno-17-29" name="__codelineno-17-29" href="#__codelineno-17-29"></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">"sisa ttl:"</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">ttl</span><span class="p">(</span><span class="s2">"py:salam"</span><span class="p">))</span>
+</span><span id="__span-17-30"><a id="__codelineno-17-30" name="__codelineno-17-30" href="#__codelineno-17-30"></a>
+</span><span id="__span-17-31"><a id="__codelineno-17-31" name="__codelineno-17-31" href="#__codelineno-17-31"></a>    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">):</span>
+</span><span id="__span-17-32"><a id="__codelineno-17-32" name="__codelineno-17-32" href="#__codelineno-17-32"></a>        <span class="n">jumlah</span> <span class="o">=</span> <span class="n">r</span><span class="o">.</span><span class="n">incr</span><span class="p">(</span><span class="s2">"py:pengunjung"</span><span class="p">)</span>
+</span><span id="__span-17-33"><a id="__codelineno-17-33" name="__codelineno-17-33" href="#__codelineno-17-33"></a>    <span class="nb">print</span><span class="p">(</span><span class="s2">"pengunjung:"</span><span class="p">,</span> <span class="n">jumlah</span><span class="p">)</span>
+</span><span id="__span-17-34"><a id="__codelineno-17-34" name="__codelineno-17-34" href="#__codelineno-17-34"></a>
+</span><span id="__span-17-35"><a id="__codelineno-17-35" name="__codelineno-17-35" href="#__codelineno-17-35"></a>    <span class="k">try</span><span class="p">:</span>
+</span><span id="__span-17-36"><a id="__codelineno-17-36" name="__codelineno-17-36" href="#__codelineno-17-36"></a>        <span class="n">r</span><span class="o">.</span><span class="n">incr</span><span class="p">(</span><span class="s2">"py:salam"</span><span class="p">)</span>
+</span><span id="__span-17-37"><a id="__codelineno-17-37" name="__codelineno-17-37" href="#__codelineno-17-37"></a>    <span class="k">except</span> <span class="n">redis</span><span class="o">.</span><span class="n">exceptions</span><span class="o">.</span><span class="n">ResponseError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+</span><span id="__span-17-38"><a id="__codelineno-17-38" name="__codelineno-17-38" href="#__codelineno-17-38"></a>        <span class="nb">print</span><span class="p">(</span><span class="s2">"ditolak Redis:"</span><span class="p">,</span> <span class="n">e</span><span class="p">)</span>
+</span><span id="__span-17-39"><a id="__codelineno-17-39" name="__codelineno-17-39" href="#__codelineno-17-39"></a>
+</span><span id="__span-17-40"><a id="__codelineno-17-40" name="__codelineno-17-40" href="#__codelineno-17-40"></a>    <span class="n">r</span><span class="o">.</span><span class="n">delete</span><span class="p">(</span><span class="s2">"py:pengunjung"</span><span class="p">,</span> <span class="s2">"py:salam"</span><span class="p">)</span>
+</span><span id="__span-17-41"><a id="__codelineno-17-41" name="__codelineno-17-41" href="#__codelineno-17-41"></a>
+</span><span id="__span-17-42"><a id="__codelineno-17-42" name="__codelineno-17-42" href="#__codelineno-17-42"></a>
+</span><span id="__span-17-43"><a id="__codelineno-17-43" name="__codelineno-17-43" href="#__codelineno-17-43"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+</span><span id="__span-17-44"><a id="__codelineno-17-44" name="__codelineno-17-44" href="#__codelineno-17-44"></a>    <span class="n">main</span><span class="p">()</span>
+</span></code></pre></div>
+<p>Penjelasan baris penting:</p>
+<table>
+<thead>
+<tr>
+<th>Baris</th>
+<th>Penjelasan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>buat_klien()</code></td>
+<td>Satu tempat membuat klien, jadi alamat dan batas waktu konsisten di seluruh kode.</td>
+</tr>
+<tr>
+<td><code>socket_connect_timeout=2, socket_timeout=2</code></td>
+<td>Mencegah program menggantung bila Redis tidak menjawab.</td>
+</tr>
+<tr>
+<td><code>r.ping()</code> di dalam <code>try</code></td>
+<td>Memastikan server hidup sebelum bekerja; pesan jelas bila tidak.</td>
+</tr>
+<tr>
+<td><code>r.delete("py:pengunjung", "py:salam")</code> di awal</td>
+<td>Memulai dari kondisi bersih; menghapus kedua key itu.</td>
+</tr>
+<tr>
+<td><code>r.set("py:salam", "halo", ex=60)</code></td>
+<td>Menyimpan teks dengan expiry 60 detik.</td>
+</tr>
+<tr>
+<td><code>for ... r.incr(...)</code></td>
+<td>Menaikkan counter tiga kali; <code>incr</code> mengembalikan angka terbaru.</td>
+</tr>
+<tr>
+<td><code>except ... ResponseError</code></td>
+<td>Menangkap penolakan Redis saat <code>incr</code> dipakai pada teks <code>halo</code>.</td>
+</tr>
+<tr>
+<td><code>r.delete(...)</code> di akhir</td>
+<td>Membersihkan key uji.</td>
+</tr>
+<tr>
+<td><code>if __name__ == "__main__"</code></td>
+<td>Memastikan <code>main()</code> hanya jalan bila file dieksekusi langsung.</td>
+</tr>
+</tbody>
+</table>
+<p>Cara menjalankan: <code>python dasar_redis_py.py</code>.</p>
+<p><strong>Diharapkan:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-18-1"><a id="__codelineno-18-1" name="__codelineno-18-1" href="#__codelineno-18-1"></a>salam: halo
+</span><span id="__span-18-2"><a id="__codelineno-18-2" name="__codelineno-18-2" href="#__codelineno-18-2"></a>sisa ttl: 60
+</span><span id="__span-18-3"><a id="__codelineno-18-3" name="__codelineno-18-3" href="#__codelineno-18-3"></a>pengunjung: 3
+</span><span id="__span-18-4"><a id="__codelineno-18-4" name="__codelineno-18-4" href="#__codelineno-18-4"></a>ditolak Redis: value is not an integer or out of range
+</span></code></pre></div>
+<p>Nilai <code>sisa ttl</code> bisa <code>60</code> atau <code>59</code>. Teks <code>ditolak Redis:</code> bisa sedikit berbeda antarversi.</p>
+<h2 id="kesalahan-umum-dan-troubleshooting">Kesalahan umum dan troubleshooting<a class="headerlink" href="#kesalahan-umum-dan-troubleshooting" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Gejala</th>
+<th>Penyebab dan solusi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ModuleNotFoundError: No module named 'redis'</code></td>
+<td><code>redis</code> belum terpasang di lingkungan yang aktif. Aktifkan <code>.venv</code> lalu <code>pip install redis</code>. Periksa dengan <code>pip show redis</code>.</td>
+</tr>
+<tr>
+<td><code>redis.exceptions.ConnectionError</code></td>
+<td>Container Redis belum berjalan, port belum dipetakan, atau alamat salah. Cek <code>docker ps</code> dan nilai <code>host</code>/<code>port</code>/<code>REDIS_URL</code>.</td>
+</tr>
+<tr>
+<td>Program menggantung lama saat Redis tidak menjawab</td>
+<td>Batas waktu tidak diatur. Tambahkan <code>socket_connect_timeout</code> dan <code>socket_timeout</code>.</td>
+</tr>
+<tr>
+<td><code>redis.exceptions.TimeoutError</code></td>
+<td>Redis tidak membalas dalam batas waktu. Periksa beban server atau naikkan batas wajar.</td>
+</tr>
+<tr>
+<td><code>redis.exceptions.ResponseError: WRONGTYPE ...</code></td>
+<td>Key bertipe lain dari yang diharapkan metode. Cek dengan <code>r.type("key")</code>.</td>
+</tr>
+<tr>
+<td><code>redis.exceptions.ResponseError: ... not an integer ...</code></td>
+<td><code>incr</code>/<code>decr</code> pada isi bukan angka bulat. Periksa isi key dengan <code>r.get</code>.</td>
+</tr>
+<tr>
+<td>Hasil <code>get</code> berbentuk <code>b'...'</code></td>
+<td><code>decode_responses=True</code> belum dipakai. Tambahkan pada pembuatan klien.</td>
+</tr>
+<tr>
+<td><code>UnicodeDecodeError</code> saat <code>get</code></td>
+<td>Value berisi byte non-UTF-8 sementara <code>decode_responses=True</code>. Pakai klien tanpa opsi itu untuk data biner.</td>
+</tr>
+<tr>
+<td>Angka yang kamu simpan kembali sebagai teks <code>'25'</code></td>
+<td>Perilaku normal; ubah dengan <code>int(...)</code> saat membaca, atau pakai <code>incr</code> untuk aritmetika.</td>
+</tr>
+<tr>
+<td><code>r.set(..., nx=True)</code> mengembalikan <code>None</code></td>
+<td>Key sudah ada. Bukan galat; tangani sebagai "gagal bersyarat".</td>
+</tr>
+<tr>
+<td>Key <code>py:...</code> tertinggal setelah skrip berhenti di tengah</td>
+<td>Hapus manual dengan <code>DEL</code> satu per satu, atau tunggu expiry bila ada.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Status verifikasi</p>
+<p>Nama metode, parameter (<code>ex</code>, <code>nx</code>, <code>decode_responses</code>, batas waktu), tipe balikan, dan nama pengecualian dicocokkan dengan dokumentasi resmi Redis dan <code>redis-py</code>. Skrip hanya diperiksa sintaksnya; belum dijalankan di Redis sungguhan saat bab ini ditulis. Nomor versi <code>redis-py</code>, teks galat, dan angka TTL tidak bisa diprediksi. Bandingkan dengan hasilmu sendiri.</p>
+</div>
+<h2 id="latihan">Latihan<a class="headerlink" href="#latihan" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Buat <code>latihan1.py</code> yang menyimpan <code>py:kota</code> bernilai <code>"Bandung"</code> dengan expiry 20 detik, lalu mencetak nilai dan <code>ttl</code>-nya. Tunggu 20 detik dan jalankan ulang bagian pembacaan. Apa yang tercetak?</li>
+<li>Sebelum menjalankan: apa tipe Python dari <code>r.incr("py:hitung")</code> dan dari <code>r.get("py:hitung")</code> (dengan <code>decode_responses=True</code>)? Buktikan dengan <code>type(...)</code>.</li>
+<li>Ubah <code>galat_koneksi.py</code> agar membaca host dan port dari <code>REDIS_URL</code>, lalu coba dengan port yang benar dan yang salah. Pesan apa yang muncul pada masing-masing?</li>
+<li>Tulis fungsi <code>ambil_atau_buat(key, nilai_awal)</code> yang memakai <code>set(..., nx=True)</code> lalu mengembalikan isi key. Apa yang terjadi jika dipanggil dua kali dengan nilai awal berbeda?</li>
+<li>Jelaskan kenapa kita tidak menulis alamat Redis dengan kata sandi langsung di kode.</li>
+</ol>
+<details class="success">
+<summary>Petunjuk</summary>
+<ol>
+<li>Gunakan <code>r.set(..., ex=20)</code> dan <code>r.get</code>; key yang hilang menghasilkan <code>None</code>.</li>
+<li><code>incr</code> mengembalikan angka, <code>get</code> mengembalikan teks.</li>
+<li><code>redis.Redis.from_url(os.environ["REDIS_URL"])</code>.</li>
+<li><code>set(..., nx=True)</code> tidak menimpa nilai yang sudah ada.</li>
+<li>Ingat bahwa kode ikut tersimpan di Git dan bisa dibaca banyak orang.</li>
+</ol>
+</details>
+<h2 id="ringkasan">Ringkasan<a class="headerlink" href="#ringkasan" title="Permanent link">&para;</a></h2>
+<ul>
+<li><code>redis-py</code> adalah pustaka Python resmi untuk Redis; metodenya mengikuti nama perintah (<code>SET</code> menjadi <code>r.set</code>).</li>
+<li>Pasang di lingkungan virtual dengan <code>pip install redis</code>, lalu periksa koneksi dengan <code>r.ping()</code>.</li>
+<li><code>decode_responses=True</code> membuat balasan berupa <code>str</code>; tanpa itu hasilnya <code>bytes</code>. Key yang tidak ada menghasilkan <code>None</code>.</li>
+<li>Nilai balik: <code>set</code> mengembalikan <code>True</code> (atau <code>None</code> pada <code>nx</code> yang ditolak), <code>incr</code> dan <code>ttl</code> mengembalikan <code>int</code>.</li>
+<li>Tangkap <code>ResponseError</code>, <code>ConnectionError</code>, dan <code>TimeoutError</code>; atur <code>socket_connect_timeout</code> dan <code>socket_timeout</code>.</li>
+<li>Baca alamat dari variabel lingkungan; jangan menulis kredensial di kode.</li>
+</ul>
+<p>Berikutnya: <a href="../struktur-data-di-python/">Struktur data di Python</a>.</p>
+<h2 id="referensi-resmi">Referensi resmi<a class="headerlink" href="#referensi-resmi" title="Permanent link">&para;</a></h2>
+<p>Bacaan tambahan: <a href="https://redis.io/docs/latest/commands/set/"><code>SET</code></a>, <a href="https://redis.io/docs/latest/commands/incr/"><code>INCR</code></a>, <a href="https://redis.io/docs/latest/commands/ping/"><code>PING</code></a>.</p>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>Redis, <em>redis-py guide (Python)</em>: <a href="https://redis.io/docs/latest/develop/clients/redis-py/">https://redis.io/docs/latest/develop/clients/redis-py/</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p>Redis, <em>Connect to the server</em> (redis-py): <a href="https://redis.io/docs/latest/develop/clients/redis-py/connect/">https://redis.io/docs/latest/develop/clients/redis-py/connect/</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p>redis-py, <em>Connecting to Redis</em> dan <em>Redis.from_url</em>: <a href="https://redis-py.readthedocs.io/en/stable/connections.html">https://redis-py.readthedocs.io/en/stable/connections.html</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Kembali ke atas
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Sebelumnya: Python dan FastAPI">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Sebelumnya
+              </span>
+              <div class="md-ellipsis">
+                Python dan FastAPI
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../struktur-data-di-python/" class="md-footer__link md-footer__link--next" aria-label="Selanjutnya: Struktur data di Python">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Selanjutnya
+              </span>
+              <div class="md-ellipsis">
+                Struktur data di Python
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.indexes", "navigation.path", "navigation.footer", "navigation.top", "navigation.tracking", "toc.follow", "search.highlight", "search.suggest", "content.code.copy", "content.code.annotate", "content.tabs.link"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Tersalin ke clipboard", "clipboard.copy": "Salin ke clipboard", "search.result.more.one": "1 lagi di halaman ini", "search.result.more.other": "# lagi di halaman ini", "search.result.none": "Tidak ada dokumen yang sesuai", "search.result.one": "1 dokumen ditemukan", "search.result.other": "# dokumen ditemukan", "search.result.placeholder": "Ketik untuk mulai pencarian", "search.result.term.missing": "Tidak ada", "select.version": "Pilih versi"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../../assets/vendor/mermaid/mermaid.min.js"></script>
+      
+        <script src="../../javascripts/mermaid-config.js"></script>
+      
+        <script src="../../javascripts/mathjax.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

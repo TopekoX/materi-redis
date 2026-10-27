@@ -1,0 +1,2819 @@
+
+<!doctype html>
+<html lang="id" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Materi Redis untuk pemula, dari dasar sampai penerapan.">
+      
+      
+      
+        <link rel="canonical" href="https://topekox.github.io/materi-redis/proyek-akhir/fitur-realtime/">
+      
+      
+        <link rel="prev" href="../implementasi-api/">
+      
+      
+        <link rel="next" href="../operasi-dan-pengujian/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Fitur realtime - Belajar Redis</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#fitur-realtime" class="md-skip">
+          Lewati ke isi
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Belajar Redis" class="md-header__button md-logo" aria-label="Belajar Redis" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Belajar Redis
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Fitur realtime
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Theme: system (click for light)"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Theme: system (click for light)" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Theme: light (click for dark)"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Theme: light (click for dark)" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Theme: dark (click for system)"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Theme: dark (click for system)" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Cari" placeholder="Cari" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Cari">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Kosongkan" aria-label="Kosongkan" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Mempersiapkan pencarian
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigasi" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Belajar Redis" class="md-nav__button md-logo" aria-label="Belajar Redis" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Belajar Redis
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../pengenalan/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pengenalan
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Pengenalan
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pengenalan/apa-itu-redis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Apa itu Redis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pengenalan/instalasi-dengan-docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Instalasi dengan Docker
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pengenalan/menjalankan-redis-cli-pertama-kali/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Menjalankan redis-cli pertama kali
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pengenalan/key-dan-expiry/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Key dan expiry
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../struktur-data/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Struktur Data
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Struktur Data
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../struktur-data/string/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    String
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../struktur-data/hash/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hash
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../struktur-data/list/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    List
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../struktur-data/set/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Set
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../struktur-data/sorted-set/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sorted Set
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../struktur-data/bitmap-hyperloglog-geo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bitmap, HyperLogLog, dan Geo
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../struktur-data/memilih-struktur-data-yang-tepat/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Memilih struktur data yang tepat
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../pola-aplikasi/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pola Penerapan
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Pola Penerapan
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pola-aplikasi/caching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Caching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pola-aplikasi/session-dan-rate-limiting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Session dan rate limiting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pola-aplikasi/pub-sub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pub/Sub
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pola-aplikasi/streams-consumer-group/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Streams dan consumer group
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pola-aplikasi/transaksi/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transaksi
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pola-aplikasi/lua-script/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lua script
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../python/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python dan FastAPI
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Python dan FastAPI
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/dasar-redis-py/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dasar redis-py
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/struktur-data-di-python/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Struktur data di Python
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/pipeline-dan-connection-pool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pipeline dan connection pool
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/dasar-fastapi-dengan-redis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dasar FastAPI dengan Redis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/fastapi-caching-dan-rate-limit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FastAPI: caching dan rate limit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/fastapi-fitur-realtime-dengan-sse/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FastAPI: fitur realtime dengan SSE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../operasi/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operasi
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Operasi
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operasi/persistence/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Persistence
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operasi/keamanan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Keamanan
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operasi/monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Monitoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operasi/replikasi-sentinel-dan-cluster/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Replikasi, Sentinel, dan Cluster
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Proyek Akhir
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Proyek Akhir
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../perancangan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Perancangan
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../implementasi-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Implementasi API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fitur realtime
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fitur realtime
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Daftar isi">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Daftar isi
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#tujuan-belajar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tujuan belajar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prasyarat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prasyarat
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#konsep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Konsep
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Konsep">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#analogi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Analogi
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cara-kerja" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cara kerja
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#praktik-langkah-demi-langkah" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Praktik langkah demi langkah
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Praktik langkah demi langkah">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#langkah-1-buat-realtimepy-mulai-dari-id-terbaru" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 1: Buat realtime.py, mulai dari ID terbaru
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-2-alirkan-peristiwa-dengan-xread-block" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 2: Alirkan peristiwa dengan XREAD BLOCK
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-3-pasang-endpoint-validasi-dan-daftarkan-router" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 3: Pasang endpoint, validasi, dan daftarkan router
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-4-amati-dengan-dua-terminal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 4: Amati dengan dua terminal
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-5-uji-putus-lalu-menyusul-dengan-skrip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 5: Uji putus lalu menyusul dengan skrip
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-6-periksa-stream-di-redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 6: Periksa Stream di Redis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-7-coba-di-peramban-opsional" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 7: Coba di peramban (opsional)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#contoh-lengkap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Contoh lengkap
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kesalahan-umum-dan-troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kesalahan umum dan troubleshooting
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#latihan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Latihan
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ringkasan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ringkasan
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#referensi-resmi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Referensi resmi
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../operasi-dan-pengujian/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operasi dan pengujian
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Daftar isi">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Daftar isi
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#tujuan-belajar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tujuan belajar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prasyarat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prasyarat
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#konsep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Konsep
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Konsep">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#analogi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Analogi
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cara-kerja" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cara kerja
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#praktik-langkah-demi-langkah" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Praktik langkah demi langkah
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Praktik langkah demi langkah">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#langkah-1-buat-realtimepy-mulai-dari-id-terbaru" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 1: Buat realtime.py, mulai dari ID terbaru
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-2-alirkan-peristiwa-dengan-xread-block" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 2: Alirkan peristiwa dengan XREAD BLOCK
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-3-pasang-endpoint-validasi-dan-daftarkan-router" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 3: Pasang endpoint, validasi, dan daftarkan router
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-4-amati-dengan-dua-terminal" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 4: Amati dengan dua terminal
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-5-uji-putus-lalu-menyusul-dengan-skrip" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 5: Uji putus lalu menyusul dengan skrip
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-6-periksa-stream-di-redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 6: Periksa Stream di Redis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-7-coba-di-peramban-opsional" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 7: Coba di peramban (opsional)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#contoh-lengkap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Contoh lengkap
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kesalahan-umum-dan-troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kesalahan umum dan troubleshooting
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#latihan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Latihan
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ringkasan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ringkasan
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#referensi-resmi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Referensi resmi
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigasi" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../.." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Home
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Proyek Akhir
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="fitur-realtime">Fitur realtime<a class="headerlink" href="#fitur-realtime" title="Permanent link">&para;</a></h1>
+<div class="admonition info">
+<p class="admonition-title">Opsional</p>
+<p>Bab ini boleh dilewati tanpa memutus alur belajar. API katalog sudah lengkap tanpa notifikasi realtime, dan bab Operasi dan pengujian tidak bergantung padanya.</p>
+</div>
+<h2 id="tujuan-belajar">Tujuan belajar<a class="headerlink" href="#tujuan-belajar" title="Permanent link">&para;</a></h2>
+<p>Setelah bab ini kamu bisa:</p>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Menjelaskan kenapa notifikasi perubahan harga dibaca dari Stream, bukan Pub/Sub.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Membaca Stream dari FastAPI dengan <code>XREAD ... BLOCK</code> dan mengalirkannya ke klien lewat SSE.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Mengirim <code>id:</code> pada setiap peristiwa dan memakai <code>Last-Event-ID</code> agar klien yang terputus bisa menyusul.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Menghindari jebakan ID <code>$</code> yang dipakai berulang, dan memvalidasi header dari klien.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Menguji aliran dengan skrip, termasuk skenario putus lalu menyusul.</li>
+</ul>
+<h2 id="prasyarat">Prasyarat<a class="headerlink" href="#prasyarat" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Sudah membaca <a href="../implementasi-api/">Implementasi API</a>. Endpoint <code>PUT /produk/{id}/harga</code> di sana sudah <strong>menulis</strong> peristiwa ke Stream <code>katalog:peristiwa</code>; bab ini menambahkan sisi <strong>pembaca</strong>.</li>
+<li>Sudah membaca <a href="../../pola-aplikasi/streams-consumer-group/">Streams dan consumer group</a> (<code>XADD</code>, <code>XREAD</code>, ID entri) dan <a href="../../python/fastapi-fitur-realtime-dengan-sse/">FastAPI: fitur realtime dengan SSE</a> (format SSE, komentar <em>keep-alive</em>, <code>is_disconnected</code>). Bab ini tidak mengulang penjelasannya.</li>
+<li>Redis 7.0 atau lebih baru, dan <code>redis</code> 5.0.1 atau lebih baru. Kode proyek (<code>kunci.py</code>, <code>sumber.py</code>, <code>main.py</code>) dari bab sebelumnya.</li>
+<li>Kondisi awal: Redis berjalan di <code>localhost:6379</code> dan API dari bab sebelumnya bisa dijalankan.</li>
+</ul>
+<h2 id="konsep">Konsep<a class="headerlink" href="#konsep" title="Permanent link">&para;</a></h2>
+<p>Saat harga produk berubah, klien yang sedang membuka katalog ingin tahu seketika. <strong>SSE</strong> (<em>Server-Sent Events</em>) cocok untuk itu: server mendorong teks lewat satu koneksi HTTP yang tetap terbuka. Pertanyaan perancangannya adalah: dari mana server mendapat peristiwa, dan apa yang terjadi bila klien terputus sebentar?</p>
+<p>Pub/Sub tidak menyimpan pesan, sehingga klien yang terputus kehilangan semua yang terkirim saat ia pergi (lihat <a href="../../pola-aplikasi/pub-sub/">Pub/Sub</a>). Karena itu <a href="../perancangan/">Perancangan</a> memilih <strong>Stream</strong>: setiap peristiwa punya ID urut dan tetap tersimpan. SSE punya mekanisme yang pas: setiap peristiwa boleh memuat bidang <code>id:</code>, dan saat peramban menyambung ulang secara otomatis, ia mengirim header <code>Last-Event-ID</code> berisi ID terakhir yang ia terima.<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup> Server tinggal membaca Stream mulai dari ID itu, dan klien menyusul tanpa kehilangan apa pun.</p>
+<h3 id="analogi">Analogi<a class="headerlink" href="#analogi" title="Permanent link">&para;</a></h3>
+<p>Bayangkan papan pengumuman dengan <strong>nomor urut</strong> dan buku log yang menyimpan semua pengumuman. Pembaca yang pulang sebentar mencatat nomor terakhir yang ia baca. Saat kembali, ia berkata "saya terakhir membaca nomor 41", dan petugas memberikan nomor 42 dan seterusnya. Pub/Sub seperti pengeras suara: yang tidak sedang di tempat tidak mendengar apa-apa.</p>
+<div class="admonition note">
+<p class="admonition-title">Batas analogi</p>
+<p>Buku log punya halaman terbatas. Stream dipangkas oleh <code>MAXLEN ~ 1000</code>, jadi klien yang pergi terlalu lama bisa menemukan entri yang ia lewatkan sudah terhapus. Ia tetap melanjutkan dari entri tertua yang masih ada, tetapi sebagian sudah tidak bisa dikejar.</p>
+</div>
+<h2 id="cara-kerja">Cara kerja<a class="headerlink" href="#cara-kerja" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>sequenceDiagram
+    participant K as Klien (EventSource)
+    participant A as API /aliran
+    participant R as Redis Stream
+    A-&gt;&gt;R: XREVRANGE (ID terbaru)
+    K-&gt;&gt;A: GET /aliran
+    loop selama terhubung
+        A-&gt;&gt;R: XREAD BLOCK 1000 dari ID terakhir
+        R--&gt;&gt;A: entri baru atau kosong
+        A--&gt;&gt;K: id: ... data: ...
+    end
+    Note over K,A: koneksi putus
+    K-&gt;&gt;A: GET /aliran (Last-Event-ID: 41-0)
+    A-&gt;&gt;R: XREAD dari 41-0
+    R--&gt;&gt;A: entri 42, 43 ...
+    A--&gt;&gt;K: menyusul</code></pre>
+<p>Keputusan penting dan alasannya:</p>
+<table>
+<thead>
+<tr>
+<th>Keputusan</th>
+<th>Alasan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Ubah <code>$</code> menjadi ID konkret saat koneksi dibuka (<code>XREVRANGE ... COUNT 1</code>)</td>
+<td>Dokumentasi menegaskan <code>$</code> hanya untuk panggilan <strong>pertama</strong>; bila dipakai berulang, entri yang masuk di antara dua panggilan terlewat.<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup> Dengan ID konkret, panggilan berikutnya selalu melanjutkan dari entri terakhir yang sudah dikirim.</td>
+</tr>
+<tr>
+<td><code>BLOCK 1000</code> (1 detik)</td>
+<td><code>BLOCK</code> menahan koneksi sampai ada data atau waktu habis.<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup> Klien dibuat dengan <code>socket_timeout=2</code>; <code>BLOCK</code> yang lebih lama dari itu dapat memicu <code>TimeoutError</code> (perilaku persisnya bergantung versi <code>redis-py</code> dan belum diuji di bab ini; lihat Latihan 2). Satu detik juga memberi kesempatan memeriksa <code>is_disconnected()</code>.</td>
+</tr>
+<tr>
+<td><code>Last-Event-ID</code> dipakai bila ada</td>
+<td>Inilah mekanisme menyusul. Bila tidak ada, klien hanya menerima peristiwa baru.</td>
+</tr>
+<tr>
+<td>Header divalidasi dengan regex</td>
+<td>Nilai yang bukan ID Stream (mis. teks acak) membuat Redis mengembalikan galat dan API berakhir <code>500</code>. Lebih baik menolak dengan <code>400</code>.</td>
+</tr>
+<tr>
+<td><code>id:</code> dan <code>data:</code> saja, tanpa <code>event:</code></td>
+<td><code>onmessage</code> di peramban hanya menerima peristiwa tanpa nama. Jenis peristiwa cukup berada di dalam JSON.</td>
+</tr>
+<tr>
+<td><code>/aliran</code> tidak dikenai pembatas laju router</td>
+<td>Koneksi panjang bukan "permintaan" berulang; pembatasannya berbentuk jumlah koneksi (lihat Latihan 5).</td>
+</tr>
+</tbody>
+</table>
+<h2 id="praktik-langkah-demi-langkah">Praktik langkah demi langkah<a class="headerlink" href="#praktik-langkah-demi-langkah" title="Permanent link">&para;</a></h2>
+<p>Output di bawah diperoleh dari menjalankan kode yang sama terhadap <code>fakeredis</code>, bukan Redis asli (lihat "Status verifikasi"). Nilai ID entri akan berbeda di komputermu.</p>
+<h3 id="langkah-1-buat-realtimepy-mulai-dari-id-terbaru">Langkah 1: Buat <code>realtime.py</code>, mulai dari ID terbaru<a class="headerlink" href="#langkah-1-buat-realtimepy-mulai-dari-id-terbaru" title="Permanent link">&para;</a></h3>
+<p><strong>Lingkungan: Python</strong></p>
+<div class="language-python highlight"><span class="filename">realtime.py (bagian 1)</span><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">id_terbaru</span><span class="p">(</span><span class="n">r</span><span class="p">:</span> <span class="n">redis</span><span class="o">.</span><span class="n">Redis</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>    <span class="n">entri</span> <span class="o">=</span> <span class="k">await</span> <span class="n">r</span><span class="o">.</span><span class="n">xrevrange</span><span class="p">(</span><span class="n">kunci</span><span class="o">.</span><span class="n">peristiwa</span><span class="p">(),</span> <span class="n">count</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>    <span class="k">return</span> <span class="n">entri</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">entri</span> <span class="k">else</span> <span class="s2">"0-0"</span>
+</span></code></pre></div>
+<p>Kenapa langkah ini diperlukan: ini pengganti <code>$</code> yang aman. <code>XREVRANGE ... COUNT 1</code> mengambil entri terakhir Stream; kita mulai membaca dari ID-nya, sehingga hanya entri yang lebih baru yang dikirim.</p>
+<table>
+<thead>
+<tr>
+<th>Baris</th>
+<th>Fungsi dan alasan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>r.xrevrange(kunci.peristiwa(), count=1)</code></td>
+<td>Mengambil satu entri dari ujung terbaru. Hasilnya daftar <code>(id, isi)</code>.</td>
+</tr>
+<tr>
+<td><code>entri[0][0]</code></td>
+<td>ID entri terakhir.</td>
+</tr>
+<tr>
+<td><code>"0-0"</code></td>
+<td>Bila Stream masih kosong, mulai dari awal: semua entri yang nanti muncul akan lebih besar dari <code>0-0</code>.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="langkah-2-alirkan-peristiwa-dengan-xread-block">Langkah 2: Alirkan peristiwa dengan <code>XREAD BLOCK</code><a class="headerlink" href="#langkah-2-alirkan-peristiwa-dengan-xread-block" title="Permanent link">&para;</a></h3>
+<p><strong>Lingkungan: Python</strong></p>
+<div class="language-python highlight"><span class="filename">realtime.py (bagian 2)</span><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">aliran_peristiwa</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">,</span> <span class="n">r</span><span class="p">:</span> <span class="n">redis</span><span class="o">.</span><span class="n">Redis</span><span class="p">,</span> <span class="n">terakhir</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>    <span class="k">yield</span> <span class="s2">": terhubung</span><span class="se">\n\n</span><span class="s2">"</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>    <span class="n">kosong</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>        <span class="k">if</span> <span class="k">await</span> <span class="n">request</span><span class="o">.</span><span class="n">is_disconnected</span><span class="p">():</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>            <span class="k">break</span>
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>        <span class="n">hasil</span> <span class="o">=</span> <span class="k">await</span> <span class="n">r</span><span class="o">.</span><span class="n">xread</span><span class="p">({</span><span class="n">kunci</span><span class="o">.</span><span class="n">peristiwa</span><span class="p">():</span> <span class="n">terakhir</span><span class="p">},</span> <span class="n">count</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">block</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">hasil</span><span class="p">:</span>
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>            <span class="n">kosong</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>            <span class="k">if</span> <span class="n">kosong</span> <span class="o">%</span> <span class="mi">15</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>                <span class="k">yield</span> <span class="s2">": ping</span><span class="se">\n\n</span><span class="s2">"</span>
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>            <span class="k">continue</span>
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>        <span class="n">kosong</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">entri</span> <span class="ow">in</span> <span class="n">hasil</span><span class="p">:</span>
+</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>            <span class="k">for</span> <span class="n">id_entri</span><span class="p">,</span> <span class="n">isi</span> <span class="ow">in</span> <span class="n">entri</span><span class="p">:</span>
+</span><span id="__span-1-17"><a id="__codelineno-1-17" name="__codelineno-1-17" href="#__codelineno-1-17"></a>                <span class="n">terakhir</span> <span class="o">=</span> <span class="n">id_entri</span>
+</span><span id="__span-1-18"><a id="__codelineno-1-18" name="__codelineno-1-18" href="#__codelineno-1-18"></a>                <span class="k">yield</span> <span class="sa">f</span><span class="s2">"id: </span><span class="si">{</span><span class="n">id_entri</span><span class="si">}</span><span class="se">\n</span><span class="s2">data: </span><span class="si">{</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">isi</span><span class="p">)</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">"</span>
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Baris</th>
+<th>Fungsi dan alasan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>yield ": terhubung\n\n"</code></td>
+<td>Komentar SSE yang langsung mengirim byte pertama, sehingga klien tahu koneksi sudah hidup.</td>
+</tr>
+<tr>
+<td><code>request.is_disconnected()</code></td>
+<td>Berhenti bila klien pergi, sehingga loop dan koneksi Redis tidak menggantung.</td>
+</tr>
+<tr>
+<td><code>r.xread({key: terakhir}, count=50, block=1000)</code></td>
+<td>Setara <code>XREAD COUNT 50 BLOCK 1000 STREAMS key terakhir</code>. Mengembalikan hanya entri dengan ID <strong>lebih besar</strong> dari <code>terakhir</code>; bila tidak ada, menunggu hingga 1 detik lalu mengembalikan kosong.<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
+</tr>
+<tr>
+<td><code>kosong % 15 == 0</code></td>
+<td>Setiap sekitar 15 detik tanpa peristiwa, kirim komentar <code>: ping</code> agar proxy tidak memutus koneksi diam.</td>
+</tr>
+<tr>
+<td><code>terakhir = id_entri</code></td>
+<td>Memajukan penanda baca. Inilah yang membuat panggilan berikutnya tidak membaca ulang entri yang sama dan tidak melewatkan yang baru.</td>
+</tr>
+<tr>
+<td><code>f"id: ...\ndata: ...\n\n"</code></td>
+<td>Satu peristiwa SSE: bidang <code>id:</code> untuk <code>Last-Event-ID</code>, <code>data:</code> berisi JSON dari bidang entri, dan baris kosong sebagai penutup.<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+</tr>
+</tbody>
+</table>
+<h3 id="langkah-3-pasang-endpoint-validasi-dan-daftarkan-router">Langkah 3: Pasang endpoint, validasi, dan daftarkan router<a class="headerlink" href="#langkah-3-pasang-endpoint-validasi-dan-daftarkan-router" title="Permanent link">&para;</a></h3>
+<p><strong>Lingkungan: Python</strong></p>
+<div class="language-python highlight"><span class="filename">realtime.py (bagian 3)</span><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nd">@router</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/aliran"</span><span class="p">)</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">aliran</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">,</span> <span class="n">r</span><span class="p">:</span> <span class="n">redis</span><span class="o">.</span><span class="n">Redis</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_redis</span><span class="p">)):</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>    <span class="n">terakhir</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"last-event-id"</span><span class="p">)</span> <span class="ow">or</span> <span class="kc">None</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>    <span class="k">if</span> <span class="n">terakhir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>        <span class="n">terakhir</span> <span class="o">=</span> <span class="k">await</span> <span class="n">id_terbaru</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>    <span class="k">elif</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="sa">r</span><span class="s2">"\d+(-\d+)?"</span><span class="p">,</span> <span class="n">terakhir</span><span class="p">):</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="s2">"Last-Event-ID tidak valid"</span><span class="p">)</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>    <span class="k">return</span> <span class="n">StreamingResponse</span><span class="p">(</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>        <span class="n">aliran_peristiwa</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">terakhir</span><span class="p">),</span>
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>        <span class="n">media_type</span><span class="o">=</span><span class="s2">"text/event-stream"</span><span class="p">,</span>
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>        <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">"Cache-Control"</span><span class="p">:</span> <span class="s2">"no-cache"</span><span class="p">,</span> <span class="s2">"X-Accel-Buffering"</span><span class="p">:</span> <span class="s2">"no"</span><span class="p">},</span>
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>    <span class="p">)</span>
+</span></code></pre></div>
+<p>Lalu di <code>main.py</code> tambahkan dua baris (impor dan pendaftaran router):</p>
+<div class="language-python highlight"><span class="filename">main.py (tambahan)</span><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">realtime</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="o">...</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="n">app</span><span class="o">.</span><span class="n">include_router</span><span class="p">(</span><span class="n">realtime</span><span class="o">.</span><span class="n">router</span><span class="p">)</span>
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Baris</th>
+<th>Fungsi dan alasan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>request.headers.get("last-event-id") or None</code></td>
+<td>Membaca header yang dikirim peramban saat menyambung ulang; string kosong dianggap tidak ada.</td>
+</tr>
+<tr>
+<td><code>re.fullmatch(r"\d+(-\d+)?", ...)</code></td>
+<td>ID Stream berbentuk <code>angka</code> atau <code>angka-angka</code>. Selain itu ditolak dengan <code>400</code> sebelum menyentuh Redis.</td>
+</tr>
+<tr>
+<td><code>StreamingResponse(..., media_type="text/event-stream")</code></td>
+<td>Menjadikan generator sebagai respons SSE yang terus mengalir.<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup></td>
+</tr>
+<tr>
+<td><code>Cache-Control: no-cache</code>, <code>X-Accel-Buffering: no</code></td>
+<td>Mencegah cache dan <em>buffering</em> di proxy (mis. Nginx) yang menahan peristiwa.</td>
+</tr>
+<tr>
+<td><code>app.include_router(realtime.router)</code></td>
+<td>Mendaftarkan <code>/aliran</code> dan <code>/</code>. Router ini sengaja tanpa <code>batasi</code>.</td>
+</tr>
+</tbody>
+</table>
+<h3 id="langkah-4-amati-dengan-dua-terminal">Langkah 4: Amati dengan dua terminal<a class="headerlink" href="#langkah-4-amati-dengan-dua-terminal" title="Permanent link">&para;</a></h3>
+<p><strong>Lingkungan: terminal</strong></p>
+<p>Jalankan API (<code>fastapi dev main.py</code>). Di terminal kedua:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>curl<span class="w"> </span>-N<span class="w"> </span>http://127.0.0.1:8000/aliran
+</span></code></pre></div>
+<p>Di terminal ketiga, ubah harga:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>curl<span class="w"> </span>-X<span class="w"> </span>PUT<span class="w"> </span>http://127.0.0.1:8000/produk/1/harga<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">  </span>-H<span class="w"> </span><span class="s2">"content-type: application/json"</span><span class="w"> </span>-d<span class="w"> </span><span class="s1">'{"harga": 48000}'</span>
+</span></code></pre></div>
+<p>Kenapa: <code>-N</code> mematikan <em>buffering</em> <code>curl</code> agar peristiwa tampil seketika. Di PowerShell, tulis <code>curl.exe</code>, dan bila kutip JSON bermasalah pakai skrip di Langkah 5.</p>
+<p><strong>Diharapkan:</strong> terminal kedua langsung mencetak <code>: terhubung</code>, lalu setelah <code>PUT</code>:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>: terhubung
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>id: 1761566400000-0
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>data: {"produk": "1", "jenis": "harga", "nilai": "48000"}
+</span></code></pre></div>
+<p>Cara membaca: bidang Stream bertipe string, jadi semua nilai di <code>data</code> berupa string (<code>"48000"</code>). Baris <code>id:</code> adalah ID entri Stream.</p>
+<h3 id="langkah-5-uji-putus-lalu-menyusul-dengan-skrip">Langkah 5: Uji putus lalu menyusul dengan skrip<a class="headerlink" href="#langkah-5-uji-putus-lalu-menyusul-dengan-skrip" title="Permanent link">&para;</a></h3>
+<p><strong>Lingkungan: Python</strong></p>
+<p>Simpan sebagai <code>uji_aliran.py</code>, jalankan <code>python uji_aliran.py</code> (API berjalan, dengan <code>httpx</code> terpasang).</p>
+<div class="language-python highlight"><span class="filename">uji_aliran.py</span><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="kn">import</span><span class="w"> </span><span class="nn">asyncio</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="kn">import</span><span class="w"> </span><span class="nn">httpx</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="n">BASIS</span> <span class="o">=</span> <span class="s2">"http://127.0.0.1:8000"</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">baca</span><span class="p">(</span><span class="n">klien</span><span class="p">,</span> <span class="n">jumlah</span><span class="p">,</span> <span class="n">last_id</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>    <span class="n">header</span> <span class="o">=</span> <span class="p">{</span><span class="s2">"Last-Event-ID"</span><span class="p">:</span> <span class="n">last_id</span><span class="p">}</span> <span class="k">if</span> <span class="n">last_id</span> <span class="k">else</span> <span class="p">{}</span>
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>    <span class="n">hasil</span> <span class="o">=</span> <span class="p">[]</span>
+</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a>    <span class="n">id_terakhir</span> <span class="o">=</span> <span class="kc">None</span>
+</span><span id="__span-7-13"><a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a>    <span class="k">async</span> <span class="k">with</span> <span class="n">klien</span><span class="o">.</span><span class="n">stream</span><span class="p">(</span><span class="s2">"GET"</span><span class="p">,</span> <span class="n">BASIS</span> <span class="o">+</span> <span class="s2">"/aliran"</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="n">header</span><span class="p">,</span> <span class="n">timeout</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="k">as</span> <span class="n">r</span><span class="p">:</span>
+</span><span id="__span-7-14"><a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a>        <span class="k">async</span> <span class="k">for</span> <span class="n">baris</span> <span class="ow">in</span> <span class="n">r</span><span class="o">.</span><span class="n">aiter_lines</span><span class="p">():</span>
+</span><span id="__span-7-15"><a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a>            <span class="k">if</span> <span class="n">baris</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"id: "</span><span class="p">):</span>
+</span><span id="__span-7-16"><a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a>                <span class="n">id_terakhir</span> <span class="o">=</span> <span class="n">baris</span><span class="p">[</span><span class="mi">4</span><span class="p">:]</span>
+</span><span id="__span-7-17"><a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a>            <span class="k">elif</span> <span class="n">baris</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s2">"data: "</span><span class="p">):</span>
+</span><span id="__span-7-18"><a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a>                <span class="n">hasil</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">id_terakhir</span><span class="p">,</span> <span class="n">json</span><span class="o">.</span><span class="n">loads</span><span class="p">(</span><span class="n">baris</span><span class="p">[</span><span class="mi">6</span><span class="p">:])))</span>
+</span><span id="__span-7-19"><a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a>                <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">hasil</span><span class="p">)</span> <span class="o">==</span> <span class="n">jumlah</span><span class="p">:</span>
+</span><span id="__span-7-20"><a id="__codelineno-7-20" name="__codelineno-7-20" href="#__codelineno-7-20"></a>                    <span class="k">break</span>
+</span><span id="__span-7-21"><a id="__codelineno-7-21" name="__codelineno-7-21" href="#__codelineno-7-21"></a>    <span class="k">return</span> <span class="n">hasil</span>
+</span><span id="__span-7-22"><a id="__codelineno-7-22" name="__codelineno-7-22" href="#__codelineno-7-22"></a>
+</span><span id="__span-7-23"><a id="__codelineno-7-23" name="__codelineno-7-23" href="#__codelineno-7-23"></a>
+</span><span id="__span-7-24"><a id="__codelineno-7-24" name="__codelineno-7-24" href="#__codelineno-7-24"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">ubah_harga</span><span class="p">(</span><span class="n">klien</span><span class="p">,</span> <span class="n">harga</span><span class="p">):</span>
+</span><span id="__span-7-25"><a id="__codelineno-7-25" name="__codelineno-7-25" href="#__codelineno-7-25"></a>    <span class="n">r</span> <span class="o">=</span> <span class="k">await</span> <span class="n">klien</span><span class="o">.</span><span class="n">put</span><span class="p">(</span><span class="n">BASIS</span> <span class="o">+</span> <span class="s2">"/produk/1/harga"</span><span class="p">,</span> <span class="n">json</span><span class="o">=</span><span class="p">{</span><span class="s2">"harga"</span><span class="p">:</span> <span class="n">harga</span><span class="p">})</span>
+</span><span id="__span-7-26"><a id="__codelineno-7-26" name="__codelineno-7-26" href="#__codelineno-7-26"></a>    <span class="k">return</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span>
+</span><span id="__span-7-27"><a id="__codelineno-7-27" name="__codelineno-7-27" href="#__codelineno-7-27"></a>
+</span><span id="__span-7-28"><a id="__codelineno-7-28" name="__codelineno-7-28" href="#__codelineno-7-28"></a>
+</span><span id="__span-7-29"><a id="__codelineno-7-29" name="__codelineno-7-29" href="#__codelineno-7-29"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">main</span><span class="p">():</span>
+</span><span id="__span-7-30"><a id="__codelineno-7-30" name="__codelineno-7-30" href="#__codelineno-7-30"></a>    <span class="k">async</span> <span class="k">with</span> <span class="n">httpx</span><span class="o">.</span><span class="n">AsyncClient</span><span class="p">()</span> <span class="k">as</span> <span class="n">k</span><span class="p">:</span>
+</span><span id="__span-7-31"><a id="__codelineno-7-31" name="__codelineno-7-31" href="#__codelineno-7-31"></a>        <span class="n">pembaca</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="n">baca</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+</span><span id="__span-7-32"><a id="__codelineno-7-32" name="__codelineno-7-32" href="#__codelineno-7-32"></a>        <span class="k">await</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">sleep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>  <span class="c1"># beri waktu pembaca tersambung</span>
+</span><span id="__span-7-33"><a id="__codelineno-7-33" name="__codelineno-7-33" href="#__codelineno-7-33"></a>        <span class="k">for</span> <span class="n">harga</span> <span class="ow">in</span> <span class="p">(</span><span class="mi">48000</span><span class="p">,</span> <span class="mi">49000</span><span class="p">,</span> <span class="mi">50000</span><span class="p">):</span>
+</span><span id="__span-7-34"><a id="__codelineno-7-34" name="__codelineno-7-34" href="#__codelineno-7-34"></a>            <span class="nb">print</span><span class="p">(</span><span class="s2">"PUT harga"</span><span class="p">,</span> <span class="n">harga</span><span class="p">,</span> <span class="s2">"-&gt;"</span><span class="p">,</span> <span class="k">await</span> <span class="n">ubah_harga</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">harga</span><span class="p">))</span>
+</span><span id="__span-7-35"><a id="__codelineno-7-35" name="__codelineno-7-35" href="#__codelineno-7-35"></a>        <span class="n">pesan</span> <span class="o">=</span> <span class="k">await</span> <span class="n">pembaca</span>
+</span><span id="__span-7-36"><a id="__codelineno-7-36" name="__codelineno-7-36" href="#__codelineno-7-36"></a>        <span class="k">for</span> <span class="n">id_entri</span><span class="p">,</span> <span class="n">isi</span> <span class="ow">in</span> <span class="n">pesan</span><span class="p">:</span>
+</span><span id="__span-7-37"><a id="__codelineno-7-37" name="__codelineno-7-37" href="#__codelineno-7-37"></a>            <span class="nb">print</span><span class="p">(</span><span class="s2">"diterima:"</span><span class="p">,</span> <span class="n">id_entri</span><span class="p">,</span> <span class="n">isi</span><span class="p">)</span>
+</span><span id="__span-7-38"><a id="__codelineno-7-38" name="__codelineno-7-38" href="#__codelineno-7-38"></a>
+</span><span id="__span-7-39"><a id="__codelineno-7-39" name="__codelineno-7-39" href="#__codelineno-7-39"></a>        <span class="n">awal</span> <span class="o">=</span> <span class="n">pesan</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+</span><span id="__span-7-40"><a id="__codelineno-7-40" name="__codelineno-7-40" href="#__codelineno-7-40"></a>        <span class="n">kejar</span> <span class="o">=</span> <span class="k">await</span> <span class="n">baca</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">last_id</span><span class="o">=</span><span class="n">awal</span><span class="p">)</span>
+</span><span id="__span-7-41"><a id="__codelineno-7-41" name="__codelineno-7-41" href="#__codelineno-7-41"></a>        <span class="nb">print</span><span class="p">(</span><span class="s2">"menyusul setelah"</span><span class="p">,</span> <span class="n">awal</span><span class="p">,</span> <span class="s2">"-&gt;"</span><span class="p">,</span> <span class="p">[</span><span class="n">isi</span><span class="p">[</span><span class="s2">"nilai"</span><span class="p">]</span> <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">isi</span> <span class="ow">in</span> <span class="n">kejar</span><span class="p">])</span>
+</span><span id="__span-7-42"><a id="__codelineno-7-42" name="__codelineno-7-42" href="#__codelineno-7-42"></a>
+</span><span id="__span-7-43"><a id="__codelineno-7-43" name="__codelineno-7-43" href="#__codelineno-7-43"></a>        <span class="n">r</span> <span class="o">=</span> <span class="k">await</span> <span class="n">k</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">BASIS</span> <span class="o">+</span> <span class="s2">"/aliran"</span><span class="p">,</span> <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">"Last-Event-ID"</span><span class="p">:</span> <span class="s2">"bukan-id"</span><span class="p">})</span>
+</span><span id="__span-7-44"><a id="__codelineno-7-44" name="__codelineno-7-44" href="#__codelineno-7-44"></a>        <span class="nb">print</span><span class="p">(</span><span class="s2">"Last-Event-ID tidak valid -&gt;"</span><span class="p">,</span> <span class="n">r</span><span class="o">.</span><span class="n">status_code</span><span class="p">)</span>
+</span><span id="__span-7-45"><a id="__codelineno-7-45" name="__codelineno-7-45" href="#__codelineno-7-45"></a>
+</span><span id="__span-7-46"><a id="__codelineno-7-46" name="__codelineno-7-46" href="#__codelineno-7-46"></a>
+</span><span id="__span-7-47"><a id="__codelineno-7-47" name="__codelineno-7-47" href="#__codelineno-7-47"></a><span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Bagian</th>
+<th>Fungsi dan alasan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>baca(klien, jumlah, last_id)</code></td>
+<td>Membuka <code>/aliran</code>, mengurai baris <code>id:</code> dan <code>data:</code>, berhenti setelah <code>jumlah</code> peristiwa. Keluar dari <code>async with</code> memutus koneksi, seperti peramban yang ditutup.</td>
+</tr>
+<tr>
+<td><code>asyncio.create_task(baca(k, 3))</code> lalu <code>sleep(1)</code></td>
+<td>Pembaca disambungkan dulu, baru tiga <code>PUT</code> dikirim, sehingga ketiganya diterima sebagai peristiwa baru.</td>
+</tr>
+<tr>
+<td><code>baca(k, 2, last_id=awal)</code></td>
+<td>Menyambung ulang dengan <code>Last-Event-ID</code> entri pertama: server harus mengirim hanya entri <strong>sesudahnya</strong>.</td>
+</tr>
+<tr>
+<td><code>Last-Event-ID: bukan-id</code></td>
+<td>Membuktikan validasi: harus <code>400</code>, bukan <code>500</code>.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Diharapkan</strong> (ID berbeda di komputermu):</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>PUT harga 48000 -&gt; 200
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>PUT harga 49000 -&gt; 200
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>PUT harga 50000 -&gt; 200
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>diterima: 1793079932901-0 {'produk': '1', 'jenis': 'harga', 'nilai': '48000'}
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>diterima: 1793079932904-0 {'produk': '1', 'jenis': 'harga', 'nilai': '49000'}
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>diterima: 1793079932906-0 {'produk': '1', 'jenis': 'harga', 'nilai': '50000'}
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>menyusul setelah 1793079932901-0 -&gt; ['49000', '50000']
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>Last-Event-ID tidak valid -&gt; 400
+</span></code></pre></div>
+<p>Cara membaca: tiga peristiwa diterima berurutan. Setelah koneksi diputus dan disambung ulang dengan ID pertama, hanya dua yang lain dikirim: pembaca <strong>menyusul</strong> tanpa kehilangan dan tanpa duplikat. Ini yang tidak bisa dilakukan Pub/Sub.</p>
+<h3 id="langkah-6-periksa-stream-di-redis">Langkah 6: Periksa Stream di Redis<a class="headerlink" href="#langkah-6-periksa-stream-di-redis" title="Permanent link">&para;</a></h3>
+<p><strong>Lingkungan: redis-cli</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>XLEN katalog:peristiwa
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>XRANGE katalog:peristiwa - + COUNT 2
+</span></code></pre></div>
+<p>Kenapa: peristiwa tetap ada di Stream meski sudah dikirim, itulah yang memungkinkan penyusulan.</p>
+<p><strong>Diharapkan:</strong> <code>XLEN</code> mengembalikan jumlah <code>PUT</code> yang pernah kamu lakukan (bukan nol), dan <code>XRANGE</code> menampilkan dua entri pertama dengan bidang <code>produk</code>, <code>jenis</code>, dan <code>nilai</code>. Entri <strong>tidak</strong> terhapus setelah dibaca; hanya <code>MAXLEN ~ 1000</code> yang memangkasnya.</p>
+<h3 id="langkah-7-coba-di-peramban-opsional">Langkah 7: Coba di peramban (opsional)<a class="headerlink" href="#langkah-7-coba-di-peramban-opsional" title="Permanent link">&para;</a></h3>
+<p>Buka <code>http://127.0.0.1:8000/</code>, lalu ubah harga dengan <code>curl</code>/skrip. Setiap <code>PUT</code> seharusnya menambah satu baris di halaman. Halaman ini memakai <code>EventSource</code>, yang otomatis menyambung ulang dan mengirim <code>Last-Event-ID</code>. Halaman belum diuji di peramban saat bab ini ditulis.</p>
+<h2 id="contoh-lengkap">Contoh lengkap<a class="headerlink" href="#contoh-lengkap" title="Permanent link">&para;</a></h2>
+<p><strong>Lingkungan: Python</strong> · Kebutuhan: proyek dari <a href="../implementasi-api/">Implementasi API</a> (<code>kunci.py</code>, <code>main.py</code>, <code>sumber.py</code>), <code>fastapi[standard]</code>, <code>redis</code> 5.0.1+, Redis 7.0+.</p>
+<div class="language-python highlight"><span class="filename">realtime.py</span><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="sd">"""realtime.py: aliran peristiwa katalog (SSE) yang dibaca dari Stream."""</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a><span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a><span class="kn">import</span><span class="w"> </span><span class="nn">re</span>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a><span class="kn">import</span><span class="w"> </span><span class="nn">redis.asyncio</span><span class="w"> </span><span class="k">as</span><span class="w"> </span><span class="nn">redis</span>
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi</span><span class="w"> </span><span class="kn">import</span> <span class="n">APIRouter</span><span class="p">,</span> <span class="n">Depends</span><span class="p">,</span> <span class="n">HTTPException</span><span class="p">,</span> <span class="n">Request</span>
+</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a><span class="kn">from</span><span class="w"> </span><span class="nn">fastapi.responses</span><span class="w"> </span><span class="kn">import</span> <span class="n">HTMLResponse</span><span class="p">,</span> <span class="n">StreamingResponse</span>
+</span><span id="__span-10-9"><a id="__codelineno-10-9" name="__codelineno-10-9" href="#__codelineno-10-9"></a>
+</span><span id="__span-10-10"><a id="__codelineno-10-10" name="__codelineno-10-10" href="#__codelineno-10-10"></a><span class="kn">import</span><span class="w"> </span><span class="nn">kunci</span>
+</span><span id="__span-10-11"><a id="__codelineno-10-11" name="__codelineno-10-11" href="#__codelineno-10-11"></a>
+</span><span id="__span-10-12"><a id="__codelineno-10-12" name="__codelineno-10-12" href="#__codelineno-10-12"></a><span class="n">router</span> <span class="o">=</span> <span class="n">APIRouter</span><span class="p">()</span>
+</span><span id="__span-10-13"><a id="__codelineno-10-13" name="__codelineno-10-13" href="#__codelineno-10-13"></a>
+</span><span id="__span-10-14"><a id="__codelineno-10-14" name="__codelineno-10-14" href="#__codelineno-10-14"></a><span class="n">HALAMAN</span> <span class="o">=</span> <span class="s2">"""&lt;!doctype html&gt;</span>
+</span><span id="__span-10-15"><a id="__codelineno-10-15" name="__codelineno-10-15" href="#__codelineno-10-15"></a><span class="s2">&lt;meta charset="utf-8"&gt;</span>
+</span><span id="__span-10-16"><a id="__codelineno-10-16" name="__codelineno-10-16" href="#__codelineno-10-16"></a><span class="s2">&lt;title&gt;Peristiwa katalog&lt;/title&gt;</span>
+</span><span id="__span-10-17"><a id="__codelineno-10-17" name="__codelineno-10-17" href="#__codelineno-10-17"></a><span class="s2">&lt;h1&gt;Peristiwa katalog&lt;/h1&gt;</span>
+</span><span id="__span-10-18"><a id="__codelineno-10-18" name="__codelineno-10-18" href="#__codelineno-10-18"></a><span class="s2">&lt;ul id="daftar"&gt;&lt;/ul&gt;</span>
+</span><span id="__span-10-19"><a id="__codelineno-10-19" name="__codelineno-10-19" href="#__codelineno-10-19"></a><span class="s2">&lt;script&gt;</span>
+</span><span id="__span-10-20"><a id="__codelineno-10-20" name="__codelineno-10-20" href="#__codelineno-10-20"></a><span class="s2">  const sumber = new EventSource("/aliran");</span>
+</span><span id="__span-10-21"><a id="__codelineno-10-21" name="__codelineno-10-21" href="#__codelineno-10-21"></a><span class="s2">  sumber.onmessage = (e) =&gt; {</span>
+</span><span id="__span-10-22"><a id="__codelineno-10-22" name="__codelineno-10-22" href="#__codelineno-10-22"></a><span class="s2">    const p = JSON.parse(e.data);</span>
+</span><span id="__span-10-23"><a id="__codelineno-10-23" name="__codelineno-10-23" href="#__codelineno-10-23"></a><span class="s2">    const li = document.createElement("li");</span>
+</span><span id="__span-10-24"><a id="__codelineno-10-24" name="__codelineno-10-24" href="#__codelineno-10-24"></a><span class="s2">    li.textContent = "Produk " + p.produk + ": " + p.jenis + " menjadi " + p.nilai;</span>
+</span><span id="__span-10-25"><a id="__codelineno-10-25" name="__codelineno-10-25" href="#__codelineno-10-25"></a><span class="s2">    document.getElementById("daftar").appendChild(li);</span>
+</span><span id="__span-10-26"><a id="__codelineno-10-26" name="__codelineno-10-26" href="#__codelineno-10-26"></a><span class="s2">  };</span>
+</span><span id="__span-10-27"><a id="__codelineno-10-27" name="__codelineno-10-27" href="#__codelineno-10-27"></a><span class="s2">&lt;/script&gt;</span>
+</span><span id="__span-10-28"><a id="__codelineno-10-28" name="__codelineno-10-28" href="#__codelineno-10-28"></a><span class="s2">"""</span>
+</span><span id="__span-10-29"><a id="__codelineno-10-29" name="__codelineno-10-29" href="#__codelineno-10-29"></a>
+</span><span id="__span-10-30"><a id="__codelineno-10-30" name="__codelineno-10-30" href="#__codelineno-10-30"></a>
+</span><span id="__span-10-31"><a id="__codelineno-10-31" name="__codelineno-10-31" href="#__codelineno-10-31"></a><span class="k">def</span><span class="w"> </span><span class="nf">get_redis</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">redis</span><span class="o">.</span><span class="n">Redis</span><span class="p">:</span>
+</span><span id="__span-10-32"><a id="__codelineno-10-32" name="__codelineno-10-32" href="#__codelineno-10-32"></a>    <span class="k">return</span> <span class="n">request</span><span class="o">.</span><span class="n">app</span><span class="o">.</span><span class="n">state</span><span class="o">.</span><span class="n">redis</span>
+</span><span id="__span-10-33"><a id="__codelineno-10-33" name="__codelineno-10-33" href="#__codelineno-10-33"></a>
+</span><span id="__span-10-34"><a id="__codelineno-10-34" name="__codelineno-10-34" href="#__codelineno-10-34"></a>
+</span><span id="__span-10-35"><a id="__codelineno-10-35" name="__codelineno-10-35" href="#__codelineno-10-35"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">id_terbaru</span><span class="p">(</span><span class="n">r</span><span class="p">:</span> <span class="n">redis</span><span class="o">.</span><span class="n">Redis</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+</span><span id="__span-10-36"><a id="__codelineno-10-36" name="__codelineno-10-36" href="#__codelineno-10-36"></a>    <span class="n">entri</span> <span class="o">=</span> <span class="k">await</span> <span class="n">r</span><span class="o">.</span><span class="n">xrevrange</span><span class="p">(</span><span class="n">kunci</span><span class="o">.</span><span class="n">peristiwa</span><span class="p">(),</span> <span class="n">count</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+</span><span id="__span-10-37"><a id="__codelineno-10-37" name="__codelineno-10-37" href="#__codelineno-10-37"></a>    <span class="k">return</span> <span class="n">entri</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">entri</span> <span class="k">else</span> <span class="s2">"0-0"</span>
+</span><span id="__span-10-38"><a id="__codelineno-10-38" name="__codelineno-10-38" href="#__codelineno-10-38"></a>
+</span><span id="__span-10-39"><a id="__codelineno-10-39" name="__codelineno-10-39" href="#__codelineno-10-39"></a>
+</span><span id="__span-10-40"><a id="__codelineno-10-40" name="__codelineno-10-40" href="#__codelineno-10-40"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">aliran_peristiwa</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">,</span> <span class="n">r</span><span class="p">:</span> <span class="n">redis</span><span class="o">.</span><span class="n">Redis</span><span class="p">,</span> <span class="n">terakhir</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+</span><span id="__span-10-41"><a id="__codelineno-10-41" name="__codelineno-10-41" href="#__codelineno-10-41"></a>    <span class="k">yield</span> <span class="s2">": terhubung</span><span class="se">\n\n</span><span class="s2">"</span>
+</span><span id="__span-10-42"><a id="__codelineno-10-42" name="__codelineno-10-42" href="#__codelineno-10-42"></a>
+</span><span id="__span-10-43"><a id="__codelineno-10-43" name="__codelineno-10-43" href="#__codelineno-10-43"></a>    <span class="n">kosong</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span id="__span-10-44"><a id="__codelineno-10-44" name="__codelineno-10-44" href="#__codelineno-10-44"></a>    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+</span><span id="__span-10-45"><a id="__codelineno-10-45" name="__codelineno-10-45" href="#__codelineno-10-45"></a>        <span class="k">if</span> <span class="k">await</span> <span class="n">request</span><span class="o">.</span><span class="n">is_disconnected</span><span class="p">():</span>
+</span><span id="__span-10-46"><a id="__codelineno-10-46" name="__codelineno-10-46" href="#__codelineno-10-46"></a>            <span class="k">break</span>
+</span><span id="__span-10-47"><a id="__codelineno-10-47" name="__codelineno-10-47" href="#__codelineno-10-47"></a>        <span class="n">hasil</span> <span class="o">=</span> <span class="k">await</span> <span class="n">r</span><span class="o">.</span><span class="n">xread</span><span class="p">({</span><span class="n">kunci</span><span class="o">.</span><span class="n">peristiwa</span><span class="p">():</span> <span class="n">terakhir</span><span class="p">},</span> <span class="n">count</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">block</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+</span><span id="__span-10-48"><a id="__codelineno-10-48" name="__codelineno-10-48" href="#__codelineno-10-48"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">hasil</span><span class="p">:</span>
+</span><span id="__span-10-49"><a id="__codelineno-10-49" name="__codelineno-10-49" href="#__codelineno-10-49"></a>            <span class="n">kosong</span> <span class="o">+=</span> <span class="mi">1</span>
+</span><span id="__span-10-50"><a id="__codelineno-10-50" name="__codelineno-10-50" href="#__codelineno-10-50"></a>            <span class="k">if</span> <span class="n">kosong</span> <span class="o">%</span> <span class="mi">15</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+</span><span id="__span-10-51"><a id="__codelineno-10-51" name="__codelineno-10-51" href="#__codelineno-10-51"></a>                <span class="k">yield</span> <span class="s2">": ping</span><span class="se">\n\n</span><span class="s2">"</span>
+</span><span id="__span-10-52"><a id="__codelineno-10-52" name="__codelineno-10-52" href="#__codelineno-10-52"></a>            <span class="k">continue</span>
+</span><span id="__span-10-53"><a id="__codelineno-10-53" name="__codelineno-10-53" href="#__codelineno-10-53"></a>        <span class="n">kosong</span> <span class="o">=</span> <span class="mi">0</span>
+</span><span id="__span-10-54"><a id="__codelineno-10-54" name="__codelineno-10-54" href="#__codelineno-10-54"></a>        <span class="k">for</span> <span class="n">_</span><span class="p">,</span> <span class="n">entri</span> <span class="ow">in</span> <span class="n">hasil</span><span class="p">:</span>
+</span><span id="__span-10-55"><a id="__codelineno-10-55" name="__codelineno-10-55" href="#__codelineno-10-55"></a>            <span class="k">for</span> <span class="n">id_entri</span><span class="p">,</span> <span class="n">isi</span> <span class="ow">in</span> <span class="n">entri</span><span class="p">:</span>
+</span><span id="__span-10-56"><a id="__codelineno-10-56" name="__codelineno-10-56" href="#__codelineno-10-56"></a>                <span class="n">terakhir</span> <span class="o">=</span> <span class="n">id_entri</span>
+</span><span id="__span-10-57"><a id="__codelineno-10-57" name="__codelineno-10-57" href="#__codelineno-10-57"></a>                <span class="k">yield</span> <span class="sa">f</span><span class="s2">"id: </span><span class="si">{</span><span class="n">id_entri</span><span class="si">}</span><span class="se">\n</span><span class="s2">data: </span><span class="si">{</span><span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">isi</span><span class="p">)</span><span class="si">}</span><span class="se">\n\n</span><span class="s2">"</span>
+</span><span id="__span-10-58"><a id="__codelineno-10-58" name="__codelineno-10-58" href="#__codelineno-10-58"></a>
+</span><span id="__span-10-59"><a id="__codelineno-10-59" name="__codelineno-10-59" href="#__codelineno-10-59"></a>
+</span><span id="__span-10-60"><a id="__codelineno-10-60" name="__codelineno-10-60" href="#__codelineno-10-60"></a><span class="nd">@router</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/aliran"</span><span class="p">)</span>
+</span><span id="__span-10-61"><a id="__codelineno-10-61" name="__codelineno-10-61" href="#__codelineno-10-61"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">aliran</span><span class="p">(</span><span class="n">request</span><span class="p">:</span> <span class="n">Request</span><span class="p">,</span> <span class="n">r</span><span class="p">:</span> <span class="n">redis</span><span class="o">.</span><span class="n">Redis</span> <span class="o">=</span> <span class="n">Depends</span><span class="p">(</span><span class="n">get_redis</span><span class="p">)):</span>
+</span><span id="__span-10-62"><a id="__codelineno-10-62" name="__codelineno-10-62" href="#__codelineno-10-62"></a>    <span class="n">terakhir</span> <span class="o">=</span> <span class="n">request</span><span class="o">.</span><span class="n">headers</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"last-event-id"</span><span class="p">)</span> <span class="ow">or</span> <span class="kc">None</span>
+</span><span id="__span-10-63"><a id="__codelineno-10-63" name="__codelineno-10-63" href="#__codelineno-10-63"></a>    <span class="k">if</span> <span class="n">terakhir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+</span><span id="__span-10-64"><a id="__codelineno-10-64" name="__codelineno-10-64" href="#__codelineno-10-64"></a>        <span class="n">terakhir</span> <span class="o">=</span> <span class="k">await</span> <span class="n">id_terbaru</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+</span><span id="__span-10-65"><a id="__codelineno-10-65" name="__codelineno-10-65" href="#__codelineno-10-65"></a>    <span class="k">elif</span> <span class="ow">not</span> <span class="n">re</span><span class="o">.</span><span class="n">fullmatch</span><span class="p">(</span><span class="sa">r</span><span class="s2">"\d+(-\d+)?"</span><span class="p">,</span> <span class="n">terakhir</span><span class="p">):</span>
+</span><span id="__span-10-66"><a id="__codelineno-10-66" name="__codelineno-10-66" href="#__codelineno-10-66"></a>        <span class="k">raise</span> <span class="n">HTTPException</span><span class="p">(</span><span class="n">status_code</span><span class="o">=</span><span class="mi">400</span><span class="p">,</span> <span class="n">detail</span><span class="o">=</span><span class="s2">"Last-Event-ID tidak valid"</span><span class="p">)</span>
+</span><span id="__span-10-67"><a id="__codelineno-10-67" name="__codelineno-10-67" href="#__codelineno-10-67"></a>    <span class="k">return</span> <span class="n">StreamingResponse</span><span class="p">(</span>
+</span><span id="__span-10-68"><a id="__codelineno-10-68" name="__codelineno-10-68" href="#__codelineno-10-68"></a>        <span class="n">aliran_peristiwa</span><span class="p">(</span><span class="n">request</span><span class="p">,</span> <span class="n">r</span><span class="p">,</span> <span class="n">terakhir</span><span class="p">),</span>
+</span><span id="__span-10-69"><a id="__codelineno-10-69" name="__codelineno-10-69" href="#__codelineno-10-69"></a>        <span class="n">media_type</span><span class="o">=</span><span class="s2">"text/event-stream"</span><span class="p">,</span>
+</span><span id="__span-10-70"><a id="__codelineno-10-70" name="__codelineno-10-70" href="#__codelineno-10-70"></a>        <span class="n">headers</span><span class="o">=</span><span class="p">{</span><span class="s2">"Cache-Control"</span><span class="p">:</span> <span class="s2">"no-cache"</span><span class="p">,</span> <span class="s2">"X-Accel-Buffering"</span><span class="p">:</span> <span class="s2">"no"</span><span class="p">},</span>
+</span><span id="__span-10-71"><a id="__codelineno-10-71" name="__codelineno-10-71" href="#__codelineno-10-71"></a>    <span class="p">)</span>
+</span><span id="__span-10-72"><a id="__codelineno-10-72" name="__codelineno-10-72" href="#__codelineno-10-72"></a>
+</span><span id="__span-10-73"><a id="__codelineno-10-73" name="__codelineno-10-73" href="#__codelineno-10-73"></a>
+</span><span id="__span-10-74"><a id="__codelineno-10-74" name="__codelineno-10-74" href="#__codelineno-10-74"></a><span class="nd">@router</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">"/"</span><span class="p">,</span> <span class="n">response_class</span><span class="o">=</span><span class="n">HTMLResponse</span><span class="p">)</span>
+</span><span id="__span-10-75"><a id="__codelineno-10-75" name="__codelineno-10-75" href="#__codelineno-10-75"></a><span class="k">async</span> <span class="k">def</span><span class="w"> </span><span class="nf">beranda</span><span class="p">():</span>
+</span><span id="__span-10-76"><a id="__codelineno-10-76" name="__codelineno-10-76" href="#__codelineno-10-76"></a>    <span class="k">return</span> <span class="n">HALAMAN</span>
+</span></code></pre></div>
+<p>Penjelasan bagian yang belum dibahas di langkah:</p>
+<table>
+<thead>
+<tr>
+<th>Bagian</th>
+<th>Penjelasan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>get_redis</code> di sini</td>
+<td>Duplikat kecil dari <code>main.py</code>, agar <code>realtime.py</code> tidak mengimpor <code>main</code> (hindari impor melingkar).</td>
+</tr>
+<tr>
+<td><code>HALAMAN</code></td>
+<td>Halaman kecil dengan <code>EventSource</code>; <code>onmessage</code> menerima peristiwa tanpa nama.</td>
+</tr>
+<tr>
+<td><code>@router.get("/")</code></td>
+<td>Memberi beranda untuk melihat aliran di peramban.</td>
+</tr>
+</tbody>
+</table>
+<p>Cara menjalankan: <code>fastapi dev main.py</code> (setelah dua baris tambahan di <code>main.py</code>), lalu <code>python uji_aliran.py</code> di terminal lain. Hasil yang diharapkan sama dengan Langkah 5.</p>
+<h2 id="kesalahan-umum-dan-troubleshooting">Kesalahan umum dan troubleshooting<a class="headerlink" href="#kesalahan-umum-dan-troubleshooting" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Gejala</th>
+<th>Penyebab dan solusi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>TimeoutError</code> / respons <code>503</code> setelah ±2 detik pada <code>/aliran</code></td>
+<td>Dugaan utama: <code>BLOCK</code> lebih lama dari <code>socket_timeout</code> klien (belum diuji; periksa jejak galatnya). Pertahankan <code>block=1000</code> (di bawah 2 detik) atau naikkan <code>socket_timeout</code> dengan sadar.</td>
+</tr>
+<tr>
+<td>Peristiwa kadang terlewat</td>
+<td><code>$</code> dipakai di setiap putaran. Selalu pakai ID konkret dan majukan dengan <code>terakhir = id_entri</code>.<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
+</tr>
+<tr>
+<td><code>/aliran</code> membalas <code>400</code></td>
+<td>Header <code>Last-Event-ID</code> bukan ID Stream. Klien yang benar mengirim ID persis seperti yang diterima.</td>
+</tr>
+<tr>
+<td><code>500</code> dengan pesan galat ID dari Redis</td>
+<td>Validasi header tidak dipasang. Pastikan regex di endpoint.</td>
+</tr>
+<tr>
+<td>Peramban tidak menampilkan apa-apa</td>
+<td><code>onmessage</code> tidak menerima peristiwa bernama (<code>event: ...</code>). Tulis hanya <code>id:</code> dan <code>data:</code>.</td>
+</tr>
+<tr>
+<td>Peristiwa tertahan lalu datang sekaligus</td>
+<td><em>Buffering</em> di proxy. Pertahankan <code>X-Accel-Buffering: no</code> dan <code>Cache-Control: no-cache</code>; pastikan proxy tidak menyangga respons.</td>
+</tr>
+<tr>
+<td>Koneksi putus tiap sekitar 60 detik</td>
+<td>Proxy memutus koneksi diam. Komentar <code>: ping</code> setiap ±15 detik mencegahnya; sesuaikan jika proxy lebih agresif.</td>
+</tr>
+<tr>
+<td>Klien yang lama pergi tidak menerima beberapa peristiwa</td>
+<td><code>XADD ... MAXLEN ~ 1000</code> memangkas entri tertua.<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup> Naikkan batas atau sediakan endpoint riwayat dari database.</td>
+</tr>
+<tr>
+<td><code>connected_clients</code> di <code>INFO clients</code> terus naik</td>
+<td>Setiap klien SSE menahan satu koneksi Redis dari pool. Pantau (<a href="../../operasi/monitoring/">Monitoring</a>) dan batasi jumlah koneksi (Latihan 5).</td>
+</tr>
+<tr>
+<td>Data berbentuk string, bukan angka</td>
+<td>Bidang Stream selalu string. Ubah di klien bila perlu (<code>Number(p.nilai)</code>).</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Status verifikasi</p>
+<p>Kode <code>realtime.py</code> dan <code>uji_aliran.py</code> <strong>dijalankan</strong> (Python 3.14.7, FastAPI 0.162.0, <code>redis</code> 8.1.0, Uvicorn 0.54.0, httpx 0.28.1), dan output Langkah 5 adalah hasil nyata. Server uji memakai <strong>fakeredis 2.40.0</strong>, bukan Redis asli (Docker tidak aktif saat bab ditulis), jadi yang terbukti adalah logika aplikasi, bukan perilaku Redis asli. Blok <code>curl</code>, <code>redis-cli</code>, dan halaman peramban <strong>belum dijalankan</strong>. Perilaku <code>XREAD</code>, <code>BLOCK</code>, dan ID dicocokkan dengan dokumentasi resmi.</p>
+</div>
+<h2 id="latihan">Latihan<a class="headerlink" href="#latihan" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Jalankan Langkah 4 dengan tiga terminal. Ubah harga dua kali, lalu hentikan <code>curl -N</code> (<code>Ctrl+C</code>), ubah harga sekali lagi, dan sambungkan ulang dengan <code>curl -N -H "Last-Event-ID: &lt;ID entri pertama&gt;" http://127.0.0.1:8000/aliran</code>. Entri mana saja yang muncul?</li>
+<li>Sebelum menjalankan: apa yang terjadi bila <code>block</code> diubah menjadi <code>5000</code> sedangkan <code>socket_timeout=2</code>? Coba dan cocokkan.</li>
+<li>Ubah <code>aliran_peristiwa</code> agar hanya mengirim peristiwa produk tertentu (parameter <code>?produk=1</code>). Di mana penyaringan sebaiknya dilakukan, di Redis atau di Python, dan kenapa?</li>
+<li>Ubah <code>PUT</code> agar juga menulis peristiwa <code>stok</code> dengan nilai acak. Apakah <code>uji_aliran.py</code> perlu diubah? Jelaskan.</li>
+<li>Rancang pembatas jumlah koneksi <code>/aliran</code> per klien memakai Redis (kunci baru di kamus). Struktur data dan TTL apa yang kamu pilih?</li>
+</ol>
+<details class="success">
+<summary>Petunjuk</summary>
+<ol>
+<li><code>XREAD</code> mengembalikan entri dengan ID <strong>lebih besar</strong> dari ID yang diberikan.</li>
+<li>Baca urutan: <code>socket_timeout</code> berlaku pada pembacaan balasan.</li>
+<li>Stream tidak bisa menyaring per bidang; baca semuanya lalu saring, atau pakai Stream per produk bila beban besar.</li>
+<li>Skrip membaca bidang <code>nilai</code>; pikirkan peristiwa dengan <code>jenis</code> berbeda.</li>
+<li>Counter dengan <code>INCR</code> dan <code>DECR</code> saat koneksi ditutup, atau Sorted Set berisi id koneksi dengan skor waktu; ingat TTL agar tidak bocor bila proses mati.</li>
+</ol>
+</details>
+<h2 id="ringkasan">Ringkasan<a class="headerlink" href="#ringkasan" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Notifikasi yang tidak boleh hilang dibaca dari <strong>Stream</strong>, bukan Pub/Sub, karena entri tetap tersimpan dan punya ID urut.</li>
+<li>Server mengalirkan peristiwa lewat SSE dengan bidang <code>id:</code> dan <code>data:</code>; peramban yang menyambung ulang mengirim <code>Last-Event-ID</code>, dan server membaca Stream dari ID itu.</li>
+<li>Pakai <code>XREAD ... BLOCK</code> dengan nilai di bawah <code>socket_timeout</code>, ubah <code>$</code> menjadi ID konkret saat koneksi dibuka, dan majukan penanda baca setiap entri.</li>
+<li>Validasi <code>Last-Event-ID</code> agar header palsu menghasilkan <code>400</code>, bukan <code>500</code>.</li>
+<li>Stream dipangkas oleh <code>MAXLEN ~</code>, jadi penyusulan terbatas pada entri yang masih ada.</li>
+</ul>
+<p>Berikutnya: <a href="../operasi-dan-pengujian/">Operasi dan pengujian</a>, yang menjaga seluruh proyek tetap tahan, aman, dan teruji.</p>
+<h2 id="referensi-resmi">Referensi resmi<a class="headerlink" href="#referensi-resmi" title="Permanent link">&para;</a></h2>
+<p>Bacaan tambahan: <a href="https://redis.io/docs/latest/commands/xrevrange/"><code>XREVRANGE</code></a>, <a href="https://redis.io/docs/latest/commands/xrange/"><code>XRANGE</code></a>, <a href="https://redis.io/docs/latest/develop/data-types/streams/">Redis Streams</a>.</p>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>MDN, <em>Using server-sent events</em>: <a href="https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events">https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p>Redis, <em>XREAD</em>: <a href="https://redis.io/docs/latest/commands/xread/">https://redis.io/docs/latest/commands/xread/</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p>FastAPI, <em>Custom Response: StreamingResponse</em>: <a href="https://fastapi.tiangolo.com/advanced/custom-response/">https://fastapi.tiangolo.com/advanced/custom-response/</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:4">
+<p>Redis, <em>XADD</em>: <a href="https://redis.io/docs/latest/commands/xadd/">https://redis.io/docs/latest/commands/xadd/</a>&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Kembali ke atas
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../implementasi-api/" class="md-footer__link md-footer__link--prev" aria-label="Sebelumnya: Implementasi API">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Sebelumnya
+              </span>
+              <div class="md-ellipsis">
+                Implementasi API
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../operasi-dan-pengujian/" class="md-footer__link md-footer__link--next" aria-label="Selanjutnya: Operasi dan pengujian">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Selanjutnya
+              </span>
+              <div class="md-ellipsis">
+                Operasi dan pengujian
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.indexes", "navigation.path", "navigation.footer", "navigation.top", "navigation.tracking", "toc.follow", "search.highlight", "search.suggest", "content.code.copy", "content.code.annotate", "content.tabs.link"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Tersalin ke clipboard", "clipboard.copy": "Salin ke clipboard", "search.result.more.one": "1 lagi di halaman ini", "search.result.more.other": "# lagi di halaman ini", "search.result.none": "Tidak ada dokumen yang sesuai", "search.result.one": "1 dokumen ditemukan", "search.result.other": "# dokumen ditemukan", "search.result.placeholder": "Ketik untuk mulai pencarian", "search.result.term.missing": "Tidak ada", "select.version": "Pilih versi"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../../assets/vendor/mermaid/mermaid.min.js"></script>
+      
+        <script src="../../javascripts/mermaid-config.js"></script>
+      
+        <script src="../../javascripts/mathjax.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

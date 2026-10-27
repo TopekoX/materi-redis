@@ -1,0 +1,2844 @@
+
+<!doctype html>
+<html lang="id" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Materi Redis untuk pemula, dari dasar sampai penerapan.">
+      
+      
+      
+        <link rel="canonical" href="https://topekox.github.io/materi-redis/operasi/keamanan/">
+      
+      
+        <link rel="prev" href="../persistence/">
+      
+      
+        <link rel="next" href="../monitoring/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Keamanan - Belajar Redis</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#keamanan" class="md-skip">
+          Lewati ke isi
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Belajar Redis" class="md-header__button md-logo" aria-label="Belajar Redis" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Belajar Redis
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Keamanan
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Theme: system (click for light)"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Theme: system (click for light)" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Theme: light (click for dark)"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Theme: light (click for dark)" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Theme: dark (click for system)"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Theme: dark (click for system)" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Cari" placeholder="Cari" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Cari">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Kosongkan" aria-label="Kosongkan" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Mempersiapkan pencarian
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigasi" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Belajar Redis" class="md-nav__button md-logo" aria-label="Belajar Redis" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Belajar Redis
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../pengenalan/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pengenalan
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Pengenalan
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pengenalan/apa-itu-redis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Apa itu Redis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pengenalan/instalasi-dengan-docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Instalasi dengan Docker
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pengenalan/menjalankan-redis-cli-pertama-kali/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Menjalankan redis-cli pertama kali
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pengenalan/key-dan-expiry/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Key dan expiry
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../struktur-data/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Struktur Data
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Struktur Data
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../struktur-data/string/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    String
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../struktur-data/hash/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hash
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../struktur-data/list/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    List
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../struktur-data/set/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Set
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../struktur-data/sorted-set/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sorted Set
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../struktur-data/bitmap-hyperloglog-geo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bitmap, HyperLogLog, dan Geo
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../struktur-data/memilih-struktur-data-yang-tepat/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Memilih struktur data yang tepat
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../pola-aplikasi/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pola Penerapan
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Pola Penerapan
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pola-aplikasi/caching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Caching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pola-aplikasi/session-dan-rate-limiting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Session dan rate limiting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pola-aplikasi/pub-sub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pub/Sub
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pola-aplikasi/streams-consumer-group/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Streams dan consumer group
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pola-aplikasi/transaksi/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transaksi
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pola-aplikasi/lua-script/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lua script
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../python/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python dan FastAPI
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Python dan FastAPI
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/dasar-redis-py/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dasar redis-py
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/struktur-data-di-python/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Struktur data di Python
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/pipeline-dan-connection-pool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pipeline dan connection pool
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/dasar-fastapi-dengan-redis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dasar FastAPI dengan Redis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/fastapi-caching-dan-rate-limit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FastAPI: caching dan rate limit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/fastapi-fitur-realtime-dengan-sse/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FastAPI: fitur realtime dengan SSE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operasi
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Operasi
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../persistence/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Persistence
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Keamanan
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Keamanan
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Daftar isi">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Daftar isi
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#tujuan-belajar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tujuan belajar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prasyarat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prasyarat
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#konsep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Konsep
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Konsep">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#analogi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Analogi
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cara-kerja" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cara kerja
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Cara kerja">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#jaringan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Jaringan
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#autentikasi-dan-acl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Autentikasi dan ACL
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#enkripsi-tls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Enkripsi: TLS
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pengaman-lain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pengaman lain
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#praktik-langkah-demi-langkah" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Praktik langkah demi langkah
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Praktik langkah demi langkah">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#langkah-1-jalankan-container-tanpa-membuka-port" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 1: Jalankan container tanpa membuka port
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-2-lihat-kondisi-awal-dan-buat-password-acak" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 2: Lihat kondisi awal dan buat password acak
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-3-pasang-password-pada-pengguna-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 3: Pasang password pada pengguna default
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-4-buat-pengguna-dengan-izin-minimum" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 4: Buat pengguna dengan izin minimum
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-5-buktikan-batasannya" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 5: Buktikan batasannya
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-6-baca-catatan-pelanggaran-dengan-acl-log" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 6: Baca catatan pelanggaran dengan ACL LOG
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-7-beri-password-ke-redis-cli-dengan-aman" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 7: Beri password ke redis-cli dengan aman
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-8-bersihkan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 8: Bersihkan
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tls-konfigurasi-dasar-tanpa-praktik" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TLS: konfigurasi dasar (tanpa praktik)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kesalahan-umum-dan-troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kesalahan umum dan troubleshooting
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#latihan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Latihan
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ringkasan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ringkasan
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#referensi-resmi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Referensi resmi
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Monitoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../replikasi-sentinel-dan-cluster/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Replikasi, Sentinel, dan Cluster
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../proyek-akhir/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Proyek Akhir
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Proyek Akhir
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../proyek-akhir/perancangan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Perancangan
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../proyek-akhir/implementasi-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Implementasi API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../proyek-akhir/fitur-realtime/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fitur realtime
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../proyek-akhir/operasi-dan-pengujian/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operasi dan pengujian
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Daftar isi">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Daftar isi
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#tujuan-belajar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tujuan belajar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prasyarat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prasyarat
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#konsep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Konsep
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Konsep">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#analogi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Analogi
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cara-kerja" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cara kerja
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Cara kerja">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#jaringan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Jaringan
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#autentikasi-dan-acl" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Autentikasi dan ACL
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#enkripsi-tls" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Enkripsi: TLS
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#pengaman-lain" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Pengaman lain
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#praktik-langkah-demi-langkah" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Praktik langkah demi langkah
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Praktik langkah demi langkah">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#langkah-1-jalankan-container-tanpa-membuka-port" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 1: Jalankan container tanpa membuka port
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-2-lihat-kondisi-awal-dan-buat-password-acak" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 2: Lihat kondisi awal dan buat password acak
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-3-pasang-password-pada-pengguna-default" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 3: Pasang password pada pengguna default
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-4-buat-pengguna-dengan-izin-minimum" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 4: Buat pengguna dengan izin minimum
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-5-buktikan-batasannya" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 5: Buktikan batasannya
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-6-baca-catatan-pelanggaran-dengan-acl-log" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 6: Baca catatan pelanggaran dengan ACL LOG
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-7-beri-password-ke-redis-cli-dengan-aman" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 7: Beri password ke redis-cli dengan aman
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-8-bersihkan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 8: Bersihkan
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tls-konfigurasi-dasar-tanpa-praktik" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        TLS: konfigurasi dasar (tanpa praktik)
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kesalahan-umum-dan-troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kesalahan umum dan troubleshooting
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#latihan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Latihan
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ringkasan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ringkasan
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#referensi-resmi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Referensi resmi
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigasi" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../.." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Home
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Operasi
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="keamanan">Keamanan<a class="headerlink" href="#keamanan" title="Permanent link">&para;</a></h1>
+<h2 id="tujuan-belajar">Tujuan belajar<a class="headerlink" href="#tujuan-belajar" title="Permanent link">&para;</a></h2>
+<p>Setelah bab ini kamu bisa:</p>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Menjelaskan model keamanan Redis: kenapa Redis hanya untuk klien tepercaya di jaringan tepercaya.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Membatasi akses jaringan dengan <code>bind</code>, port yang dipetakan Docker, dan memahami <em>protected mode</em>.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Memasang password pada pengguna <code>default</code>, lalu masuk dengan <code>AUTH</code>.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Membuat pengguna ACL dengan izin minimum memakai <code>ACL SETUSER</code>, dan membaca galat <code>NOPERM</code> serta <code>WRONGPASS</code>.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Menjelaskan fungsi TLS dan pengaturan dasar yang dibutuhkan, tanpa praktik mendalam.</li>
+</ul>
+<h2 id="prasyarat">Prasyarat<a class="headerlink" href="#prasyarat" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Sudah membaca <a href="../../pengenalan/instalasi-dengan-docker/">Instalasi dengan Docker</a>, terutama tentang pemetaan port dan varian <code>-p 127.0.0.1:6379:6379</code>.</li>
+<li>Sudah membaca <a href="../../pengenalan/menjalankan-redis-cli-pertama-kali/">Menjalankan redis-cli pertama kali</a> dan <a href="../persistence/">Persistence</a> (perlu untuk memahami kenapa pengaturan harus disimpan).</li>
+<li>Docker terpasang. ACL tersedia sejak Redis 6.0;<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup> fitur izin kunci <code>%R~</code> dan <code>%W~</code> serta <em>selector</em> butuh Redis 7.0 atau lebih baru.<sup id="fnref6:2"><a class="footnote-ref" href="#fn:2">2</a></sup> Image <code>redis:latest</code> memenuhi semuanya.</li>
+<li>Bab ini membuat container <code>redis-aman</code>. Container <code>redis</code> dari bab sebelumnya tidak tersentuh.</li>
+</ul>
+<h2 id="konsep">Konsep<a class="headerlink" href="#konsep" title="Permanent link">&para;</a></h2>
+<p>Redis dirancang untuk diakses oleh <strong>klien tepercaya di dalam lingkungan tepercaya</strong>. Dokumentasi resmi menyatakan bahwa umumnya bukan ide bagus membuka Redis langsung ke internet atau ke lingkungan yang klien tak tepercayanya bisa menjangkau port Redis.<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup> Pengguna aplikasi web seharusnya tidak berbicara ke Redis; aplikasi web-lah yang berbicara ke Redis atas nama mereka.</p>
+<p>Kenapa seserius itu? Karena satu perintah seperti <code>FLUSHALL</code> cukup bagi penyerang untuk menghapus seluruh data.<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup> Maka keamanan Redis dibangun dalam lapisan, dari luar ke dalam:</p>
+<table>
+<thead>
+<tr>
+<th>Lapisan</th>
+<th>Pertanyaan yang dijawab</th>
+<th>Alat</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>1. Jaringan</td>
+<td>Siapa yang boleh menyambung ke port?</td>
+<td><code>bind</code>, firewall, pemetaan port Docker</td>
+</tr>
+<tr>
+<td>2. Autentikasi</td>
+<td>Siapa kamu?</td>
+<td>password, <code>AUTH</code></td>
+</tr>
+<tr>
+<td>3. Otorisasi</td>
+<td>Apa yang boleh kamu lakukan?</td>
+<td>ACL</td>
+</tr>
+<tr>
+<td>4. Enkripsi</td>
+<td>Apakah isi komunikasi bisa disadap?</td>
+<td>TLS</td>
+</tr>
+</tbody>
+</table>
+<h3 id="analogi">Analogi<a class="headerlink" href="#analogi" title="Permanent link">&para;</a></h3>
+<p>Bayangkan gudang. Pagar di sekeliling kompleks adalah <strong>jaringan</strong>, kartu identitas di pintu adalah <strong>autentikasi</strong>, kunci per ruangan yang berbeda untuk tiap karyawan adalah <strong>ACL</strong>, dan kendaraan lapis baja pengantar barang adalah <strong>TLS</strong>. Pagar saja tidak cukup bila ada orang jahat di dalam; kunci per ruangan saja sia-sia bila pagarnya terbuka lebar.</p>
+<div class="admonition note">
+<p class="admonition-title">Batas analogi</p>
+<p>Password Redis tidak melindungi dari penyadapan jaringan. Perintah <code>AUTH</code>, seperti perintah lain, dikirim tanpa enkripsi, sehingga penyerang yang bisa menyadap jaringan tetap bisa melihatnya.<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup> Itu tugas TLS.</p>
+</div>
+<h2 id="cara-kerja">Cara kerja<a class="headerlink" href="#cara-kerja" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart LR
+    A["Klien"] --&gt; B{"Boleh sampai&lt;br/&gt;ke port?&lt;br/&gt;(bind, firewall)"}
+    B -- "Tidak" --&gt; X["Ditolak"]
+    B -- "Ya" --&gt; C{"AUTH&lt;br/&gt;berhasil?"}
+    C -- "Tidak" --&gt; Y["NOAUTH / WRONGPASS"]
+    C -- "Ya" --&gt; D{"ACL mengizinkan&lt;br/&gt;perintah dan key?"}
+    D -- "Tidak" --&gt; Z["NOPERM"]
+    D -- "Ya" --&gt; E["Perintah dijalankan"]</code></pre>
+<h3 id="jaringan">Jaringan<a class="headerlink" href="#jaringan" title="Permanent link">&para;</a></h3>
+<p>Port Redis harus tertutup bagi semua kecuali klien tepercaya. Pada satu komputer yang langsung terhubung ke internet, port Redis sebaiknya diblokir firewall dan hanya bisa diakses lewat antarmuka loopback. Di <code>redis.conf</code> kamu bisa mengikat Redis ke satu antarmuka dengan <code>bind 127.0.0.1</code>.<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
+<p>Sejak Redis 3.2.0 ada <strong>protected mode</strong>: bila Redis berjalan dengan konfigurasi bawaan (mengikat semua antarmuka) dan tanpa password, ia hanya menjawab klien dari loopback, dan klien dari alamat lain menerima galat yang menjelaskan cara mengonfigurasi dengan benar.<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup> Ini jaring pengaman, bukan pengganti firewall; administrator masih bisa mematikannya.</p>
+<p>Di Docker, pengendali utamanya adalah <strong>cara kamu memetakan port</strong>. <code>-p 6379:6379</code> membuka port di semua antarmuka komputer, sedangkan <code>-p 127.0.0.1:6379:6379</code> hanya untuk komputer itu sendiri (lihat <a href="../../pengenalan/instalasi-dengan-docker/">Instalasi dengan Docker</a>).</p>
+<h3 id="autentikasi-dan-acl">Autentikasi dan ACL<a class="headerlink" href="#autentikasi-dan-acl" title="Permanent link">&para;</a></h3>
+<p>Ada dua cara autentikasi:<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
+<ul>
+<li><strong>ACL</strong> (Access Control List), cara yang direkomendasikan sejak Redis 6: pengguna bernama dengan izin terperinci.</li>
+<li><strong><code>requirepass</code></strong>, cara lama: satu password untuk semua klien. Sejak ACL ada, <code>requirepass</code> sekadar menetapkan password untuk pengguna <code>default</code>.<sup id="fnref7:2"><a class="footnote-ref" href="#fn:2">2</a></sup></li>
+</ul>
+<p>Secara bawaan hanya ada satu pengguna, <code>default</code>, yang aktif, tanpa password, dan boleh semuanya: <code>user default on nopass ~* &amp;* +@all</code>.<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup> Artinya setiap koneksi baru langsung boleh menjalankan semua perintah. Itulah kondisi container Redis kamu sekarang.</p>
+<p>Aturan ACL ditulis sebagai kata-kata yang dibaca <strong>dari kiri ke kanan</strong>; urutan penting.<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup> Aturan yang akan kita pakai:</p>
+<table>
+<thead>
+<tr>
+<th>Aturan</th>
+<th>Arti</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>on</code> / <code>off</code></td>
+<td>Pengguna aktif / dinonaktifkan. Pengguna baru berstatus <code>off</code>.</td>
+</tr>
+<tr>
+<td><code>&gt;kata</code></td>
+<td>Tambah password. Menghapus status <code>nopass</code>.</td>
+</tr>
+<tr>
+<td><code>~pola</code></td>
+<td>Pola key yang boleh disentuh, misalnya <code>~app:*</code>.</td>
+</tr>
+<tr>
+<td><code>+@kategori</code> / <code>-@kategori</code></td>
+<td>Izinkan / cabut satu kategori perintah (<code>@read</code>, <code>@write</code>, <code>@dangerous</code>, <code>@admin</code>, ...).</td>
+</tr>
+<tr>
+<td><code>+perintah</code> / <code>-perintah</code></td>
+<td>Izinkan / cabut satu perintah.</td>
+</tr>
+<tr>
+<td><code>+@all</code></td>
+<td>Semua perintah.</td>
+</tr>
+</tbody>
+</table>
+<p>Pengguna baru dibuat dengan izin sekecil-kecilnya: nonaktif, tanpa password, tanpa perintah, tanpa key.<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup> Ini bagus untuk keamanan: kamu menambah izin, bukan mencabutnya.</p>
+<div class="admonition warning">
+<p class="admonition-title">Pola key tidak membatasi perintah tanpa key</p>
+<p>Pola <code>~app:*</code> hanya membatasi perintah yang menyebut key. Perintah yang bekerja pada seluruh database, seperti <code>FLUSHALL</code>, <code>FLUSHDB</code>, dan <code>SWAPDB</code>, tidak dibatasi pola key. Pengguna <code>~app:* +@all</code> tetap bisa menjalankan <code>FLUSHALL</code>. Cabut perintah itu secara eksplisit, atau jangan beri <code>+@all</code>.<sup id="fnref8:2"><a class="footnote-ref" href="#fn:2">2</a></sup></p>
+</div>
+<p>Password ACL disimpan sebagai hash SHA-256. Karena itu Redis cepat memeriksanya, sehingga penyerang bisa mencoba banyak password per detik. Solusinya: pakai password yang <strong>panjang dan acak</strong>. <code>ACL GENPASS</code> membuat string acak 64 karakter dari generator acak kriptografis sistem.<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup><sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup></p>
+<h3 id="enkripsi-tls">Enkripsi: TLS<a class="headerlink" href="#enkripsi-tls" title="Permanent link">&para;</a></h3>
+<p>Redis mendukung TLS pada semua kanal komunikasi: koneksi klien, replikasi, dan bus Cluster.<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup> TLS adalah fitur opsional yang harus diaktifkan saat kompilasi (<code>make BUILD_TLS=yes</code>), tersedia sejak Redis 6.<sup id="fnref:5"><a class="footnote-ref" href="#fn:5">5</a></sup> TLS menambah beban sehingga throughput per instans turun.<sup id="fnref2:5"><a class="footnote-ref" href="#fn:5">5</a></sup></p>
+<h3 id="pengaman-lain">Pengaman lain<a class="headerlink" href="#pengaman-lain" title="Permanent link">&para;</a></h3>
+<ul>
+<li>Menjalankan Redis sebagai pengguna biasa (<code>redis</code>), bukan root.<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>Perintah <code>CONFIG</code> bisa mengubah folder kerja dan nama file dump, sehingga klien dengan akses penuh dapat menulis file RDB ke lokasi sembarang. Ini alasan lain untuk membatasi <code>@admin</code>.<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li><code>rename-command</code> untuk menyembunyikan perintah sudah <em>deprecated</em>. Pakai ACL.<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+</ul>
+<h2 id="praktik-langkah-demi-langkah">Praktik langkah demi langkah<a class="headerlink" href="#praktik-langkah-demi-langkah" title="Permanent link">&para;</a></h2>
+<p>Output di bawah adalah output yang <strong>diharapkan</strong> berdasarkan dokumentasi, bukan hasil eksekusi di komputermu. Teks galat bisa sedikit berbeda antar versi, tetapi kata kuncinya (<code>NOAUTH</code>, <code>WRONGPASS</code>, <code>NOPERM</code>) sama. Password di bab ini selalu <strong>placeholder</strong>; ganti dengan nilai milikmu dan jangan pakai password nyata di contoh.</p>
+<h3 id="langkah-1-jalankan-container-tanpa-membuka-port">Langkah 1: Jalankan container tanpa membuka port<a class="headerlink" href="#langkah-1-jalankan-container-tanpa-membuka-port" title="Permanent link">&para;</a></h3>
+<p><strong>Lingkungan: terminal</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>redis-aman<span class="w"> </span>redis:latest
+</span></code></pre></div>
+<p>Kenapa langkah ini diperlukan: container baru tanpa <code>-p</code> tidak bisa dijangkau dari luar komputer. Untuk latihan, semua akses lewat <code>docker exec</code>, jadi lapisan jaringan sudah aman.</p>
+<p><strong>Diharapkan:</strong> satu ID container yang panjang.</p>
+<h3 id="langkah-2-lihat-kondisi-awal-dan-buat-password-acak">Langkah 2: Lihat kondisi awal dan buat password acak<a class="headerlink" href="#langkah-2-lihat-kondisi-awal-dan-buat-password-acak" title="Permanent link">&para;</a></h3>
+<p><strong>Lingkungan: terminal, lalu redis-cli</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>redis-aman<span class="w"> </span>redis-cli
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>ACL LIST
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>ACL WHOAMI
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>ACL GENPASS
+</span></code></pre></div>
+<p>Kenapa: <code>ACL LIST</code> menunjukkan siapa saja pengguna dan izinnya, <code>ACL WHOAMI</code> menunjukkan kamu masuk sebagai siapa, dan <code>ACL GENPASS</code> memberi password acak yang kuat.<sup id="fnref2:4"><a class="footnote-ref" href="#fn:4">4</a></sup></p>
+<p><strong>Diharapkan:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>1) "user default on nopass ~* &amp;* +@all"
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>"default"
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>"&lt;string heksadesimal 64 karakter&gt;"
+</span></code></pre></div>
+<p>Cara membaca: <code>nopass</code> berarti siapa pun bisa masuk, dan <code>~* &amp;* +@all</code> berarti semua key, channel, dan perintah diizinkan. Salin string dari <code>ACL GENPASS</code>; di langkah berikut, string itu disebut <code>PASSWORD_DARI_GENPASS</code>.</p>
+<h3 id="langkah-3-pasang-password-pada-pengguna-default">Langkah 3: Pasang password pada pengguna <code>default</code><a class="headerlink" href="#langkah-3-pasang-password-pada-pengguna-default" title="Permanent link">&para;</a></h3>
+<p><strong>Lingkungan: redis-cli</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>ACL SETUSER default &gt;PASSWORD_DARI_GENPASS
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>EXIT
+</span></code></pre></div>
+<p>Lalu masuk lagi dan coba tanpa dan dengan password:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>redis-aman<span class="w"> </span>redis-cli
+</span></code></pre></div>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>PING
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>AUTH salah-sengaja
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>AUTH PASSWORD_DARI_GENPASS
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>PING
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Bagian</th>
+<th>Fungsi dan alasan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>ACL SETUSER default &gt;...</code></td>
+<td>Menambah password ke pengguna <code>default</code>. Tanda <code>&gt;</code> menghapus status <code>nopass</code>, sehingga koneksi baru wajib <code>AUTH</code>.<sup id="fnref10:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
+</tr>
+<tr>
+<td><code>EXIT</code> lalu masuk lagi</td>
+<td>Sesi lama sudah terlanjur terautentikasi. Koneksi baru membuktikan aturan baru berlaku.</td>
+</tr>
+<tr>
+<td><code>AUTH &lt;password&gt;</code></td>
+<td>Bentuk satu argumen. Redis menganggap pengguna <code>default</code>.<sup id="fnref2:3"><a class="footnote-ref" href="#fn:3">3</a></sup></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Diharapkan:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>(error) NOAUTH Authentication required.
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>(error) WRONGPASS invalid username-password pair or user is disabled.
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>OK
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>PONG
+</span></code></pre></div>
+<p>Cara membaca: <code>NOAUTH</code> berarti kamu belum <code>AUTH</code>. <code>WRONGPASS</code> berarti pasangan pengguna dan password salah. Setelah <code>OK</code>, perintah berjalan lagi.</p>
+<div class="admonition warning">
+<p class="admonition-title">Perubahan ini hilang saat restart</p>
+<p><code>ACL SETUSER</code> hanya mengubah server yang sedang berjalan. Container baru yang dibuat dari image yang sama akan kembali ke pengguna <code>default</code> tanpa password. Agar permanen, definisikan pengguna di <code>redis.conf</code> atau file ACL (<code>aclfile</code>), atau berikan <code>--requirepass</code> saat start.<sup id="fnref9:2"><a class="footnote-ref" href="#fn:2">2</a></sup> Prinsipnya sama dengan jebakan <code>CONFIG SET</code> di bab <a href="../persistence/">Persistence</a>.</p>
+</div>
+<h3 id="langkah-4-buat-pengguna-dengan-izin-minimum">Langkah 4: Buat pengguna dengan izin minimum<a class="headerlink" href="#langkah-4-buat-pengguna-dengan-izin-minimum" title="Permanent link">&para;</a></h3>
+<p><strong>Lingkungan: redis-cli</strong> (masih sebagai <code>default</code> yang sudah <code>AUTH</code>)</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>ACL SETUSER aplikasi on &gt;PASSWORD_APLIKASI ~app:* +@read +@write +@connection -@dangerous
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>ACL SETUSER pembaca on &gt;PASSWORD_PEMBACA ~app:* +@read +@connection -@dangerous
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>ACL LIST
+</span></code></pre></div>
+<p>Ganti <code>PASSWORD_APLIKASI</code> dan <code>PASSWORD_PEMBACA</code> dengan dua string acak dari <code>ACL GENPASS</code>.</p>
+<p>Kenapa dua pengguna: aplikasi yang menulis data tidak boleh sama kuasanya dengan layanan yang hanya membaca. Prinsipnya <em>least privilege</em>: beri izin sebatas yang dibutuhkan.</p>
+<table>
+<thead>
+<tr>
+<th>Bagian</th>
+<th>Fungsi dan alasan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>on</code></td>
+<td>Mengaktifkan pengguna; tanpa ini <code>AUTH</code> ditolak.</td>
+</tr>
+<tr>
+<td><code>&gt;PASSWORD_...</code></td>
+<td>Password pengguna ini.</td>
+</tr>
+<tr>
+<td><code>~app:*</code></td>
+<td>Hanya boleh menyentuh key berawalan <code>app:</code>.</td>
+</tr>
+<tr>
+<td><code>+@read +@write</code></td>
+<td>Boleh perintah baca dan tulis. <code>pembaca</code> hanya <code>+@read</code>.</td>
+</tr>
+<tr>
+<td><code>+@connection</code></td>
+<td>Perlu agar <code>PING</code>, <code>AUTH</code>, dan sejenisnya tetap bisa dipakai.</td>
+</tr>
+<tr>
+<td><code>-@dangerous</code></td>
+<td>Dicabut <strong>setelah</strong> <code>+@read</code>/<code>+@write</code> karena urutan dibaca dari kiri ke kanan. Ini mencabut <code>FLUSHALL</code>, <code>KEYS</code>, <code>CONFIG</code>, dan kawan-kawan.<sup id="fnref11:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Diharapkan:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>OK
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>OK
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>1) "user aplikasi on #&lt;hash&gt; ~app:* resetchannels -@all +@read +@write +@connection -@dangerous"
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>2) "user default on #&lt;hash&gt; ~* &amp;* +@all"
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>3) "user pembaca on #&lt;hash&gt; ~app:* resetchannels -@all +@read +@connection -@dangerous"
+</span></code></pre></div>
+<p>Cara membaca: password tampil sebagai hash SHA-256 berawalan <code>#</code>, bukan teks asli. <code>resetchannels</code> berarti tidak boleh memakai channel Pub/Sub (pengguna baru di Redis 7.0+ tidak boleh by default).<sup id="fnref5:2"><a class="footnote-ref" href="#fn:2">2</a></sup> Susunan dan urutan baris bisa sedikit berbeda.</p>
+<h3 id="langkah-5-buktikan-batasannya">Langkah 5: Buktikan batasannya<a class="headerlink" href="#langkah-5-buktikan-batasannya" title="Permanent link">&para;</a></h3>
+<p><strong>Lingkungan: redis-cli</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>AUTH aplikasi PASSWORD_APLIKASI
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>ACL WHOAMI
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>SET app:1 "ok"
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>SET lain:1 "nope"
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>FLUSHALL
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>AUTH pembaca PASSWORD_PEMBACA
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>GET app:1
+</span><span id="__span-10-8"><a id="__codelineno-10-8" name="__codelineno-10-8" href="#__codelineno-10-8"></a>SET app:2 "nope"
+</span></code></pre></div>
+<p>Kenapa: aturan yang tidak pernah diuji hanyalah asumsi. Di sini kamu melihat tiga jenis penolakan: key di luar pola, perintah dicabut, dan pengguna read-only mencoba menulis.</p>
+<p><strong>Diharapkan:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>OK
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>"aplikasi"
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>OK
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>(error) NOPERM ... no permissions to access one of the keys used as arguments
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>(error) NOPERM ... no permissions to run the 'flushall' command
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>OK
+</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>"ok"
+</span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>(error) NOPERM ... no permissions to run the 'set' command
+</span></code></pre></div>
+<p>Cara membaca: <code>NOPERM</code> selalu berarti <em>terautentikasi, tetapi tidak diizinkan</em>. Bedakan dari <code>NOAUTH</code> (belum login) dan <code>WRONGPASS</code> (login salah). Teks persis galat NOPERM berbeda antar versi.</p>
+<h3 id="langkah-6-baca-catatan-pelanggaran-dengan-acl-log">Langkah 6: Baca catatan pelanggaran dengan <code>ACL LOG</code><a class="headerlink" href="#langkah-6-baca-catatan-pelanggaran-dengan-acl-log" title="Permanent link">&para;</a></h3>
+<p><strong>Lingkungan: redis-cli</strong></p>
+<p>Sambung lagi sebagai <code>default</code>, lalu jalankan:</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>AUTH default PASSWORD_DARI_GENPASS
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>ACL LOG 3
+</span></code></pre></div>
+<p>Kenapa: di produksi, kamu perlu tahu kalau ada percobaan masuk yang gagal atau perintah yang ditolak. <code>ACL LOG</code> mencatat kegagalan <code>AUTH</code> dan pelanggaran izin.<sup id="fnref:6"><a class="footnote-ref" href="#fn:6">6</a></sup></p>
+<p><strong>Diharapkan:</strong> daftar entri terbaru dulu, masing-masing berisi medan seperti <code>count</code>, <code>reason</code> (<code>auth</code>, <code>command</code>, <code>key</code>, atau <code>channel</code>), <code>context</code>, <code>object</code>, <code>username</code>, dan <code>client-info</code>.<sup id="fnref2:6"><a class="footnote-ref" href="#fn:6">6</a></sup> Misalnya entri dengan <code>reason</code> bernilai <code>command</code> dan <code>object</code> bernilai <code>flushall</code> dari pengguna <code>aplikasi</code>, juga entri <code>reason</code> bernilai <code>auth</code> dari percobaan password salah di Langkah 3.</p>
+<h3 id="langkah-7-beri-password-ke-redis-cli-dengan-aman">Langkah 7: Beri password ke <code>redis-cli</code> dengan aman<a class="headerlink" href="#langkah-7-beri-password-ke-redis-cli-dengan-aman" title="Permanent link">&para;</a></h3>
+<p><strong>Lingkungan: terminal</strong></p>
+<p>Keluar dari redis-cli (<code>EXIT</code>), lalu:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-e<span class="w"> </span><span class="nv">REDISCLI_AUTH</span><span class="o">=</span>PASSWORD_DARI_GENPASS<span class="w"> </span>redis-aman<span class="w"> </span>redis-cli<span class="w"> </span>PING
+</span></code></pre></div>
+<p>Kenapa: opsi <code>-a &lt;password&gt;</code> menaruh password di baris perintah sehingga terlihat di daftar proses dan riwayat shell. Dokumentasi <code>redis-cli</code> menyarankan variabel lingkungan <code>REDISCLI_AUTH</code> untuk alasan keamanan.<sup id="fnref:7"><a class="footnote-ref" href="#fn:7">7</a></sup> Variabel itu hanya berlaku untuk perintah <code>docker exec</code> ini.</p>
+<p><strong>Diharapkan:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>PONG
+</span></code></pre></div>
+<h3 id="langkah-8-bersihkan">Langkah 8: Bersihkan<a class="headerlink" href="#langkah-8-bersihkan" title="Permanent link">&para;</a></h3>
+<p><strong>Lingkungan: terminal</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>docker<span class="w"> </span>rm<span class="w"> </span>-f<span class="w"> </span>redis-aman
+</span></code></pre></div>
+<div class="admonition danger">
+<p class="admonition-title">Perintah ini menghapus data</p>
+<p><code>docker rm -f</code> menghapus container beserta isinya. Container ini hanya untuk latihan dan tidak memakai volume, jadi tidak ada yang perlu diselamatkan.</p>
+</div>
+<h2 id="tls-konfigurasi-dasar-tanpa-praktik">TLS: konfigurasi dasar (tanpa praktik)<a class="headerlink" href="#tls-konfigurasi-dasar-tanpa-praktik" title="Permanent link">&para;</a></h2>
+<p>TLS melindungi isi komunikasi dari penyadapan. Dokumentasi resmi menjelaskan konfigurasinya; bagian ini hanya menunjukkan bentuknya, belum dijalankan di bab ini.</p>
+<p><strong>Lingkungan: berkas <code>redis.conf</code></strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>port 0
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>tls-port 6379
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>tls-cert-file /jalur/ke/redis.crt
+</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>tls-key-file /jalur/ke/redis.key
+</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>tls-ca-cert-file /jalur/ke/ca.crt
+</span></code></pre></div>
+<table>
+<thead>
+<tr>
+<th>Baris</th>
+<th>Fungsi dan alasan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>port 0</code></td>
+<td>Mematikan port non-TLS sepenuhnya. Tanpa ini, port biasa tetap terbuka sehingga TLS bisa dilewati.<sup id="fnref5:5"><a class="footnote-ref" href="#fn:5">5</a></sup></td>
+</tr>
+<tr>
+<td><code>tls-port 6379</code></td>
+<td>Menerima koneksi TLS di port itu. Port TLS bersifat <em>tambahan</em> terhadap <code>port</code>.<sup id="fnref6:5"><a class="footnote-ref" href="#fn:5">5</a></sup></td>
+</tr>
+<tr>
+<td><code>tls-cert-file</code>, <code>tls-key-file</code></td>
+<td>Sertifikat X.509 dan kunci privat server.</td>
+</tr>
+<tr>
+<td><code>tls-ca-cert-file</code></td>
+<td>Sertifikat CA tepercaya untuk memvalidasi sertifikat.</td>
+</tr>
+</tbody>
+</table>
+<p>Secara bawaan Redis memakai <strong>mutual TLS</strong>: klien juga wajib menunjukkan sertifikat. Matikan dengan <code>tls-auth-clients no</code> bila perlu.<sup id="fnref3:5"><a class="footnote-ref" href="#fn:5">5</a></sup> Klien terhubung dengan:</p>
+<p><strong>Lingkungan: terminal</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>redis-cli<span class="w"> </span>--tls<span class="w"> </span>--cert<span class="w"> </span>./redis.crt<span class="w"> </span>--key<span class="w"> </span>./redis.key<span class="w"> </span>--cacert<span class="w"> </span>./ca.crt
+</span></code></pre></div>
+<p><code>--tls</code> mengaktifkan TLS, <code>--cacert</code> menentukan CA tepercaya, dan <code>--cert</code> serta <code>--key</code> dipakai bila server meminta sertifikat klien.<sup id="fnref2:7"><a class="footnote-ref" href="#fn:7">7</a></sup> Untuk replikasi dan Cluster ada pengaturan terpisah (<code>tls-replication yes</code>, <code>tls-cluster yes</code>).<sup id="fnref4:5"><a class="footnote-ref" href="#fn:5">5</a></sup> Sertifikat uji dapat dibuat dengan <code>./utils/gen-test-certs.sh</code> dari kode sumber Redis, tetapi sertifikat produksi harus dari CA yang kamu percayai. Dokumentasi mencatat TLS harus dikompilasi dengan <code>BUILD_TLS=yes</code>; periksa dokumentasi image Docker yang kamu pakai untuk memastikan dukungannya.</p>
+<h2 id="kesalahan-umum-dan-troubleshooting">Kesalahan umum dan troubleshooting<a class="headerlink" href="#kesalahan-umum-dan-troubleshooting" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Gejala</th>
+<th>Penyebab dan solusi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>NOAUTH Authentication required</code></td>
+<td>Server butuh password. Jalankan <code>AUTH</code>, atau beri <code>REDISCLI_AUTH</code> saat memakai <code>redis-cli</code>.</td>
+</tr>
+<tr>
+<td><code>WRONGPASS</code></td>
+<td>Pengguna atau password salah, atau pengguna berstatus <code>off</code>. Pengguna baru dari <code>ACL SETUSER</code> belum aktif sebelum diberi <code>on</code>.<sup id="fnref12:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
+</tr>
+<tr>
+<td><code>NOPERM ... keys</code></td>
+<td>Key di luar pola <code>~...</code>. Tambahkan pola yang benar, atau periksa penulisan key.</td>
+</tr>
+<tr>
+<td><code>NOPERM ... run the '...' command</code></td>
+<td>Perintah tidak diizinkan. Periksa urutan aturan: <code>-@dangerous</code> yang muncul sebelum <code>+@read</code> tidak mencabut apa pun yang ditambahkan sesudahnya.<sup id="fnref13:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
+</tr>
+<tr>
+<td>Pengguna baru tidak bisa login padahal sudah diberi password</td>
+<td>Lupa <code>on</code>. Cek dengan <code>ACL LIST</code> apakah flag-nya <code>on</code>.</td>
+</tr>
+<tr>
+<td>Pengguna dan password hilang setelah restart</td>
+<td><code>ACL SETUSER</code> tidak permanen. Simpan di <code>redis.conf</code> atau <code>aclfile</code> (lalu <code>ACL SAVE</code>).<sup id="fnref14:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
+</tr>
+<tr>
+<td><code>redis-cli</code> memperingatkan soal password di baris perintah</td>
+<td>Itu karena <code>-a</code>. Pakai <code>REDISCLI_AUTH</code> atau <code>--askpass</code>.<sup id="fnref3:7"><a class="footnote-ref" href="#fn:7">7</a></sup></td>
+</tr>
+<tr>
+<td>Pengguna dengan <code>~tenant:* +@all</code> masih bisa <code>FLUSHALL</code></td>
+<td>Pola key tidak membatasi perintah tanpa key. Tambah <code>-flushall -flushdb -swapdb</code>.<sup id="fnref15:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
+</tr>
+<tr>
+<td>Klien dari komputer lain ditolak dengan pesan <em>protected mode</em></td>
+<td>Itu perlindungan bawaan. Perbaiki dengan konfigurasi yang benar (<code>bind</code>, password, firewall), bukan sekadar mematikan protected mode.<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Status verifikasi</p>
+<p>Sintaks, aturan ACL, nama galat, dan perilaku dicocokkan dengan dokumentasi resmi Redis. Perintah dan blok output di bab ini belum dijalankan di Redis nyata saat bab ini ditulis. Teks galat persisnya (terutama <code>NOPERM</code> dan <code>WRONGPASS</code>) bergantung pada versi, jadi cocokkan dengan hasilmu. Bagian TLS belum dipraktikkan sama sekali.</p>
+</div>
+<h2 id="latihan">Latihan<a class="headerlink" href="#latihan" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Buat pengguna <code>laporan</code> yang hanya boleh <code>GET</code> dan <code>TTL</code> pada key berawalan <code>laporan:</code>. Uji dengan <code>GET</code> pada key lain dan lihat galatnya.</li>
+<li>Sebelum menjalankan: bila kamu menulis <code>ACL SETUSER x on &gt;pw ~* -@dangerous +@read</code>, apakah <code>FLUSHALL</code> ditolak? Jalankan <code>ACL SETUSER</code>, masuk sebagai <code>x</code>, dan buktikan.</li>
+<li>Buat password acak dengan <code>ACL GENPASS</code> dan pasang ke pengguna baru dengan <code>&gt;</code>. Lihat hasilnya di <code>ACL LIST</code>: apa yang kamu temukan tentang cara password disimpan?</li>
+<li>Lakukan tiga percobaan <code>AUTH</code> salah, lalu baca <code>ACL LOG</code>. Apa nilai <code>count</code>, <code>reason</code>, dan <code>username</code>-nya?</li>
+<li>Jelaskan dengan kata-katamu kenapa <code>-p 127.0.0.1:6379:6379</code> dan password sama-sama dibutuhkan, dan apa yang tidak dilindungi oleh keduanya.</li>
+</ol>
+<details class="success">
+<summary>Petunjuk</summary>
+<ol>
+<li>Pakai <code>+get +ttl ~laporan:*</code> dan jangan lupa <code>on</code> dan password.</li>
+<li>Ingat aturan dibaca dari kiri ke kanan, dan lihat apakah kategori <code>@read</code> mencakup <code>FLUSHALL</code>.</li>
+<li>Lihat awalan <code>#</code> pada hasil <code>ACL LIST</code>.</li>
+<li>Percobaan serupa dalam 60 detik digabung menjadi satu entri.</li>
+<li>Pikirkan lapisan jaringan, autentikasi, dan enkripsi satu per satu.</li>
+</ol>
+</details>
+<h2 id="ringkasan">Ringkasan<a class="headerlink" href="#ringkasan" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Redis ditujukan untuk klien tepercaya di jaringan tepercaya. Jangan membuka portnya ke internet; batasi dengan <code>bind</code>, firewall, dan pemetaan port Docker.</li>
+<li>Secara bawaan pengguna <code>default</code> boleh semuanya tanpa password. Pasang password dengan <code>ACL SETUSER default &gt;...</code> atau <code>--requirepass</code>, dan masuk dengan <code>AUTH</code>.</li>
+<li>ACL membuat pengguna bernama dengan izin minimum: <code>on</code>, <code>&gt;password</code>, <code>~pola</code>, <code>+@kategori</code>, <code>-@dangerous</code>. Aturan dibaca dari kiri ke kanan. Galat <code>NOAUTH</code>, <code>WRONGPASS</code>, dan <code>NOPERM</code> punya arti berbeda.</li>
+<li><code>ACL SETUSER</code> tidak permanen. Simpan di <code>redis.conf</code> atau <code>aclfile</code>. Pakai <code>ACL GENPASS</code> untuk password kuat dan <code>REDISCLI_AUTH</code> supaya password tidak muncul di baris perintah.</li>
+<li><code>AUTH</code> dikirim tanpa enkripsi; TLS (<code>tls-port</code>, sertifikat, <code>port 0</code>) melindungi komunikasi dari penyadapan.</li>
+</ul>
+<p>Berikutnya: <a href="../monitoring/">Monitoring</a>, yang membahas <code>INFO</code>, <code>SLOWLOG</code>, memori, dan latensi.</p>
+<h2 id="referensi-resmi">Referensi resmi<a class="headerlink" href="#referensi-resmi" title="Permanent link">&para;</a></h2>
+<p>Bacaan tambahan: <a href="https://redis.io/docs/latest/commands/acl-setuser/"><code>ACL SETUSER</code></a>, <a href="https://redis.io/docs/latest/commands/acl-whoami/"><code>ACL WHOAMI</code></a>, <a href="https://redis.io/docs/latest/commands/acl-save/"><code>ACL SAVE</code></a>.</p>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>Redis, <em>Redis security</em>: <a href="https://redis.io/docs/latest/operate/oss_and_stack/management/security/">https://redis.io/docs/latest/operate/oss_and_stack/management/security/</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p>Redis, <em>ACL</em>: <a href="https://redis.io/docs/latest/operate/oss_and_stack/management/security/acl/">https://redis.io/docs/latest/operate/oss_and_stack/management/security/acl/</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p>Redis, <em>AUTH</em>: <a href="https://redis.io/docs/latest/commands/auth/">https://redis.io/docs/latest/commands/auth/</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:4">
+<p>Redis, <em>ACL GENPASS</em>: <a href="https://redis.io/docs/latest/commands/acl-genpass/">https://redis.io/docs/latest/commands/acl-genpass/</a>&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:5">
+<p>Redis, <em>TLS</em>: <a href="https://redis.io/docs/latest/operate/oss_and_stack/management/security/encryption/">https://redis.io/docs/latest/operate/oss_and_stack/management/security/encryption/</a>&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 5 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:5" title="Jump back to footnote 5 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:5" title="Jump back to footnote 5 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:5" title="Jump back to footnote 5 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:5" title="Jump back to footnote 5 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:5" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+</li>
+<li id="fn:6">
+<p>Redis, <em>ACL LOG</em>: <a href="https://redis.io/docs/latest/commands/acl-log/">https://redis.io/docs/latest/commands/acl-log/</a>&#160;<a class="footnote-backref" href="#fnref:6" title="Jump back to footnote 6 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:6" title="Jump back to footnote 6 in the text">&#8617;</a></p>
+</li>
+<li id="fn:7">
+<p>Redis, <em>Redis CLI</em>: <a href="https://redis.io/docs/latest/develop/tools/cli/">https://redis.io/docs/latest/develop/tools/cli/</a>&#160;<a class="footnote-backref" href="#fnref:7" title="Jump back to footnote 7 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:7" title="Jump back to footnote 7 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:7" title="Jump back to footnote 7 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Kembali ke atas
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../persistence/" class="md-footer__link md-footer__link--prev" aria-label="Sebelumnya: Persistence">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Sebelumnya
+              </span>
+              <div class="md-ellipsis">
+                Persistence
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../monitoring/" class="md-footer__link md-footer__link--next" aria-label="Selanjutnya: Monitoring">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Selanjutnya
+              </span>
+              <div class="md-ellipsis">
+                Monitoring
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.indexes", "navigation.path", "navigation.footer", "navigation.top", "navigation.tracking", "toc.follow", "search.highlight", "search.suggest", "content.code.copy", "content.code.annotate", "content.tabs.link"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Tersalin ke clipboard", "clipboard.copy": "Salin ke clipboard", "search.result.more.one": "1 lagi di halaman ini", "search.result.more.other": "# lagi di halaman ini", "search.result.none": "Tidak ada dokumen yang sesuai", "search.result.one": "1 dokumen ditemukan", "search.result.other": "# dokumen ditemukan", "search.result.placeholder": "Ketik untuk mulai pencarian", "search.result.term.missing": "Tidak ada", "select.version": "Pilih versi"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../../assets/vendor/mermaid/mermaid.min.js"></script>
+      
+        <script src="../../javascripts/mermaid-config.js"></script>
+      
+        <script src="../../javascripts/mathjax.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

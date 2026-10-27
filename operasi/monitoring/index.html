@@ -1,0 +1,2963 @@
+
+<!doctype html>
+<html lang="id" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Materi Redis untuk pemula, dari dasar sampai penerapan.">
+      
+      
+      
+        <link rel="canonical" href="https://topekox.github.io/materi-redis/operasi/monitoring/">
+      
+      
+        <link rel="prev" href="../keamanan/">
+      
+      
+        <link rel="next" href="../replikasi-sentinel-dan-cluster/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Monitoring - Belajar Redis</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#monitoring" class="md-skip">
+          Lewati ke isi
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Belajar Redis" class="md-header__button md-logo" aria-label="Belajar Redis" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Belajar Redis
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Monitoring
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Theme: system (click for light)"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Theme: system (click for light)" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Theme: light (click for dark)"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Theme: light (click for dark)" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Theme: dark (click for system)"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Theme: dark (click for system)" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Cari" placeholder="Cari" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Cari">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Kosongkan" aria-label="Kosongkan" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Mempersiapkan pencarian
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigasi" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Belajar Redis" class="md-nav__button md-logo" aria-label="Belajar Redis" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Belajar Redis
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../pengenalan/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pengenalan
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Pengenalan
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pengenalan/apa-itu-redis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Apa itu Redis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pengenalan/instalasi-dengan-docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Instalasi dengan Docker
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pengenalan/menjalankan-redis-cli-pertama-kali/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Menjalankan redis-cli pertama kali
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pengenalan/key-dan-expiry/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Key dan expiry
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../struktur-data/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Struktur Data
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Struktur Data
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../struktur-data/string/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    String
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../struktur-data/hash/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hash
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../struktur-data/list/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    List
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../struktur-data/set/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Set
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../struktur-data/sorted-set/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sorted Set
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../struktur-data/bitmap-hyperloglog-geo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bitmap, HyperLogLog, dan Geo
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../struktur-data/memilih-struktur-data-yang-tepat/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Memilih struktur data yang tepat
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../pola-aplikasi/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pola Penerapan
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Pola Penerapan
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pola-aplikasi/caching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Caching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pola-aplikasi/session-dan-rate-limiting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Session dan rate limiting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pola-aplikasi/pub-sub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pub/Sub
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pola-aplikasi/streams-consumer-group/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Streams dan consumer group
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pola-aplikasi/transaksi/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transaksi
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pola-aplikasi/lua-script/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lua script
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../python/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python dan FastAPI
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Python dan FastAPI
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/dasar-redis-py/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dasar redis-py
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/struktur-data-di-python/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Struktur data di Python
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/pipeline-dan-connection-pool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pipeline dan connection pool
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/dasar-fastapi-dengan-redis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dasar FastAPI dengan Redis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/fastapi-caching-dan-rate-limit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FastAPI: caching dan rate limit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/fastapi-fitur-realtime-dengan-sse/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FastAPI: fitur realtime dengan SSE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operasi
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Operasi
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../persistence/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Persistence
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../keamanan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Keamanan
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Monitoring
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Monitoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Daftar isi">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Daftar isi
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#tujuan-belajar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tujuan belajar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prasyarat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prasyarat
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#konsep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Konsep
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Konsep">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#analogi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Analogi
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cara-kerja" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cara kerja
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Cara kerja">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#info-dasbor-redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        INFO: dasbor Redis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#slowlog-catatan-perintah-lambat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SLOWLOG: catatan perintah lambat
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#latensi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Latensi
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#praktik-langkah-demi-langkah" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Praktik langkah demi langkah
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Praktik langkah demi langkah">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#langkah-1-jalankan-container-dan-isi-data-uji" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 1: Jalankan container dan isi data uji
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-2-baca-memori-dengan-info-memory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 2: Baca memori dengan INFO memory
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-3-ukur-dan-cari-key-besar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 3: Ukur dan cari key besar
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-4-hitung-hit-rate-dari-info-stats" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 4: Hitung hit rate dari INFO stats
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-5-lihat-klien-dan-pantau-langsung" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 5: Lihat klien dan pantau langsung
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-6-tangkap-perintah-lambat-dengan-slowlog" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 6: Tangkap perintah lambat dengan SLOWLOG
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-7-ukur-latensi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 7: Ukur latensi
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-8-aktifkan-latency-monitor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 8: Aktifkan latency monitor
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-9-bersihkan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 9: Bersihkan
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#contoh-lengkap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Contoh lengkap
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kesalahan-umum-dan-troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kesalahan umum dan troubleshooting
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#latihan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Latihan
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ringkasan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ringkasan
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#referensi-resmi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Referensi resmi
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../replikasi-sentinel-dan-cluster/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Replikasi, Sentinel, dan Cluster
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../proyek-akhir/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Proyek Akhir
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Proyek Akhir
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../proyek-akhir/perancangan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Perancangan
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../proyek-akhir/implementasi-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Implementasi API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../proyek-akhir/fitur-realtime/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fitur realtime
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../proyek-akhir/operasi-dan-pengujian/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operasi dan pengujian
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Daftar isi">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Daftar isi
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#tujuan-belajar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tujuan belajar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prasyarat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prasyarat
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#konsep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Konsep
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Konsep">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#analogi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Analogi
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cara-kerja" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cara kerja
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Cara kerja">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#info-dasbor-redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        INFO: dasbor Redis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#slowlog-catatan-perintah-lambat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        SLOWLOG: catatan perintah lambat
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#latensi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Latensi
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#praktik-langkah-demi-langkah" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Praktik langkah demi langkah
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Praktik langkah demi langkah">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#langkah-1-jalankan-container-dan-isi-data-uji" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 1: Jalankan container dan isi data uji
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-2-baca-memori-dengan-info-memory" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 2: Baca memori dengan INFO memory
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-3-ukur-dan-cari-key-besar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 3: Ukur dan cari key besar
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-4-hitung-hit-rate-dari-info-stats" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 4: Hitung hit rate dari INFO stats
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-5-lihat-klien-dan-pantau-langsung" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 5: Lihat klien dan pantau langsung
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-6-tangkap-perintah-lambat-dengan-slowlog" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 6: Tangkap perintah lambat dengan SLOWLOG
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-7-ukur-latensi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 7: Ukur latensi
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-8-aktifkan-latency-monitor" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 8: Aktifkan latency monitor
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-9-bersihkan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 9: Bersihkan
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#contoh-lengkap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Contoh lengkap
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kesalahan-umum-dan-troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kesalahan umum dan troubleshooting
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#latihan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Latihan
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ringkasan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ringkasan
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#referensi-resmi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Referensi resmi
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigasi" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../.." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Home
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Operasi
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="monitoring">Monitoring<a class="headerlink" href="#monitoring" title="Permanent link">&para;</a></h1>
+<h2 id="tujuan-belajar">Tujuan belajar<a class="headerlink" href="#tujuan-belajar" title="Permanent link">&para;</a></h2>
+<p>Setelah bab ini kamu bisa:</p>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Menjelaskan apa yang perlu dipantau dari sebuah server Redis dan kenapa.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Membaca bagian penting <code>INFO</code>: memori, klien, statistik, dan hit/miss.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Mengukur ukuran sebuah key dengan <code>MEMORY USAGE</code> dan mencari key besar dengan <code>redis-cli --bigkeys</code>.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Mengatur dan membaca <code>SLOWLOG</code> untuk menemukan perintah yang lambat.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Mengukur latensi dengan <code>redis-cli --latency</code> dan mengenali kegunaan latency monitor.</li>
+</ul>
+<h2 id="prasyarat">Prasyarat<a class="headerlink" href="#prasyarat" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Sudah membaca <a href="../../pola-aplikasi/caching/">Caching</a>, terutama tentang <code>maxmemory</code>, eviction, dan hit/miss. Bab ini tidak mengulang penjelasannya.</li>
+<li>Sudah membaca <a href="../persistence/">Persistence</a> dan <a href="../keamanan/">Keamanan</a>. <code>INFO</code> dan <code>SLOWLOG</code> termasuk perintah administratif; di server yang memakai ACL, pengguna pemantau perlu izin untuk menjalankannya.<sup id="fnref:8"><a class="footnote-ref" href="#fn:8">8</a></sup></li>
+<li>Docker terpasang. Bab ini membuat container <code>redis-pantau</code> dan menghapusnya di akhir.</li>
+</ul>
+<h2 id="konsep">Konsep<a class="headerlink" href="#konsep" title="Permanent link">&para;</a></h2>
+<p>Redis yang "jalan" belum tentu Redis yang "sehat". Server bisa diam-diam kehabisan memori, melayani satu perintah lambat sambil membuat semua klien menunggu, atau mulai menolak koneksi. <strong>Monitoring</strong> adalah kebiasaan memeriksa tanda-tanda itu <em>sebelum</em> pengguna mengeluh.</p>
+<p>Redis sebagian besar berjalan dengan satu thread yang melayani perintah satu per satu.<sup id="fnref:6"><a class="footnote-ref" href="#fn:6">6</a></sup> Akibatnya, satu perintah lambat membuat semua klien lain ikut menunggu. Karena itu pemantauan Redis berpusat pada empat pertanyaan:</p>
+<table>
+<thead>
+<tr>
+<th>Pertanyaan</th>
+<th>Alat</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Berapa banyak memori yang dipakai, dan apakah mendekati batas?</td>
+<td><code>INFO memory</code>, <code>MEMORY USAGE</code>, <code>redis-cli --bigkeys</code></td>
+</tr>
+<tr>
+<td>Seberapa sibuk server dan berapa klien yang tersambung?</td>
+<td><code>INFO clients</code>, <code>INFO stats</code>, <code>redis-cli --stat</code></td>
+</tr>
+<tr>
+<td>Perintah apa yang lambat?</td>
+<td><code>SLOWLOG</code></td>
+</tr>
+<tr>
+<td>Seberapa lama klien menunggu jawaban?</td>
+<td><code>redis-cli --latency</code>, latency monitor</td>
+</tr>
+</tbody>
+</table>
+<h3 id="analogi">Analogi<a class="headerlink" href="#analogi" title="Permanent link">&para;</a></h3>
+<p>Anggap Redis sebagai mobil. <code>INFO</code> adalah <strong>panel dasbor</strong> (bensin, suhu mesin, kecepatan). <code>SLOWLOG</code> adalah <strong>catatan servis</strong> yang mencatat kapan mesin tersendat. Pengukuran latensi seperti <strong>stopwatch</strong> untuk waktu tempuh. Dasbor memberi tahu kondisi sekarang; catatan servis menunjukkan apa penyebab masalah di masa lalu.</p>
+<div class="admonition note">
+<p class="admonition-title">Batas analogi</p>
+<p>Dasbor mobil menampilkan angka langsung dengan batas merah. <code>INFO</code> hanya memberi angka mentah. Kamu yang menentukan batas wajar untuk aplikasimu, dan sebaiknya membandingkan angka dari waktu ke waktu, bukan hanya satu kali.</p>
+</div>
+<h2 id="cara-kerja">Cara kerja<a class="headerlink" href="#cara-kerja" title="Permanent link">&para;</a></h2>
+<pre class="mermaid"><code>flowchart LR
+    A["Gejala:&lt;br/&gt;aplikasi lambat"] --&gt; B["INFO: memori, klien,&lt;br/&gt;statistik"]
+    B --&gt; C{"Ada yang&lt;br/&gt;tidak wajar?"}
+    C -- "Memori hampir penuh" --&gt; D["MEMORY USAGE,&lt;br/&gt;--bigkeys"]
+    C -- "Normal" --&gt; E["SLOWLOG:&lt;br/&gt;perintah lambat?"]
+    E --&gt; F["LATENCY / --latency:&lt;br/&gt;sumber penundaan"]</code></pre>
+<h3 id="info-dasbor-redis"><code>INFO</code>: dasbor Redis<a class="headerlink" href="#info-dasbor-redis" title="Permanent link">&para;</a></h3>
+<p><code>INFO</code> mengembalikan teks berisi baris <code>nama:nilai</code> yang dikelompokkan dalam bagian (<em>section</em>). Kamu bisa meminta satu bagian saja, misalnya <code>INFO memory</code>.<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup> Field yang akan kita pakai:<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
+<table>
+<thead>
+<tr>
+<th>Bagian</th>
+<th>Field</th>
+<th>Arti</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>memory</code></td>
+<td><code>used_memory</code> / <code>used_memory_human</code></td>
+<td>Byte yang dialokasikan Redis untuk datanya.</td>
+</tr>
+<tr>
+<td></td>
+<td><code>used_memory_rss</code></td>
+<td>Memori yang dilihat sistem operasi untuk proses Redis.</td>
+</tr>
+<tr>
+<td></td>
+<td><code>maxmemory</code>, <code>maxmemory_policy</code></td>
+<td>Batas memori dan kebijakan eviction. Batas <code>0</code> berarti tak terbatas.</td>
+</tr>
+<tr>
+<td></td>
+<td><code>mem_fragmentation_ratio</code></td>
+<td>Rasio <code>used_memory_rss</code> terhadap <code>used_memory</code>.</td>
+</tr>
+<tr>
+<td><code>clients</code></td>
+<td><code>connected_clients</code></td>
+<td>Jumlah koneksi klien (tidak termasuk replika).</td>
+</tr>
+<tr>
+<td></td>
+<td><code>blocked_clients</code></td>
+<td>Klien yang menunggu panggilan blocking seperti <code>BLPOP</code>.</td>
+</tr>
+<tr>
+<td><code>stats</code></td>
+<td><code>total_commands_processed</code></td>
+<td>Total perintah yang pernah diproses.</td>
+</tr>
+<tr>
+<td></td>
+<td><code>instantaneous_ops_per_sec</code></td>
+<td>Perintah per detik saat ini.</td>
+</tr>
+<tr>
+<td></td>
+<td><code>rejected_connections</code></td>
+<td>Koneksi yang ditolak karena batas jumlah klien.</td>
+</tr>
+<tr>
+<td></td>
+<td><code>evicted_keys</code></td>
+<td>Key yang dibuang karena batas <code>maxmemory</code>.</td>
+</tr>
+<tr>
+<td></td>
+<td><code>keyspace_hits</code> / <code>keyspace_misses</code></td>
+<td>Pencarian key yang berhasil / gagal.</td>
+</tr>
+<tr>
+<td></td>
+<td><code>expired_keys</code></td>
+<td>Total kejadian key kedaluwarsa.</td>
+</tr>
+<tr>
+<td></td>
+<td><code>latest_fork_usec</code></td>
+<td>Durasi <code>fork</code> terakhir (mikrodetik), yang dipakai persistence.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Cara membaca memori.</strong> Idealnya <code>used_memory_rss</code> hanya sedikit lebih besar dari <code>used_memory</code>. Bila RSS jauh lebih besar, mungkin ada fragmentasi memori. Bila <code>used_memory</code> jauh lebih besar dari RSS, sebagian memori Redis sudah dipindahkan ke disk (<em>swap</em>) oleh sistem operasi, dan kamu bisa mengharapkan latensi yang buruk.<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup> Rasio fragmentasi tinggi tidak otomatis masalah bila selisih byte-nya kecil (beberapa megabyte).<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
+<p><strong>Cara membaca hit rate.</strong> <code>keyspace_hits</code> dibagi (<code>keyspace_hits</code> + <code>keyspace_misses</code>) adalah persentase pencarian yang berhasil. Makna hit dan miss untuk cache sudah dibahas di <a href="../../pola-aplikasi/caching/">Caching</a>.</p>
+<h3 id="slowlog-catatan-perintah-lambat"><code>SLOWLOG</code>: catatan perintah lambat<a class="headerlink" href="#slowlog-catatan-perintah-lambat" title="Permanent link">&para;</a></h3>
+<p>Slow log mencatat perintah yang waktu eksekusinya melebihi ambang tertentu. Waktu yang dihitung <strong>hanya waktu menjalankan perintah</strong>, tidak termasuk I/O seperti berbicara dengan klien dan mengirim balasan.<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup> Jadi perintah yang lambat karena jaringan tidak muncul di sini.</p>
+<p>Dua pengaturan menentukannya:<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup></p>
+<table>
+<thead>
+<tr>
+<th>Pengaturan</th>
+<th>Bawaan</th>
+<th>Arti</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>slowlog-log-slower-than</code></td>
+<td><code>10000</code></td>
+<td>Ambang dalam <strong>mikrodetik</strong> (10000 = 10 ms). <code>0</code> mencatat semua perintah; angka negatif mematikan slow log.</td>
+</tr>
+<tr>
+<td><code>slowlog-max-len</code></td>
+<td><code>128</code></td>
+<td>Jumlah maksimum entri; yang terlama dibuang.</td>
+</tr>
+</tbody>
+</table>
+<p>Tiap entri berisi: ID urut, waktu Unix, durasi (mikrodetik), argumen perintah, alamat klien, dan nama klien bila ada.<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup> Argumen yang terlalu banyak dipotong (batas bawaan 32).<sup id="fnref2:3"><a class="footnote-ref" href="#fn:3">3</a></sup> ID tidak pernah direset sampai server restart, jadi skrip bisa memakainya untuk tidak memproses entri yang sama dua kali.<sup id="fnref3:3"><a class="footnote-ref" href="#fn:3">3</a></sup></p>
+<h3 id="latensi">Latensi<a class="headerlink" href="#latensi" title="Permanent link">&para;</a></h3>
+<p>Latensi adalah jeda antara klien mengirim perintah dan menerima balasannya. Penyebab umum yang disebut dokumentasi:<sup id="fnref2:6"><a class="footnote-ref" href="#fn:6">6</a></sup></p>
+<ul>
+<li><strong>Perintah lambat</strong> pada value besar, misalnya <code>SORT</code>, <code>LREM</code>, atau <code>SUNION</code>. Sumber yang <em>sangat umum</em>: <code>KEYS</code> di produksi (gunakan <code>SCAN</code>).</li>
+<li><strong><code>fork</code></strong> saat persistence, yang makin lama untuk dataset besar.</li>
+<li><strong>Swapping</strong>, <strong>transparent huge pages</strong>, dan <strong>I/O disk</strong> dari AOF.</li>
+<li>Banyak key kedaluwarsa pada detik yang sama.</li>
+<li><strong>Latensi bawaan lingkungan</strong> (<em>intrinsic latency</em>) dari kernel atau hypervisor, yang tidak bisa dilampaui Redis.</li>
+</ul>
+<p>Redis menyediakan <em>latency monitor</em> yang mencatat lonjakan latensi per jenis kejadian (<code>command</code>, <code>fork</code>, <code>aof-fsync-always</code>, dan lain-lain). Fitur ini <strong>mati secara bawaan</strong> (<code>latency-monitor-threshold 0</code>); kamu menyalakannya dengan menetapkan ambang dalam <strong>milidetik</strong>.<sup id="fnref:5"><a class="footnote-ref" href="#fn:5">5</a></sup><sup id="fnref2:4"><a class="footnote-ref" href="#fn:4">4</a></sup></p>
+<h2 id="praktik-langkah-demi-langkah">Praktik langkah demi langkah<a class="headerlink" href="#praktik-langkah-demi-langkah" title="Permanent link">&para;</a></h2>
+<p>Output di bawah adalah output yang <strong>diharapkan</strong> berdasarkan dokumentasi, bukan hasil eksekusi di komputermu. Angka seperti ukuran memori, durasi, dan jumlah sampel pasti berbeda. Fokuslah pada bentuk dan cara membacanya. Perintah <code>docker exec</code> tanpa <code>-it</code> tidak berjalan di terminal, sehingga <code>redis-cli</code> memakai <em>raw output</em>: angka tampil tanpa <code>(integer)</code>, string tanpa tanda kutip, dan nilai kosong (<code>nil</code>) sebagai baris kosong.<sup id="fnref:7"><a class="footnote-ref" href="#fn:7">7</a></sup></p>
+<h3 id="langkah-1-jalankan-container-dan-isi-data-uji">Langkah 1: Jalankan container dan isi data uji<a class="headerlink" href="#langkah-1-jalankan-container-dan-isi-data-uji" title="Permanent link">&para;</a></h3>
+<p><strong>Lingkungan: terminal</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>redis-pantau<span class="w"> </span>redis:latest
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>redis-pantau<span class="w"> </span>sh<span class="w"> </span>-c<span class="w"> </span><span class="s1">'for i in $(seq 1 500); do echo "SET produk:$i nilai-$i"; done | redis-cli &gt; /dev/null'</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>redis-pantau<span class="w"> </span>sh<span class="w"> </span>-c<span class="w"> </span><span class="s1">'for i in $(seq 1 20000); do echo "RPUSH antrean $i"; done | redis-cli &gt; /dev/null'</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>redis-pantau<span class="w"> </span>redis-cli<span class="w"> </span>DBSIZE
+</span></code></pre></div>
+<p>Kenapa langkah ini diperlukan: tanpa data, angka di <code>INFO</code> hampir kosong dan tidak ada yang lambat. Perintah <code>redis-cli</code> yang menerima daftar perintah dari <em>stdin</em> menjalankannya berurutan, sehingga cukup satu pipa untuk ratusan perintah.<sup id="fnref2:7"><a class="footnote-ref" href="#fn:7">7</a></sup></p>
+<table>
+<thead>
+<tr>
+<th>Bagian</th>
+<th>Fungsi dan alasan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>sh -c '...'</code></td>
+<td>Menjalankan loop shell di dalam container, bukan di komputermu (aman untuk Windows).</td>
+</tr>
+<tr>
+<td><code>seq 1 500</code></td>
+<td>Membuat 500 key <code>produk:1</code> ... <code>produk:500</code>.</td>
+</tr>
+<tr>
+<td><code>RPUSH antrean ...</code> 20000 kali</td>
+<td>Membuat satu List besar (<code>antrean</code>) untuk dibaca lambat di Langkah 6.</td>
+</tr>
+<tr>
+<td><code>&gt; /dev/null</code></td>
+<td>Membuang balasan <code>OK</code> / angka supaya layar tidak penuh.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Diharapkan:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>501
+</span></code></pre></div>
+<p>Cara membaca: 500 key <code>produk:*</code> ditambah satu key <code>antrean</code>.</p>
+<h3 id="langkah-2-baca-memori-dengan-info-memory">Langkah 2: Baca memori dengan <code>INFO memory</code><a class="headerlink" href="#langkah-2-baca-memori-dengan-info-memory" title="Permanent link">&para;</a></h3>
+<p><strong>Lingkungan: terminal</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>redis-pantau<span class="w"> </span>sh<span class="w"> </span>-c<span class="w"> </span><span class="s2">"redis-cli INFO memory | grep -E 'used_memory_human|used_memory_rss_human|maxmemory_human|maxmemory_policy|mem_fragmentation_ratio'"</span>
+</span></code></pre></div>
+<p>Kenapa: <code>grep</code> menyaring puluhan baris <code>INFO memory</code> menjadi lima yang paling berguna untuk pemula.</p>
+<p><strong>Diharapkan</strong> (angka akan berbeda):</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>used_memory_human:2.31M
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>used_memory_rss_human:12.50M
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>maxmemory_human:0B
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>maxmemory_policy:noeviction
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>mem_fragmentation_ratio:5.40
+</span></code></pre></div>
+<p>Cara membaca: <code>maxmemory_human:0B</code> berarti <strong>tidak ada batas</strong>, dan <code>noeviction</code> berarti saat memori habis, penulisan akan ditolak dengan galat (lihat <a href="../../pola-aplikasi/caching/">Caching</a>). Rasio fragmentasi besar di sini wajar karena data kecil: selisihnya hanya beberapa megabyte, sedangkan proses Redis punya biaya tetap (kode, pustaka). Catatan resmi: rasio tinggi dengan selisih byte kecil bukan tanda masalah.<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
+<h3 id="langkah-3-ukur-dan-cari-key-besar">Langkah 3: Ukur dan cari key besar<a class="headerlink" href="#langkah-3-ukur-dan-cari-key-besar" title="Permanent link">&para;</a></h3>
+<p><strong>Lingkungan: terminal</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>redis-pantau<span class="w"> </span>redis-cli<span class="w"> </span>MEMORY<span class="w"> </span>USAGE<span class="w"> </span>produk:1
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>redis-pantau<span class="w"> </span>redis-cli<span class="w"> </span>MEMORY<span class="w"> </span>USAGE<span class="w"> </span>antrean
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>redis-pantau<span class="w"> </span>redis-cli<span class="w"> </span>--bigkeys
+</span></code></pre></div>
+<p>Kenapa: ketika memori membengkak, yang perlu kamu cari adalah <em>key mana</em> penyebabnya. <code>MEMORY USAGE</code> memberi ukuran satu key; <code>--bigkeys</code> memindai seluruh keyspace.</p>
+<table>
+<thead>
+<tr>
+<th>Bagian</th>
+<th>Fungsi dan alasan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>MEMORY USAGE key</code></td>
+<td>Estimasi byte yang dibutuhkan key beserta value-nya, termasuk overhead administrasi. Untuk tipe bersarang, nilainya dirata-rata dari sampel (bawaan 5; <code>SAMPLES 0</code> memeriksa semua).<sup id="fnref:9"><a class="footnote-ref" href="#fn:9">9</a></sup></td>
+</tr>
+<tr>
+<td><code>--bigkeys</code></td>
+<td>Memindai dengan <code>SCAN</code> (jadi aman di server yang sibuk) dan melaporkan key terbesar per tipe, plus ringkasan jumlah per tipe.<sup id="fnref8:7"><a class="footnote-ref" href="#fn:7">7</a></sup></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Diharapkan:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>72
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>1180000
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>...
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>Biggest list found 'antrean' has 20000 items
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>...
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>1 lists with 20000 items (00.20% of keys, avg size 20000.00)
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>500 strings with 2890 bytes (99.80% of keys, avg size 5.78)
+</span></code></pre></div>
+<p>Cara membaca: <code>antrean</code> jauh lebih besar dari <code>produk:1</code> (ratusan ribu byte dibanding puluhan byte). Pada aplikasi sungguhan, key semacam inilah yang diselidiki. Jumlah byte persis berbeda antar versi.</p>
+<h3 id="langkah-4-hitung-hit-rate-dari-info-stats">Langkah 4: Hitung hit rate dari <code>INFO stats</code><a class="headerlink" href="#langkah-4-hitung-hit-rate-dari-info-stats" title="Permanent link">&para;</a></h3>
+<p><strong>Lingkungan: terminal</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>redis-pantau<span class="w"> </span>redis-cli<span class="w"> </span>GET<span class="w"> </span>produk:1
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>redis-pantau<span class="w"> </span>redis-cli<span class="w"> </span>GET<span class="w"> </span>tidak-ada
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>redis-pantau<span class="w"> </span>sh<span class="w"> </span>-c<span class="w"> </span><span class="s2">"redis-cli INFO stats | grep -E 'keyspace_hits|keyspace_misses|total_commands_processed|instantaneous_ops_per_sec|rejected_connections|evicted_keys|expired_keys'"</span>
+</span></code></pre></div>
+<p>Kenapa: dua <code>GET</code> pertama sengaja menghasilkan satu hit dan satu miss, sehingga kamu bisa melihat sendiri bagaimana counter bergerak.</p>
+<p><strong>Diharapkan:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>nilai-1
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>&lt;baris kosong&gt;
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>total_commands_processed:20520
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>instantaneous_ops_per_sec:0
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a>expired_keys:0
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>evicted_keys:0
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>keyspace_hits:1
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>keyspace_misses:1
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a>rejected_connections:0
+</span></code></pre></div>
+<p>Cara membaca: <code>keyspace_hits:1</code> dan <code>keyspace_misses:1</code> berarti hit rate 50% pada contoh mini ini. Counter bersifat kumulatif sejak server menyala, jadi untuk melihat tren, bandingkan angka dua kali pengambilan. <code>evicted_keys</code> yang terus naik berarti <code>maxmemory</code> tercapai dan Redis membuang data. <code>rejected_connections</code> yang naik berarti server menolak klien karena batas koneksi.</p>
+<h3 id="langkah-5-lihat-klien-dan-pantau-langsung">Langkah 5: Lihat klien dan pantau langsung<a class="headerlink" href="#langkah-5-lihat-klien-dan-pantau-langsung" title="Permanent link">&para;</a></h3>
+<p><strong>Lingkungan: terminal</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>redis-pantau<span class="w"> </span>sh<span class="w"> </span>-c<span class="w"> </span><span class="s2">"redis-cli INFO clients | grep -E 'connected_clients|blocked_clients'"</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>redis-pantau<span class="w"> </span>redis-cli<span class="w"> </span>--stat
+</span></code></pre></div>
+<p>Tekan <code>Ctrl+C</code> untuk berhenti. Kenapa: <code>--stat</code> mencetak satu baris per detik berisi jumlah key, memori, klien, dan permintaan, dengan selisih dari baris sebelumnya.<sup id="fnref3:7"><a class="footnote-ref" href="#fn:7">7</a></sup> Itu cara cepat melihat apakah beban naik.</p>
+<p><strong>Diharapkan:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>connected_clients:1
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>blocked_clients:0
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>------- data ------ --------------------- load -------------------- - child -
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a>keys       mem      clients blocked requests            connections
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a>501        2.31M    1       0       20525 (+0)          10
+</span><span id="__span-9-6"><a id="__codelineno-9-6" name="__codelineno-9-6" href="#__codelineno-9-6"></a>501        2.31M    1       0       20526 (+1)          11
+</span></code></pre></div>
+<p>Cara membaca: kolom <code>requests (+n)</code> menunjukkan perintah per detik, dan <code>connections</code> bertambah setiap kali ada koneksi baru. Dalam <code>--stat</code>, <code>redis-cli</code> sendiri adalah satu klien.</p>
+<h3 id="langkah-6-tangkap-perintah-lambat-dengan-slowlog">Langkah 6: Tangkap perintah lambat dengan <code>SLOWLOG</code><a class="headerlink" href="#langkah-6-tangkap-perintah-lambat-dengan-slowlog" title="Permanent link">&para;</a></h3>
+<p><strong>Lingkungan: terminal</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>redis-pantau<span class="w"> </span>redis-cli<span class="w"> </span>CONFIG<span class="w"> </span>GET<span class="w"> </span>slowlog-log-slower-than
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>redis-pantau<span class="w"> </span>redis-cli<span class="w"> </span>CONFIG<span class="w"> </span>SET<span class="w"> </span>slowlog-log-slower-than<span class="w"> </span><span class="m">100</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>redis-pantau<span class="w"> </span>redis-cli<span class="w"> </span>SLOWLOG<span class="w"> </span>RESET
+</span><span id="__span-10-4"><a id="__codelineno-10-4" name="__codelineno-10-4" href="#__codelineno-10-4"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>redis-pantau<span class="w"> </span>sh<span class="w"> </span>-c<span class="w"> </span><span class="s2">"redis-cli LRANGE antrean 0 -1 &gt; /dev/null"</span>
+</span><span id="__span-10-5"><a id="__codelineno-10-5" name="__codelineno-10-5" href="#__codelineno-10-5"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>redis-pantau<span class="w"> </span>sh<span class="w"> </span>-c<span class="w"> </span><span class="s2">"redis-cli KEYS '*' &gt; /dev/null"</span>
+</span><span id="__span-10-6"><a id="__codelineno-10-6" name="__codelineno-10-6" href="#__codelineno-10-6"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>redis-pantau<span class="w"> </span>redis-cli<span class="w"> </span>SLOWLOG<span class="w"> </span>LEN
+</span><span id="__span-10-7"><a id="__codelineno-10-7" name="__codelineno-10-7" href="#__codelineno-10-7"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>redis-pantau<span class="w"> </span>redis-cli<span class="w"> </span>SLOWLOG<span class="w"> </span>GET<span class="w"> </span><span class="m">2</span>
+</span></code></pre></div>
+<p>Kenapa: ambang bawaan 10 ms terlalu tinggi untuk mesin latihan yang cepat, jadi kita turunkan ke 100 mikrodetik agar perintah berat tertangkap. <code>LRANGE antrean 0 -1</code> membaca 20000 elemen sekaligus, dan <code>KEYS '*'</code> memindai semua key. Keduanya adalah contoh perintah yang membuat klien lain menunggu.<sup id="fnref3:6"><a class="footnote-ref" href="#fn:6">6</a></sup> Hanya <code>SLOWLOG GET</code> yang memakai <code>-it</code>, supaya balasan bersarangnya tampil sebagai daftar bernomor seperti di bawah; tanpa <code>-it</code>, <code>redis-cli</code> mencetaknya sebagai baris-baris biasa.<sup id="fnref4:7"><a class="footnote-ref" href="#fn:7">7</a></sup></p>
+<table>
+<thead>
+<tr>
+<th>Bagian</th>
+<th>Fungsi dan alasan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>CONFIG SET slowlog-log-slower-than 100</code></td>
+<td>Mencatat perintah yang berjalan lebih dari 100 µs. Satuan mikrodetik.<sup id="fnref3:4"><a class="footnote-ref" href="#fn:4">4</a></sup></td>
+</tr>
+<tr>
+<td><code>SLOWLOG RESET</code></td>
+<td>Mengosongkan catatan lama supaya hasil latihan bersih.</td>
+</tr>
+<tr>
+<td><code>SLOWLOG LEN</code></td>
+<td>Jumlah entri yang tercatat.</td>
+</tr>
+<tr>
+<td><code>SLOWLOG GET 2</code></td>
+<td>Dua entri terbaru. Tanpa angka, hasilnya sepuluh entri.<sup id="fnref4:3"><a class="footnote-ref" href="#fn:3">3</a></sup></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Diharapkan</strong> (angka berbeda):</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>slowlog-log-slower-than
+</span><span id="__span-11-2"><a id="__codelineno-11-2" name="__codelineno-11-2" href="#__codelineno-11-2"></a>10000
+</span><span id="__span-11-3"><a id="__codelineno-11-3" name="__codelineno-11-3" href="#__codelineno-11-3"></a>OK
+</span><span id="__span-11-4"><a id="__codelineno-11-4" name="__codelineno-11-4" href="#__codelineno-11-4"></a>OK
+</span><span id="__span-11-5"><a id="__codelineno-11-5" name="__codelineno-11-5" href="#__codelineno-11-5"></a>2
+</span><span id="__span-11-6"><a id="__codelineno-11-6" name="__codelineno-11-6" href="#__codelineno-11-6"></a>1) 1) (integer) 1
+</span><span id="__span-11-7"><a id="__codelineno-11-7" name="__codelineno-11-7" href="#__codelineno-11-7"></a>   2) (integer) 1761563000
+</span><span id="__span-11-8"><a id="__codelineno-11-8" name="__codelineno-11-8" href="#__codelineno-11-8"></a>   3) (integer) 2310
+</span><span id="__span-11-9"><a id="__codelineno-11-9" name="__codelineno-11-9" href="#__codelineno-11-9"></a>   4) 1) "KEYS"
+</span><span id="__span-11-10"><a id="__codelineno-11-10" name="__codelineno-11-10" href="#__codelineno-11-10"></a>      2) "*"
+</span><span id="__span-11-11"><a id="__codelineno-11-11" name="__codelineno-11-11" href="#__codelineno-11-11"></a>   5) "127.0.0.1:41822"
+</span><span id="__span-11-12"><a id="__codelineno-11-12" name="__codelineno-11-12" href="#__codelineno-11-12"></a>   6) ""
+</span><span id="__span-11-13"><a id="__codelineno-11-13" name="__codelineno-11-13" href="#__codelineno-11-13"></a>2) 1) (integer) 0
+</span><span id="__span-11-14"><a id="__codelineno-11-14" name="__codelineno-11-14" href="#__codelineno-11-14"></a>   2) (integer) 1761562999
+</span><span id="__span-11-15"><a id="__codelineno-11-15" name="__codelineno-11-15" href="#__codelineno-11-15"></a>   3) (integer) 3480
+</span><span id="__span-11-16"><a id="__codelineno-11-16" name="__codelineno-11-16" href="#__codelineno-11-16"></a>   4) 1) "LRANGE"
+</span><span id="__span-11-17"><a id="__codelineno-11-17" name="__codelineno-11-17" href="#__codelineno-11-17"></a>      2) "antrean"
+</span><span id="__span-11-18"><a id="__codelineno-11-18" name="__codelineno-11-18" href="#__codelineno-11-18"></a>      3) "0"
+</span><span id="__span-11-19"><a id="__codelineno-11-19" name="__codelineno-11-19" href="#__codelineno-11-19"></a>      4) "-1"
+</span><span id="__span-11-20"><a id="__codelineno-11-20" name="__codelineno-11-20" href="#__codelineno-11-20"></a>   5) "127.0.0.1:41820"
+</span><span id="__span-11-21"><a id="__codelineno-11-21" name="__codelineno-11-21" href="#__codelineno-11-21"></a>   6) ""
+</span></code></pre></div>
+<p>Cara membaca setiap entri berurutan: nomor ID, waktu Unix, <strong>durasi dalam mikrodetik</strong> (2310 µs ≈ 2,3 ms), perintah dan argumennya, alamat klien, dan nama klien (kosong). Entri paling baru muncul di atas. Fokus pada kolom durasi dan perintahnya: perintah dengan durasi paling besar adalah kandidat untuk diganti, misalnya <code>KEYS</code> menjadi <code>SCAN</code>, atau <code>LRANGE</code> seluruh List menjadi potongan kecil.</p>
+<div class="admonition warning">
+<p class="admonition-title">Kembalikan ambang setelah latihan</p>
+<p>Ambang yang terlalu rendah membuat slow log penuh entri biasa dan terus memakai memori. Setelah selesai, kembalikan: <code>docker exec redis-pantau redis-cli CONFIG SET slowlog-log-slower-than 10000</code>. Pengaturan ini juga hilang saat restart seperti <code>CONFIG SET</code> lain (lihat <a href="../persistence/">Persistence</a>).</p>
+</div>
+<h3 id="langkah-7-ukur-latensi">Langkah 7: Ukur latensi<a class="headerlink" href="#langkah-7-ukur-latensi" title="Permanent link">&para;</a></h3>
+<p><strong>Lingkungan: terminal</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>redis-pantau<span class="w"> </span>redis-cli<span class="w"> </span>--latency
+</span></code></pre></div>
+<p>Tekan <code>Ctrl+C</code> setelah beberapa detik. Kenapa: mode ini mengirim <code>PING</code> berulang kali (sekitar 100 kali per detik) dan mencatat waktu balasan.<sup id="fnref5:7"><a class="footnote-ref" href="#fn:7">7</a></sup></p>
+<p><strong>Diharapkan:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>min: 0, max: 1, avg: 0.12 (1530 samples)
+</span></code></pre></div>
+<p>Cara membaca: satuan <strong>milidetik</strong>. <code>min</code>, <code>max</code>, dan <code>avg</code> adalah latensi terendah, tertinggi, dan rata-rata dari sampel. Nilai <code>max</code> yang melonjak jauh di atas <code>avg</code> menandakan ada penundaan sesaat. Catatan penting: ini mengukur jalur dari <code>redis-cli</code> ke server, termasuk penundaan penjadwal sistem pada mesin yang menjalankan <code>redis-cli</code>, jadi rata-rata sedikit melebih-lebihkan latensi sebenarnya.<sup id="fnref6:7"><a class="footnote-ref" href="#fn:7">7</a></sup></p>
+<p>Untuk melihat latensi dasar mesin (tanpa Redis), <code>redis-cli --intrinsic-latency &lt;detik&gt;</code> menguji kernel/hypervisor dan <strong>harus dijalankan di mesin server</strong>, bukan di klien.<sup id="fnref4:6"><a class="footnote-ref" href="#fn:6">6</a></sup><sup id="fnref7:7"><a class="footnote-ref" href="#fn:7">7</a></sup> Hasilnya adalah batas bawah yang tidak bisa dilampaui Redis.</p>
+<h3 id="langkah-8-aktifkan-latency-monitor">Langkah 8: Aktifkan latency monitor<a class="headerlink" href="#langkah-8-aktifkan-latency-monitor" title="Permanent link">&para;</a></h3>
+<p><strong>Lingkungan: terminal</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>redis-pantau<span class="w"> </span>redis-cli<span class="w"> </span>CONFIG<span class="w"> </span>SET<span class="w"> </span>latency-monitor-threshold<span class="w"> </span><span class="m">1</span>
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>redis-pantau<span class="w"> </span>redis-cli<span class="w"> </span>LATENCY<span class="w"> </span>LATEST
+</span><span id="__span-14-3"><a id="__codelineno-14-3" name="__codelineno-14-3" href="#__codelineno-14-3"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>redis-pantau<span class="w"> </span>redis-cli<span class="w"> </span>LATENCY<span class="w"> </span>DOCTOR
+</span></code></pre></div>
+<p>Kenapa: slow log hanya mencatat <em>perintah</em>; latency monitor juga mencatat kejadian internal seperti <code>fork</code> dan penulisan AOF. Ambang <code>1</code> berarti mencatat kejadian yang memakan waktu 1 milidetik atau lebih.<sup id="fnref2:5"><a class="footnote-ref" href="#fn:5">5</a></sup></p>
+<p><strong>Diharapkan:</strong> karena server latihan ini ringan, <code>LATENCY LATEST</code> kemungkinan besar mengembalikan daftar kosong, dan <code>LATENCY DOCTOR</code> melaporkan bahwa belum ada data latensi yang perlu ditinjau. Bila ada lonjakan, <code>LATENCY LATEST</code> menampilkan nama kejadian (misalnya <code>command</code> atau <code>fork</code>), waktu, latensi terakhir, dan latensi maksimum, dan <code>LATENCY HISTORY &lt;kejadian&gt;</code> menampilkan deret waktunya.<sup id="fnref3:5"><a class="footnote-ref" href="#fn:5">5</a></sup></p>
+<h3 id="langkah-9-bersihkan">Langkah 9: Bersihkan<a class="headerlink" href="#langkah-9-bersihkan" title="Permanent link">&para;</a></h3>
+<p><strong>Lingkungan: terminal</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>docker<span class="w"> </span>rm<span class="w"> </span>-f<span class="w"> </span>redis-pantau
+</span></code></pre></div>
+<div class="admonition danger">
+<p class="admonition-title">Perintah ini menghapus data</p>
+<p><code>docker rm -f</code> menghapus container dan semua datanya. Container latihan ini tidak memakai volume, jadi tidak ada yang perlu diselamatkan.</p>
+</div>
+<h2 id="contoh-lengkap">Contoh lengkap<a class="headerlink" href="#contoh-lengkap" title="Permanent link">&para;</a></h2>
+<p>Skrip kecil untuk memeriksa kesehatan dasar sebuah container Redis.</p>
+<p><strong>Lingkungan: shell (sh/bash)</strong> · Kebutuhan: Docker, dan container Redis yang sedang berjalan</p>
+<div class="language-bash highlight"><span class="filename">cek-redis.sh</span><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a><span class="ch">#!/bin/sh</span>
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a><span class="c1"># Pemakaian: sh cek-redis.sh [nama-container]</span>
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a><span class="nv">KONTAINER</span><span class="o">=</span><span class="s2">"</span><span class="si">${</span><span class="nv">1</span><span class="k">:-</span><span class="nv">redis</span><span class="p">-pantau</span><span class="si">}</span><span class="s2">"</span>
+</span><span id="__span-16-4"><a id="__codelineno-16-4" name="__codelineno-16-4" href="#__codelineno-16-4"></a>
+</span><span id="__span-16-5"><a id="__codelineno-16-5" name="__codelineno-16-5" href="#__codelineno-16-5"></a>info<span class="o">()</span><span class="w"> </span><span class="o">{</span>
+</span><span id="__span-16-6"><a id="__codelineno-16-6" name="__codelineno-16-6" href="#__codelineno-16-6"></a><span class="w">  </span>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span><span class="s2">"</span><span class="nv">$KONTAINER</span><span class="s2">"</span><span class="w"> </span>redis-cli<span class="w"> </span>INFO<span class="w"> </span><span class="s2">"</span><span class="nv">$1</span><span class="s2">"</span>
+</span><span id="__span-16-7"><a id="__codelineno-16-7" name="__codelineno-16-7" href="#__codelineno-16-7"></a><span class="o">}</span>
+</span><span id="__span-16-8"><a id="__codelineno-16-8" name="__codelineno-16-8" href="#__codelineno-16-8"></a>
+</span><span id="__span-16-9"><a id="__codelineno-16-9" name="__codelineno-16-9" href="#__codelineno-16-9"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"== Memori =="</span>
+</span><span id="__span-16-10"><a id="__codelineno-16-10" name="__codelineno-16-10" href="#__codelineno-16-10"></a>info<span class="w"> </span>memory<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">'used_memory_human|maxmemory_human|maxmemory_policy'</span>
+</span><span id="__span-16-11"><a id="__codelineno-16-11" name="__codelineno-16-11" href="#__codelineno-16-11"></a>
+</span><span id="__span-16-12"><a id="__codelineno-16-12" name="__codelineno-16-12" href="#__codelineno-16-12"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"== Klien =="</span>
+</span><span id="__span-16-13"><a id="__codelineno-16-13" name="__codelineno-16-13" href="#__codelineno-16-13"></a>info<span class="w"> </span>clients<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">'connected_clients|blocked_clients'</span>
+</span><span id="__span-16-14"><a id="__codelineno-16-14" name="__codelineno-16-14" href="#__codelineno-16-14"></a>
+</span><span id="__span-16-15"><a id="__codelineno-16-15" name="__codelineno-16-15" href="#__codelineno-16-15"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"== Statistik =="</span>
+</span><span id="__span-16-16"><a id="__codelineno-16-16" name="__codelineno-16-16" href="#__codelineno-16-16"></a>info<span class="w"> </span>stats<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span>-E<span class="w"> </span><span class="s1">'instantaneous_ops_per_sec|evicted_keys|rejected_connections'</span>
+</span><span id="__span-16-17"><a id="__codelineno-16-17" name="__codelineno-16-17" href="#__codelineno-16-17"></a>
+</span><span id="__span-16-18"><a id="__codelineno-16-18" name="__codelineno-16-18" href="#__codelineno-16-18"></a><span class="nv">HITS</span><span class="o">=</span><span class="k">$(</span>info<span class="w"> </span>stats<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s1">'^keyspace_hits:'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-d:<span class="w"> </span>-f2<span class="w"> </span><span class="p">|</span><span class="w"> </span>tr<span class="w"> </span>-d<span class="w"> </span><span class="s1">'\r'</span><span class="k">)</span>
+</span><span id="__span-16-19"><a id="__codelineno-16-19" name="__codelineno-16-19" href="#__codelineno-16-19"></a><span class="nv">MISSES</span><span class="o">=</span><span class="k">$(</span>info<span class="w"> </span>stats<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s1">'^keyspace_misses:'</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>cut<span class="w"> </span>-d:<span class="w"> </span>-f2<span class="w"> </span><span class="p">|</span><span class="w"> </span>tr<span class="w"> </span>-d<span class="w"> </span><span class="s1">'\r'</span><span class="k">)</span>
+</span><span id="__span-16-20"><a id="__codelineno-16-20" name="__codelineno-16-20" href="#__codelineno-16-20"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"== Hit rate =="</span>
+</span><span id="__span-16-21"><a id="__codelineno-16-21" name="__codelineno-16-21" href="#__codelineno-16-21"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"hits=</span><span class="nv">$HITS</span><span class="s2"> misses=</span><span class="nv">$MISSES</span><span class="s2">"</span>
+</span><span id="__span-16-22"><a id="__codelineno-16-22" name="__codelineno-16-22" href="#__codelineno-16-22"></a>
+</span><span id="__span-16-23"><a id="__codelineno-16-23" name="__codelineno-16-23" href="#__codelineno-16-23"></a><span class="nb">echo</span><span class="w"> </span><span class="s2">"== Slow log (jumlah entri) =="</span>
+</span><span id="__span-16-24"><a id="__codelineno-16-24" name="__codelineno-16-24" href="#__codelineno-16-24"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span><span class="s2">"</span><span class="nv">$KONTAINER</span><span class="s2">"</span><span class="w"> </span>redis-cli<span class="w"> </span>SLOWLOG<span class="w"> </span>LEN
+</span></code></pre></div>
+<p>Penjelasan baris penting:</p>
+<table>
+<thead>
+<tr>
+<th>Baris</th>
+<th>Penjelasan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>KONTAINER="${1:-redis-pantau}"</code></td>
+<td>Memakai argumen pertama sebagai nama container; bila kosong, memakai <code>redis-pantau</code>.</td>
+</tr>
+<tr>
+<td><code>info() { ... }</code></td>
+<td>Fungsi pembungkus agar <code>INFO &lt;bagian&gt;</code> tidak ditulis berulang.</td>
+</tr>
+<tr>
+<td><code>grep -E '...'</code></td>
+<td>Menyaring baris yang kita perlukan dari keluaran <code>INFO</code>.</td>
+</tr>
+<tr>
+<td><code>cut -d: -f2</code></td>
+<td>Mengambil nilai setelah tanda titik dua.</td>
+</tr>
+<tr>
+<td><code>tr -d '\r'</code></td>
+<td>Membuang karakter <em>carriage return</em>, karena <code>INFO</code> memakai akhir baris <code>\r\n</code>.</td>
+</tr>
+</tbody>
+</table>
+<p>Cara menjalankan: <code>sh cek-redis.sh redis-pantau</code>. Hasil yang diharapkan: lima bagian berurutan dengan angka dari server-mu. Skrip ini belum dijalankan saat bab ditulis. Untuk pemantauan terus-menerus, jalankan skrip dari penjadwal (cron) dan simpan hasilnya, supaya kamu bisa membandingkan antar waktu.</p>
+<h2 id="kesalahan-umum-dan-troubleshooting">Kesalahan umum dan troubleshooting<a class="headerlink" href="#kesalahan-umum-dan-troubleshooting" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Gejala</th>
+<th>Penyebab dan solusi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SLOWLOG GET</code> kosong padahal terasa lambat</td>
+<td>Ambang <code>slowlog-log-slower-than</code> (bawaan 10 ms) terlalu tinggi, atau lambatnya ada di jaringan/klien karena slow log tidak menghitung I/O.<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup> Turunkan ambang, atau ukur dengan <code>--latency</code>.</td>
+</tr>
+<tr>
+<td>Slow log penuh entri biasa</td>
+<td>Ambang terlalu rendah (mis. <code>0</code>, yang mencatat semua perintah).<sup id="fnref4:4"><a class="footnote-ref" href="#fn:4">4</a></sup> Naikkan lagi.</td>
+</tr>
+<tr>
+<td>Entri lama hilang</td>
+<td>Jumlah entri dibatasi <code>slowlog-max-len</code> (bawaan 128).<sup id="fnref5:4"><a class="footnote-ref" href="#fn:4">4</a></sup></td>
+</tr>
+<tr>
+<td><code>LATENCY LATEST</code> selalu kosong</td>
+<td>Latency monitor mati secara bawaan (ambang <code>0</code>). Aktifkan dengan <code>CONFIG SET latency-monitor-threshold &lt;ms&gt;</code>.<sup id="fnref4:5"><a class="footnote-ref" href="#fn:5">5</a></sup></td>
+</tr>
+<tr>
+<td><code>mem_fragmentation_ratio</code> tinggi</td>
+<td>Lihat selisih byte <code>mem_fragmentation_bytes</code>. Selisih kecil (beberapa MB) bukan masalah.<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+</tr>
+<tr>
+<td><code>used_memory</code> jauh di atas <code>used_memory_rss</code></td>
+<td>Sebagian memori ter-swap oleh sistem operasi, sehingga latensi buruk.<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup> Kurangi tekanan memori mesin.</td>
+</tr>
+<tr>
+<td><code>evicted_keys</code> terus naik</td>
+<td><code>maxmemory</code> tercapai. Tinjau ukuran data, TTL, atau kebijakan eviction (lihat <a href="../../pola-aplikasi/caching/">Caching</a>).</td>
+</tr>
+<tr>
+<td><code>--intrinsic-latency</code> tidak memberi hasil bermakna</td>
+<td>Perintah itu harus dijalankan di mesin server, bukan klien, dan tidak menyambung ke Redis.<sup id="fnref9:7"><a class="footnote-ref" href="#fn:7">7</a></sup></td>
+</tr>
+<tr>
+<td><code>NOPERM</code> saat menjalankan <code>INFO</code> atau <code>SLOWLOG</code></td>
+<td>Pengguna ACL tidak punya izin. <code>INFO</code> termasuk kategori <code>@dangerous</code> dan <code>SLOWLOG GET</code> termasuk <code>@admin</code>.<sup id="fnref2:8"><a class="footnote-ref" href="#fn:8">8</a></sup><sup id="fnref5:3"><a class="footnote-ref" href="#fn:3">3</a></sup> Beri izin spesifik, jangan <code>+@all</code>.</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Status verifikasi</p>
+<p>Sintaks, nama field, satuan, dan nilai bawaan dicocokkan dengan dokumentasi resmi Redis. Perintah, blok output, dan skrip di bab ini belum dijalankan di Redis nyata saat bab ini ditulis. Angka dalam contoh hanyalah ilustrasi bentuk.</p>
+</div>
+<h2 id="latihan">Latihan<a class="headerlink" href="#latihan" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Jalankan Langkah 1 lalu ambil <code>used_memory_human</code>. Tambahkan 5000 key baru, ambil lagi. Berapa selisihnya, dan berapa byte per key kira-kira?</li>
+<li>Sebelum menjalankan: apa yang terjadi pada <code>keyspace_hits</code> dan <code>keyspace_misses</code> bila kamu menjalankan <code>EXISTS produk:1</code> dan <code>GET tidak-ada</code>? Jalankan dan bandingkan dengan prediksimu.</li>
+<li>Turunkan <code>slowlog-log-slower-than</code> ke <code>0</code>, jalankan tiga perintah berbeda, lalu baca <code>SLOWLOG GET</code>. Perintah mana yang paling lama? Kembalikan ambang ke <code>10000</code>.</li>
+<li>Ganti <code>KEYS '*'</code> pada Langkah 6 dengan <code>redis-cli --scan</code> dan bandingkan apakah ia tercatat di slow log. Kenapa <code>SCAN</code> lebih aman?</li>
+<li>Jelaskan dengan kata-katamu kenapa <code>SLOWLOG</code> bisa kosong padahal klien mengeluh lambat, dan alat apa yang kamu pakai berikutnya.</li>
+</ol>
+<details class="success">
+<summary>Petunjuk</summary>
+<ol>
+<li>Bagi selisih byte dengan 5000.</li>
+<li>Cek dulu apakah <code>EXISTS</code> dihitung sebagai pencarian key di <code>INFO stats</code>; jangan menebak, jalankan dan lihat.</li>
+<li>Kolom ketiga setiap entri adalah durasi dalam mikrodetik.</li>
+<li><code>SCAN</code> bekerja bertahap dan tidak memblokir server lama.</li>
+<li>Ingat apa yang tidak dihitung oleh slow log.</li>
+</ol>
+</details>
+<h2 id="ringkasan">Ringkasan<a class="headerlink" href="#ringkasan" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Pantau empat hal: memori, beban dan klien, perintah lambat, dan latensi. Redis memproses perintah hampir satu per satu, jadi satu perintah lambat memperlambat semua klien.</li>
+<li><code>INFO</code> adalah dasbor: pakai <code>INFO memory</code>, <code>INFO clients</code>, <code>INFO stats</code>. Perhatikan <code>used_memory</code>, <code>maxmemory</code>, <code>evicted_keys</code>, <code>rejected_connections</code>, serta hit dan miss. Counter bersifat kumulatif, jadi bandingkan antar waktu.</li>
+<li><code>MEMORY USAGE</code> dan <code>redis-cli --bigkeys</code> mencari key besar. <code>SLOWLOG</code> (ambang bawaan 10 ms, 128 entri) mencatat perintah lambat tanpa menghitung I/O.</li>
+<li><code>redis-cli --latency</code> mengukur latensi dalam milidetik; latency monitor harus dinyalakan dengan <code>latency-monitor-threshold</code>. Hindari <code>KEYS</code> di produksi dan gunakan <code>SCAN</code>.</li>
+<li>Semua <code>CONFIG SET</code> di bab ini hilang saat restart, dan perintah pemantau perlu izin ACL yang sesuai.</li>
+</ul>
+<p>Berikutnya: <a href="../replikasi-sentinel-dan-cluster/">Replikasi, Sentinel, dan Cluster</a> (opsional), tentang ketersediaan tinggi.</p>
+<h2 id="referensi-resmi">Referensi resmi<a class="headerlink" href="#referensi-resmi" title="Permanent link">&para;</a></h2>
+<p>Bacaan tambahan: <a href="https://redis.io/docs/latest/commands/latency-doctor/"><code>LATENCY DOCTOR</code></a>, <a href="https://redis.io/docs/latest/commands/memory-stats/"><code>MEMORY STATS</code></a>, <a href="https://redis.io/docs/latest/commands/slowlog-reset/"><code>SLOWLOG RESET</code></a>.</p>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>Redis, <em>INFO</em>: <a href="https://redis.io/docs/latest/commands/info/">https://redis.io/docs/latest/commands/info/</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p>Redis, <em>SLOWLOG</em>: <a href="https://redis.io/docs/latest/commands/slowlog/">https://redis.io/docs/latest/commands/slowlog/</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p>Redis, <em>SLOWLOG GET</em>: <a href="https://redis.io/docs/latest/commands/slowlog-get/">https://redis.io/docs/latest/commands/slowlog-get/</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:4">
+<p>Redis, <code>redis.conf</code> (8.0): <a href="https://raw.githubusercontent.com/redis/redis/8.0/redis.conf">https://raw.githubusercontent.com/redis/redis/8.0/redis.conf</a>&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:4" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:4" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:4" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:5">
+<p>Redis, <em>Redis latency monitoring</em>: <a href="https://redis.io/docs/latest/operate/oss_and_stack/management/optimization/latency-monitor/">https://redis.io/docs/latest/operate/oss_and_stack/management/optimization/latency-monitor/</a>&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 5 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:5" title="Jump back to footnote 5 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:5" title="Jump back to footnote 5 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:5" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+</li>
+<li id="fn:6">
+<p>Redis, <em>Diagnosing latency issues</em>: <a href="https://redis.io/docs/latest/operate/oss_and_stack/management/optimization/latency/">https://redis.io/docs/latest/operate/oss_and_stack/management/optimization/latency/</a>&#160;<a class="footnote-backref" href="#fnref:6" title="Jump back to footnote 6 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:6" title="Jump back to footnote 6 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:6" title="Jump back to footnote 6 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:6" title="Jump back to footnote 6 in the text">&#8617;</a></p>
+</li>
+<li id="fn:7">
+<p>Redis, <em>Redis CLI</em>: <a href="https://redis.io/docs/latest/develop/tools/cli/">https://redis.io/docs/latest/develop/tools/cli/</a>&#160;<a class="footnote-backref" href="#fnref:7" title="Jump back to footnote 7 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:7" title="Jump back to footnote 7 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:7" title="Jump back to footnote 7 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:7" title="Jump back to footnote 7 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:7" title="Jump back to footnote 7 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:7" title="Jump back to footnote 7 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:7" title="Jump back to footnote 7 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:7" title="Jump back to footnote 7 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:7" title="Jump back to footnote 7 in the text">&#8617;</a></p>
+</li>
+<li id="fn:8">
+<p>Redis, <em>ACL</em>: <a href="https://redis.io/docs/latest/operate/oss_and_stack/management/security/acl/">https://redis.io/docs/latest/operate/oss_and_stack/management/security/acl/</a>&#160;<a class="footnote-backref" href="#fnref:8" title="Jump back to footnote 8 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:8" title="Jump back to footnote 8 in the text">&#8617;</a></p>
+</li>
+<li id="fn:9">
+<p>Redis, <em>MEMORY USAGE</em>: <a href="https://redis.io/docs/latest/commands/memory-usage/">https://redis.io/docs/latest/commands/memory-usage/</a>&#160;<a class="footnote-backref" href="#fnref:9" title="Jump back to footnote 9 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Kembali ke atas
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../keamanan/" class="md-footer__link md-footer__link--prev" aria-label="Sebelumnya: Keamanan">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Sebelumnya
+              </span>
+              <div class="md-ellipsis">
+                Keamanan
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../replikasi-sentinel-dan-cluster/" class="md-footer__link md-footer__link--next" aria-label="Selanjutnya: Replikasi, Sentinel, dan Cluster">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Selanjutnya
+              </span>
+              <div class="md-ellipsis">
+                Replikasi, Sentinel, dan Cluster
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.indexes", "navigation.path", "navigation.footer", "navigation.top", "navigation.tracking", "toc.follow", "search.highlight", "search.suggest", "content.code.copy", "content.code.annotate", "content.tabs.link"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Tersalin ke clipboard", "clipboard.copy": "Salin ke clipboard", "search.result.more.one": "1 lagi di halaman ini", "search.result.more.other": "# lagi di halaman ini", "search.result.none": "Tidak ada dokumen yang sesuai", "search.result.one": "1 dokumen ditemukan", "search.result.other": "# dokumen ditemukan", "search.result.placeholder": "Ketik untuk mulai pencarian", "search.result.term.missing": "Tidak ada", "select.version": "Pilih versi"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../../assets/vendor/mermaid/mermaid.min.js"></script>
+      
+        <script src="../../javascripts/mermaid-config.js"></script>
+      
+        <script src="../../javascripts/mathjax.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

@@ -1,0 +1,2795 @@
+
+<!doctype html>
+<html lang="id" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Materi Redis untuk pemula, dari dasar sampai penerapan.">
+      
+      
+      
+        <link rel="canonical" href="https://topekox.github.io/materi-redis/operasi/persistence/">
+      
+      
+        <link rel="prev" href="../">
+      
+      
+        <link rel="next" href="../keamanan/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Persistence - Belajar Redis</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#persistence" class="md-skip">
+          Lewati ke isi
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Belajar Redis" class="md-header__button md-logo" aria-label="Belajar Redis" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Belajar Redis
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Persistence
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Theme: system (click for light)"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Theme: system (click for light)" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Theme: light (click for dark)"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Theme: light (click for dark)" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Theme: dark (click for system)"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Theme: dark (click for system)" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Cari" placeholder="Cari" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Cari">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Kosongkan" aria-label="Kosongkan" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Mempersiapkan pencarian
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigasi" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Belajar Redis" class="md-nav__button md-logo" aria-label="Belajar Redis" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Belajar Redis
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../pengenalan/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pengenalan
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Pengenalan
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pengenalan/apa-itu-redis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Apa itu Redis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pengenalan/instalasi-dengan-docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Instalasi dengan Docker
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pengenalan/menjalankan-redis-cli-pertama-kali/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Menjalankan redis-cli pertama kali
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pengenalan/key-dan-expiry/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Key dan expiry
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../struktur-data/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Struktur Data
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Struktur Data
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../struktur-data/string/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    String
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../struktur-data/hash/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hash
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../struktur-data/list/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    List
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../struktur-data/set/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Set
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../struktur-data/sorted-set/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sorted Set
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../struktur-data/bitmap-hyperloglog-geo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bitmap, HyperLogLog, dan Geo
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../struktur-data/memilih-struktur-data-yang-tepat/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Memilih struktur data yang tepat
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../pola-aplikasi/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pola Penerapan
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Pola Penerapan
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pola-aplikasi/caching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Caching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pola-aplikasi/session-dan-rate-limiting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Session dan rate limiting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pola-aplikasi/pub-sub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pub/Sub
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pola-aplikasi/streams-consumer-group/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Streams dan consumer group
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pola-aplikasi/transaksi/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transaksi
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pola-aplikasi/lua-script/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lua script
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../python/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python dan FastAPI
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Python dan FastAPI
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/dasar-redis-py/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dasar redis-py
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/struktur-data-di-python/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Struktur data di Python
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/pipeline-dan-connection-pool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pipeline dan connection pool
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/dasar-fastapi-dengan-redis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dasar FastAPI dengan Redis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/fastapi-caching-dan-rate-limit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FastAPI: caching dan rate limit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/fastapi-fitur-realtime-dengan-sse/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FastAPI: fitur realtime dengan SSE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operasi
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Operasi
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Persistence
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Persistence
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Daftar isi">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Daftar isi
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#tujuan-belajar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tujuan belajar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prasyarat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prasyarat
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#konsep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Konsep
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Konsep">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#analogi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Analogi
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cara-kerja" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cara kerja
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#praktik-langkah-demi-langkah" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Praktik langkah demi langkah
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Praktik langkah demi langkah">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#langkah-1-jalankan-redis-dengan-volume-dan-snapshot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 1: Jalankan Redis dengan volume dan snapshot
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-2-periksa-pengaturan-persistence-yang-aktif" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 2: Periksa pengaturan persistence yang aktif
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-3-buat-data-lalu-paksa-snapshot-dengan-bgsave" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 3: Buat data lalu paksa snapshot dengan BGSAVE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-4-lihat-sendiri-data-yang-hilang-tanpa-snapshot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 4: Lihat sendiri data yang hilang tanpa snapshot
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-5-aktifkan-aof-pada-server-yang-sedang-berjalan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 5: Aktifkan AOF pada server yang sedang berjalan
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-6-pahami-jebakan-config-set-lalu-buat-ulang-container-dengan-konfigurasi-tetap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 6: Pahami jebakan CONFIG SET, lalu buat ulang container dengan konfigurasi tetap
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-7-buktikan-aof-menahan-kehilangan-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 7: Buktikan AOF menahan kehilangan data
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-8-padatkan-aof-dengan-bgrewriteaof" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 8: Padatkan AOF dengan BGREWRITEAOF
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-9-buat-cadangan-file-rdb" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 9: Buat cadangan file RDB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-10-bersihkan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 10: Bersihkan
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kesalahan-umum-dan-troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kesalahan umum dan troubleshooting
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#latihan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Latihan
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ringkasan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ringkasan
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#referensi-resmi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Referensi resmi
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../keamanan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Keamanan
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Monitoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../replikasi-sentinel-dan-cluster/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Replikasi, Sentinel, dan Cluster
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../proyek-akhir/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Proyek Akhir
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Proyek Akhir
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../proyek-akhir/perancangan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Perancangan
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../proyek-akhir/implementasi-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Implementasi API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../proyek-akhir/fitur-realtime/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fitur realtime
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../proyek-akhir/operasi-dan-pengujian/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operasi dan pengujian
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Daftar isi">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Daftar isi
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#tujuan-belajar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tujuan belajar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prasyarat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prasyarat
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#konsep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Konsep
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Konsep">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#analogi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Analogi
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cara-kerja" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cara kerja
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#praktik-langkah-demi-langkah" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Praktik langkah demi langkah
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Praktik langkah demi langkah">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#langkah-1-jalankan-redis-dengan-volume-dan-snapshot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 1: Jalankan Redis dengan volume dan snapshot
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-2-periksa-pengaturan-persistence-yang-aktif" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 2: Periksa pengaturan persistence yang aktif
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-3-buat-data-lalu-paksa-snapshot-dengan-bgsave" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 3: Buat data lalu paksa snapshot dengan BGSAVE
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-4-lihat-sendiri-data-yang-hilang-tanpa-snapshot" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 4: Lihat sendiri data yang hilang tanpa snapshot
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-5-aktifkan-aof-pada-server-yang-sedang-berjalan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 5: Aktifkan AOF pada server yang sedang berjalan
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-6-pahami-jebakan-config-set-lalu-buat-ulang-container-dengan-konfigurasi-tetap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 6: Pahami jebakan CONFIG SET, lalu buat ulang container dengan konfigurasi tetap
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-7-buktikan-aof-menahan-kehilangan-data" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 7: Buktikan AOF menahan kehilangan data
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-8-padatkan-aof-dengan-bgrewriteaof" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 8: Padatkan AOF dengan BGREWRITEAOF
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-9-buat-cadangan-file-rdb" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 9: Buat cadangan file RDB
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-10-bersihkan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 10: Bersihkan
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kesalahan-umum-dan-troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kesalahan umum dan troubleshooting
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#latihan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Latihan
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ringkasan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ringkasan
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#referensi-resmi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Referensi resmi
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigasi" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../.." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Home
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Operasi
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="persistence">Persistence<a class="headerlink" href="#persistence" title="Permanent link">&para;</a></h1>
+<h2 id="tujuan-belajar">Tujuan belajar<a class="headerlink" href="#tujuan-belajar" title="Permanent link">&para;</a></h2>
+<p>Setelah bab ini kamu bisa:</p>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Menjelaskan kenapa data Redis bisa hilang saat server mati dan apa yang dilakukan persistence.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Membedakan RDB (snapshot) dan AOF (catatan setiap perintah tulis), termasuk kelebihan dan kekurangannya.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Menjalankan Redis di Docker dengan volume, lalu memicu dan memeriksa snapshot dengan <code>BGSAVE</code>, <code>LASTSAVE</code>, dan <code>INFO persistence</code>.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Mengaktifkan AOF, mengenali file di <code>appendonlydir</code>, dan menjalankan <code>BGREWRITEAOF</code>.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Membuat cadangan file RDB dan menjelaskan kenapa pengaturan lewat <code>CONFIG SET</code> bisa hilang saat restart.</li>
+</ul>
+<h2 id="prasyarat">Prasyarat<a class="headerlink" href="#prasyarat" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Sudah membaca <a href="../../pengenalan/instalasi-dengan-docker/">Instalasi dengan Docker</a>, terutama risiko <code>docker rm</code> terhadap data, dan <a href="../../pengenalan/key-dan-expiry/">Key dan expiry</a>.</li>
+<li>Docker terpasang. Image <code>redis:latest</code> yang kamu pakai di bab sebelumnya sudah memenuhi syarat: tata letak file AOF yang dibahas di sini berlaku sejak Redis 7.0.<sup id="fnref16:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>Bab ini membuat container baru bernama <code>redis-persist</code> dan volume <code>redis-data</code>, jadi container <code>redis</code> dari bab sebelumnya tidak tersentuh. Pastikan kedua nama itu belum terpakai (<code>docker ps -a</code> dan <code>docker volume ls</code>).</li>
+</ul>
+<h2 id="konsep">Konsep<a class="headerlink" href="#konsep" title="Permanent link">&para;</a></h2>
+<p>Redis menyimpan data di memori (RAM). Memori itu hilang ketika server mati, container dihapus, atau listrik padam. Kalau Redis hanya dipakai sebagai cache, itu sering tidak masalah karena data bisa dibuat ulang. Tetapi untuk data yang tidak boleh hilang, misalnya antrean pekerjaan atau sesi, kamu butuh <strong>persistence</strong>: menulis data ke penyimpanan tahan lama seperti SSD.<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
+<p>Redis punya dua cara utama, dan keduanya boleh dipakai bersamaan:<sup id="fnref2:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
+<ul>
+<li><strong>RDB (Redis Database)</strong>: mengambil <em>snapshot</em> seluruh data pada waktu tertentu dan menyimpannya di satu file, secara bawaan bernama <code>dump.rdb</code>.</li>
+<li><strong>AOF (Append Only File)</strong>: mencatat setiap perintah tulis yang diterima server. Saat server menyala lagi, catatan itu diputar ulang untuk membangun kembali data.</li>
+</ul>
+<h3 id="analogi">Analogi<a class="headerlink" href="#analogi" title="Permanent link">&para;</a></h3>
+<p>RDB seperti <strong>foto</strong> lemari arsip yang kamu ambil tiap beberapa menit. Memulihkan dari foto itu cepat, tetapi apa pun yang berubah setelah foto terakhir tidak terekam. AOF seperti <strong>buku catatan harian</strong> yang mencatat setiap kali kamu menaruh atau mengambil berkas. Hasil pemulihannya lebih lengkap, tetapi bukunya makin tebal dan membacanya ulang lebih lama.</p>
+<div class="admonition note">
+<p class="admonition-title">Batas analogi</p>
+<p>Buku catatan AOF tidak dibiarkan menebal tanpa batas. Redis bisa menulis ulang (<em>rewrite</em>) catatan itu menjadi versi paling ringkas yang menghasilkan data yang sama.<sup id="fnref17:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
+</div>
+<h2 id="cara-kerja">Cara kerja<a class="headerlink" href="#cara-kerja" title="Permanent link">&para;</a></h2>
+<p>Perbandingan dari dokumentasi resmi:<sup id="fnref3:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th>RDB</th>
+<th>AOF</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Isi</td>
+<td>Satu file padat berisi data pada satu titik waktu</td>
+<td>Log perintah tulis</td>
+</tr>
+<tr>
+<td>Risiko kehilangan data</td>
+<td>Bisa kehilangan data beberapa menit terakhir, sesuai jarak antar snapshot</td>
+<td>Dengan kebijakan bawaan, paling banyak sekitar 1 detik</td>
+</tr>
+<tr>
+<td>Ukuran file</td>
+<td>Lebih kecil</td>
+<td>Biasanya lebih besar</td>
+</tr>
+<tr>
+<td>Kecepatan restart pada data besar</td>
+<td>Lebih cepat</td>
+<td>Lebih lambat</td>
+</tr>
+<tr>
+<td>Cocok untuk</td>
+<td>Cadangan dan pemulihan bencana</td>
+<td>Data yang harus sangat tahan kehilangan</td>
+</tr>
+</tbody>
+</table>
+<p>Dokumentasi resmi menyarankan memakai <strong>keduanya</strong> bila kamu menginginkan keamanan data yang sebanding dengan database seperti PostgreSQL. Bila kamu bisa menerima kehilangan beberapa menit data, RDB saja cukup. AOF saja tidak disarankan karena snapshot RDB berguna untuk cadangan dan restart lebih cepat.<sup id="fnref4:1"><a class="footnote-ref" href="#fn:1">1</a></sup> Bila RDB dan AOF aktif bersamaan lalu Redis restart, <strong>file AOF yang dipakai</strong> untuk membangun ulang data karena dianggap paling lengkap.<sup id="fnref5:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
+<pre class="mermaid"><code>flowchart LR
+    A["Perintah tulis&lt;br/&gt;SET nama Budi"] --&gt; B["Data di memori"]
+    A --&gt; C["AOF: ditambahkan ke log"]
+    B -- "Snapshot berkala&lt;br/&gt;atau BGSAVE" --&gt; D["dump.rdb"]
+    C --&gt; E["appendonlydir/"]
+    D --&gt; F["Restart server"]
+    E --&gt; F
+    F --&gt; G["Data dibangun ulang&lt;br/&gt;(AOF diutamakan bila aktif)"]</code></pre>
+<p><strong>Bagaimana snapshot dibuat.</strong> Redis membuat proses anak lewat <code>fork</code>. Anak itu menulis data ke file sementara, lalu menggantikan file lama saat selesai. Proses utama terus melayani klien.<sup id="fnref6:1"><a class="footnote-ref" href="#fn:1">1</a></sup> Karena file lama baru diganti setelah file baru lengkap, <code>dump.rdb</code> tidak pernah setengah tertulis.</p>
+<p><strong>Seberapa tahan AOF.</strong> Pengaturan <code>appendfsync</code> menentukan seberapa sering log benar-benar dipaksa ke disk:<sup id="fnref7:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
+<table>
+<thead>
+<tr>
+<th>Nilai</th>
+<th>Arti</th>
+<th>Kompromi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>always</code></td>
+<td><code>fsync</code> setiap kali ada tulisan baru</td>
+<td>Paling aman, sangat lambat</td>
+</tr>
+<tr>
+<td><code>everysec</code></td>
+<td><code>fsync</code> tiap detik (<strong>bawaan</strong>)</td>
+<td>Cepat, bisa kehilangan sekitar 1 detik data</td>
+</tr>
+<tr>
+<td><code>no</code></td>
+<td>Diserahkan ke sistem operasi</td>
+<td>Paling cepat, paling tidak aman</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Nilai bawaan tanpa file konfigurasi.</strong> Container Redis yang kamu jalankan di <a href="../../pengenalan/instalasi-dengan-docker/">Instalasi dengan Docker</a> tidak memakai file <code>redis.conf</code>, jadi berlaku nilai bawaan.<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup> Menurut <code>redis.conf</code> Redis 8.0:<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup></p>
+<table>
+<thead>
+<tr>
+<th>Pengaturan</th>
+<th>Nilai bawaan</th>
+<th>Arti</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>save</code></td>
+<td><code>3600 1 300 100 60 10000</code></td>
+<td>Snapshot jika ada ≥1 perubahan dalam 1 jam, ≥100 dalam 5 menit, atau ≥10000 dalam 1 menit. <code>save ""</code> mematikan snapshot.</td>
+</tr>
+<tr>
+<td><code>dbfilename</code></td>
+<td><code>dump.rdb</code></td>
+<td>Nama file snapshot.</td>
+</tr>
+<tr>
+<td><code>dir</code></td>
+<td><code>./</code></td>
+<td>Folder tempat file ditulis.</td>
+</tr>
+<tr>
+<td><code>appendonly</code></td>
+<td><code>no</code></td>
+<td>AOF mati.</td>
+</tr>
+<tr>
+<td><code>appenddirname</code></td>
+<td><code>appendonlydir</code></td>
+<td>Folder file AOF (sejak Redis 7.0).</td>
+</tr>
+<tr>
+<td><code>auto-aof-rewrite-percentage</code> / <code>auto-aof-rewrite-min-size</code></td>
+<td><code>100</code> / <code>64mb</code></td>
+<td>Rewrite otomatis saat AOF tumbuh 100% dan sudah ≥ 64 MB.</td>
+</tr>
+</tbody>
+</table>
+<p>Sejak Redis 7.0, AOF terdiri dari beberapa file di satu folder: satu file <em>base</em> (data awal saat rewrite terakhir), satu atau lebih file <em>incr</em> (perubahan sesudahnya), dan satu file <em>manifest</em> yang mencatat daftarnya.<sup id="fnref8:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
+<div class="admonition warning">
+<p class="admonition-title">Data di dalam container ikut hilang</p>
+<p>Di image resmi, data ditulis ke <code>/data</code>, yang dideklarasikan sebagai volume.<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup> Tanpa <code>-v</code>, Docker membuat volume anonim yang mudah terlupa dan tidak terbawa saat container dibuat ulang. Selalu pasang volume bernama bila datanya penting.</p>
+</div>
+<h2 id="praktik-langkah-demi-langkah">Praktik langkah demi langkah<a class="headerlink" href="#praktik-langkah-demi-langkah" title="Permanent link">&para;</a></h2>
+<p>Output di bawah adalah output yang <strong>diharapkan</strong> berdasarkan dokumentasi, bukan hasil eksekusi di komputermu. Nilai seperti waktu, ukuran file, dan nomor urut file bisa berbeda. Semua perintah dijalankan dari terminal. Perintah <code>docker exec</code> tanpa <code>-it</code> tidak berjalan di terminal, sehingga <code>redis-cli</code> memakai <em>raw output</em>: string tampil tanpa tanda kutip, angka tanpa <code>(integer)</code>, dan nilai kosong (<code>nil</code>) sebagai baris kosong.<sup id="fnref:11"><a class="footnote-ref" href="#fn:11">11</a></sup></p>
+<h3 id="langkah-1-jalankan-redis-dengan-volume-dan-snapshot">Langkah 1: Jalankan Redis dengan volume dan snapshot<a class="headerlink" href="#langkah-1-jalankan-redis-dengan-volume-dan-snapshot" title="Permanent link">&para;</a></h3>
+<p><strong>Lingkungan: terminal</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>redis-persist<span class="w"> </span>-v<span class="w"> </span>redis-data:/data<span class="w"> </span>redis:latest<span class="w"> </span>redis-server<span class="w"> </span>--save<span class="w"> </span><span class="m">60</span><span class="w"> </span><span class="m">1</span>
+</span></code></pre></div>
+<p>Kenapa langkah ini diperlukan: tanpa volume, file <code>dump.rdb</code> terkubur di dalam container. Dengan <code>-v redis-data:/data</code>, file disimpan di volume bernama yang bertahan walau container dihapus.<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup></p>
+<table>
+<thead>
+<tr>
+<th>Bagian</th>
+<th>Fungsi dan alasan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>-v redis-data:/data</code></td>
+<td>Menempelkan volume <code>redis-data</code> ke folder <code>/data</code>, tempat Redis menulis file.</td>
+</tr>
+<tr>
+<td><code>redis-server --save 60 1</code></td>
+<td>Menimpa aturan snapshot bawaan: simpan setiap 60 detik bila ada minimal 1 perubahan. Dipilih supaya pengujian tidak menunggu satu jam.<sup id="fnref4:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
+</tr>
+<tr>
+<td>Tanpa <code>-p</code></td>
+<td>Port tidak dibuka ke komputer. Kita memakai <code>docker exec</code>, sehingga lebih aman.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Diharapkan:</strong> satu ID container yang panjang.</p>
+<h3 id="langkah-2-periksa-pengaturan-persistence-yang-aktif">Langkah 2: Periksa pengaturan persistence yang aktif<a class="headerlink" href="#langkah-2-periksa-pengaturan-persistence-yang-aktif" title="Permanent link">&para;</a></h3>
+<p><strong>Lingkungan: terminal</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>redis-persist<span class="w"> </span>redis-cli<span class="w"> </span>CONFIG<span class="w"> </span>GET<span class="w"> </span>save
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>redis-persist<span class="w"> </span>redis-cli<span class="w"> </span>CONFIG<span class="w"> </span>GET<span class="w"> </span>appendonly
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>redis-persist<span class="w"> </span>redis-cli<span class="w"> </span>CONFIG<span class="w"> </span>GET<span class="w"> </span>dir
+</span></code></pre></div>
+<p>Kenapa: jangan menebak. <code>CONFIG GET</code> menunjukkan nilai yang benar-benar dipakai server, dan memastikan <code>--save 60 1</code> terbaca.</p>
+<p><strong>Diharapkan:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>save
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>60 1
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>appendonly
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>no
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>dir
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>/data
+</span></code></pre></div>
+<p>Cara membaca: <code>redis-cli</code> dalam mode satu kali jalan mencetak nama pengaturan lalu nilainya. <code>appendonly no</code> berarti AOF belum aktif. <code>dir</code> yang bernilai <code>/data</code> memastikan file jatuh ke volume.</p>
+<h3 id="langkah-3-buat-data-lalu-paksa-snapshot-dengan-bgsave">Langkah 3: Buat data lalu paksa snapshot dengan <code>BGSAVE</code><a class="headerlink" href="#langkah-3-buat-data-lalu-paksa-snapshot-dengan-bgsave" title="Permanent link">&para;</a></h3>
+<p><strong>Lingkungan: terminal</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>redis-persist<span class="w"> </span>redis-cli<span class="w"> </span>SET<span class="w"> </span>nama<span class="w"> </span><span class="s2">"Budi"</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>redis-persist<span class="w"> </span>redis-cli<span class="w"> </span>LASTSAVE
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>redis-persist<span class="w"> </span>redis-cli<span class="w"> </span>BGSAVE
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>redis-persist<span class="w"> </span>redis-cli<span class="w"> </span>LASTSAVE
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>redis-persist<span class="w"> </span>ls<span class="w"> </span>-l<span class="w"> </span>/data
+</span></code></pre></div>
+<p>Kenapa: <code>BGSAVE</code> membuat snapshot di latar belakang tanpa memblokir klien. <code>LASTSAVE</code> sebelum dan sesudahnya membuktikan snapshot benar-benar tersimpan.<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup><sup id="fnref:5"><a class="footnote-ref" href="#fn:5">5</a></sup></p>
+<table>
+<thead>
+<tr>
+<th>Perintah</th>
+<th>Fungsi dan alasan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>BGSAVE</code></td>
+<td>Fork lalu simpan di proses anak. Dipakai di produksi. Memakai <code>SAVE</code> akan memblokir semua klien.<sup id="fnref2:6"><a class="footnote-ref" href="#fn:6">6</a></sup></td>
+</tr>
+<tr>
+<td><code>LASTSAVE</code></td>
+<td>Waktu Unix snapshot sukses terakhir. Bila angkanya naik, snapshot selesai.<sup id="fnref2:5"><a class="footnote-ref" href="#fn:5">5</a></sup></td>
+</tr>
+<tr>
+<td><code>ls -l /data</code></td>
+<td>Melihat file di dalam volume.</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Diharapkan:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>OK
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>1761561600
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>Background saving started
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>1761561725
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>total 4
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>-rw-r--r-- 1 redis redis 88 Oct 27 10:02 dump.rdb
+</span></code></pre></div>
+<p>Cara membaca: dua angka <code>LASTSAVE</code> berbeda dan yang kedua lebih besar. Bila sama, snapshot belum selesai: tunggu sebentar lalu ulangi <code>LASTSAVE</code>. Ukuran file kecil karena datanya hanya satu key.</p>
+<div class="admonition danger">
+<p class="admonition-title">Jangan pakai <code>SAVE</code> di server yang melayani klien</p>
+<p><code>SAVE</code> bersifat sinkron dan memblokir semua klien sampai selesai.<sup id="fnref:6"><a class="footnote-ref" href="#fn:6">6</a></sup> Dokumentasi resmi hanya menyebutnya sebagai pilihan terakhir bila <code>fork</code> gagal.</p>
+</div>
+<h3 id="langkah-4-lihat-sendiri-data-yang-hilang-tanpa-snapshot">Langkah 4: Lihat sendiri data yang hilang tanpa snapshot<a class="headerlink" href="#langkah-4-lihat-sendiri-data-yang-hilang-tanpa-snapshot" title="Permanent link">&para;</a></h3>
+<p><strong>Lingkungan: terminal</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>redis-persist<span class="w"> </span>redis-cli<span class="w"> </span>SET<span class="w"> </span>kota<span class="w"> </span><span class="s2">"Bandung"</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a>docker<span class="w"> </span><span class="nb">kill</span><span class="w"> </span>redis-persist
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>docker<span class="w"> </span>start<span class="w"> </span>redis-persist
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>redis-persist<span class="w"> </span>redis-cli<span class="w"> </span>GET<span class="w"> </span>nama
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>redis-persist<span class="w"> </span>redis-cli<span class="w"> </span>GET<span class="w"> </span>kota
+</span></code></pre></div>
+<p>Kenapa: ini mensimulasikan listrik padam. <code>docker kill</code> mengirim <code>SIGKILL</code>, jadi Redis tidak sempat menyimpan apa pun. Jalankan semua perintah di atas <strong>dalam 60 detik</strong> setelah Langkah 3, sebelum aturan <code>save 60 1</code> memicu snapshot otomatis.</p>
+<p><strong>Diharapkan:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>OK
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>redis-persist
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a>redis-persist
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a>Budi
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a>&lt;baris kosong&gt;
+</span></code></pre></div>
+<p>Cara membaca: <code>nama</code> selamat karena sudah masuk snapshot di Langkah 3. <code>kota</code> hilang karena ditulis setelah snapshot dan sebelum snapshot berikutnya. Inilah kelemahan RDB. Nilai kosong <code>kota</code> tampil sebagai baris kosong, bukan <code>(nil)</code>, karena mode raw. Bila kamu lambat lebih dari 60 detik, <code>kota</code> mungkin sudah tersimpan oleh aturan otomatis, dan itu wajar.</p>
+<div class="admonition note">
+<p class="admonition-title">Mematikan dengan baik berbeda</p>
+<p><code>docker stop</code> mengirim <code>SIGTERM</code>. Redis menanganinya seperti <code>SHUTDOWN</code>: bila ada save point, Redis menyimpan RDB dulu sebelum keluar.<sup id="fnref:7"><a class="footnote-ref" href="#fn:7">7</a></sup> Data hanya hilang pada kematian mendadak seperti <code>kill -9</code>, listrik padam, atau crash.</p>
+</div>
+<h3 id="langkah-5-aktifkan-aof-pada-server-yang-sedang-berjalan">Langkah 5: Aktifkan AOF pada server yang sedang berjalan<a class="headerlink" href="#langkah-5-aktifkan-aof-pada-server-yang-sedang-berjalan" title="Permanent link">&para;</a></h3>
+<p><strong>Lingkungan: terminal</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>redis-persist<span class="w"> </span>redis-cli<span class="w"> </span>CONFIG<span class="w"> </span>SET<span class="w"> </span>appendonly<span class="w"> </span>yes
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>redis-persist<span class="w"> </span>sh<span class="w"> </span>-c<span class="w"> </span><span class="s2">"redis-cli INFO persistence | grep -E 'aof_enabled|aof_rewrite_in_progress|aof_last_bgrewrite_status'"</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>redis-persist<span class="w"> </span>ls<span class="w"> </span>-l<span class="w"> </span>/data/appendonlydir
+</span></code></pre></div>
+<p>Kenapa: dokumentasi resmi menyarankan mengaktifkan AOF lewat <code>CONFIG SET</code> pada server yang hidup, supaya Redis langsung membuat file AOF awal dari data di memori. Hanya mengubah konfigurasi lalu restart bisa menyebabkan kehilangan data.<sup id="fnref9:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref:8"><a class="footnote-ref" href="#fn:8">8</a></sup></p>
+<p><strong>Diharapkan:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>OK
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>aof_enabled:1
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>aof_rewrite_in_progress:0
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>aof_last_bgrewrite_status:ok
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>total 12
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>-rw-r--r-- 1 redis redis 88 Oct 27 10:05 appendonly.aof.1.base.rdb
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>-rw-r--r-- 1 redis redis  0 Oct 27 10:05 appendonly.aof.1.incr.aof
+</span><span id="__span-8-8"><a id="__codelineno-8-8" name="__codelineno-8-8" href="#__codelineno-8-8"></a>-rw-r--r-- 1 redis redis 88 Oct 27 10:05 appendonly.aof.manifest
+</span></code></pre></div>
+<p>Cara membaca: <code>aof_enabled:1</code> berarti AOF aktif. Tunggu sampai <code>aof_rewrite_in_progress</code> bernilai <code>0</code> dan <code>aof_last_bgrewrite_status</code> bernilai <code>ok</code> sebelum menganggap file AOF awal siap.<sup id="fnref10:1"><a class="footnote-ref" href="#fn:1">1</a></sup> Tiga file di folder itu adalah file <em>base</em>, <em>incr</em>, dan <em>manifest</em>.</p>
+<h3 id="langkah-6-pahami-jebakan-config-set-lalu-buat-ulang-container-dengan-konfigurasi-tetap">Langkah 6: Pahami jebakan <code>CONFIG SET</code>, lalu buat ulang container dengan konfigurasi tetap<a class="headerlink" href="#langkah-6-pahami-jebakan-config-set-lalu-buat-ulang-container-dengan-konfigurasi-tetap" title="Permanent link">&para;</a></h3>
+<p><code>CONFIG SET</code> hanya mengubah server yang sedang berjalan. Perintah awal container (<code>--save 60 1</code>) tidak berubah, jadi <code>docker restart</code> akan menyalakan Redis lagi <strong>tanpa AOF</strong>.<sup id="fnref:9"><a class="footnote-ref" href="#fn:9">9</a></sup> Itu sebabnya dokumentasi resmi menekankan mengubah konfigurasi permanen juga.<sup id="fnref11:1"><a class="footnote-ref" href="#fn:1">1</a></sup> Di Docker, cara termudah adalah membuat ulang container dengan opsi yang benar. Volume <code>redis-data</code> tidak ikut terhapus.</p>
+<p><strong>Lingkungan: terminal</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>docker<span class="w"> </span>rm<span class="w"> </span>-f<span class="w"> </span>redis-persist
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>redis-persist<span class="w"> </span>-v<span class="w"> </span>redis-data:/data<span class="w"> </span>redis:latest<span class="w"> </span>redis-server<span class="w"> </span>--save<span class="w"> </span><span class="m">60</span><span class="w"> </span><span class="m">1</span><span class="w"> </span>--appendonly<span class="w"> </span>yes
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>redis-persist<span class="w"> </span>redis-cli<span class="w"> </span>GET<span class="w"> </span>nama
+</span></code></pre></div>
+<div class="admonition danger">
+<p class="admonition-title">Risiko kehilangan data</p>
+<p><code>docker rm -f</code> menghapus container, bukan volume. Karena kita memakai <code>-v redis-data:/data</code>, datanya tetap ada. Jangan tambahkan <code>-v</code> pada <code>docker rm</code> atau menghapus volume <code>redis-data</code> sebelum selesai bab ini.</p>
+</div>
+<p><strong>Diharapkan:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a>redis-persist
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>&lt;ID container panjang&gt;
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>Budi
+</span></code></pre></div>
+<p>Cara membaca: <code>"Budi"</code> kembali karena Redis memuat data dari AOF (dan snapshot) di volume.</p>
+<h3 id="langkah-7-buktikan-aof-menahan-kehilangan-data">Langkah 7: Buktikan AOF menahan kehilangan data<a class="headerlink" href="#langkah-7-buktikan-aof-menahan-kehilangan-data" title="Permanent link">&para;</a></h3>
+<p><strong>Lingkungan: terminal</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>redis-persist<span class="w"> </span>redis-cli<span class="w"> </span>SET<span class="w"> </span>kota<span class="w"> </span><span class="s2">"Bandung"</span>
+</span></code></pre></div>
+<p>Tunggu 2–3 detik supaya <code>fsync</code> per detik sempat berjalan, lalu:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-12-1"><a id="__codelineno-12-1" name="__codelineno-12-1" href="#__codelineno-12-1"></a>docker<span class="w"> </span><span class="nb">kill</span><span class="w"> </span>redis-persist
+</span><span id="__span-12-2"><a id="__codelineno-12-2" name="__codelineno-12-2" href="#__codelineno-12-2"></a>docker<span class="w"> </span>start<span class="w"> </span>redis-persist
+</span><span id="__span-12-3"><a id="__codelineno-12-3" name="__codelineno-12-3" href="#__codelineno-12-3"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>redis-persist<span class="w"> </span>redis-cli<span class="w"> </span>GET<span class="w"> </span>kota
+</span></code></pre></div>
+<p>Kenapa menunggu: dengan <code>appendfsync everysec</code> (bawaan), kamu bisa kehilangan sekitar 1 detik tulisan terakhir.<sup id="fnref12:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
+<p><strong>Diharapkan:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-13-1"><a id="__codelineno-13-1" name="__codelineno-13-1" href="#__codelineno-13-1"></a>OK
+</span><span id="__span-13-2"><a id="__codelineno-13-2" name="__codelineno-13-2" href="#__codelineno-13-2"></a>redis-persist
+</span><span id="__span-13-3"><a id="__codelineno-13-3" name="__codelineno-13-3" href="#__codelineno-13-3"></a>redis-persist
+</span><span id="__span-13-4"><a id="__codelineno-13-4" name="__codelineno-13-4" href="#__codelineno-13-4"></a>Bandung
+</span></code></pre></div>
+<p>Cara membaca: berbeda dengan Langkah 4, <code>kota</code> selamat karena perintah <code>SET</code> sudah tercatat di file incr AOF.</p>
+<h3 id="langkah-8-padatkan-aof-dengan-bgrewriteaof">Langkah 8: Padatkan AOF dengan <code>BGREWRITEAOF</code><a class="headerlink" href="#langkah-8-padatkan-aof-dengan-bgrewriteaof" title="Permanent link">&para;</a></h3>
+<p><strong>Lingkungan: terminal</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-14-1"><a id="__codelineno-14-1" name="__codelineno-14-1" href="#__codelineno-14-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>redis-persist<span class="w"> </span>redis-cli<span class="w"> </span>BGREWRITEAOF
+</span><span id="__span-14-2"><a id="__codelineno-14-2" name="__codelineno-14-2" href="#__codelineno-14-2"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>redis-persist<span class="w"> </span>ls<span class="w"> </span>/data/appendonlydir
+</span></code></pre></div>
+<p>Kenapa: log AOF terus tumbuh. Bila sebuah counter dinaikkan 100 kali, log menyimpan 100 entri padahal hanya nilai akhir yang dibutuhkan. Rewrite membuat versi paling ringkas.<sup id="fnref13:1"><a class="footnote-ref" href="#fn:1">1</a></sup> Redis menjalankannya otomatis, tetapi kamu bisa memicunya manual.<sup id="fnref:10"><a class="footnote-ref" href="#fn:10">10</a></sup></p>
+<p><strong>Diharapkan:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-15-1"><a id="__codelineno-15-1" name="__codelineno-15-1" href="#__codelineno-15-1"></a>Background append only file rewriting started
+</span><span id="__span-15-2"><a id="__codelineno-15-2" name="__codelineno-15-2" href="#__codelineno-15-2"></a>appendonly.aof.2.base.rdb
+</span><span id="__span-15-3"><a id="__codelineno-15-3" name="__codelineno-15-3" href="#__codelineno-15-3"></a>appendonly.aof.2.incr.aof
+</span><span id="__span-15-4"><a id="__codelineno-15-4" name="__codelineno-15-4" href="#__codelineno-15-4"></a>appendonly.aof.manifest
+</span></code></pre></div>
+<p>Cara membaca: nomor file naik (misalnya dari <code>1</code> ke <code>2</code>) karena rewrite membuat file <em>base</em> baru lalu menghapus yang lama. Bila Redis sedang membuat snapshot, rewrite dijadwalkan dan baru mulai setelah snapshot selesai.<sup id="fnref2:10"><a class="footnote-ref" href="#fn:10">10</a></sup> Bila rewrite lain sedang berjalan, kamu mendapat galat.</p>
+<h3 id="langkah-9-buat-cadangan-file-rdb">Langkah 9: Buat cadangan file RDB<a class="headerlink" href="#langkah-9-buat-cadangan-file-rdb" title="Permanent link">&para;</a></h3>
+<p><strong>Lingkungan: terminal</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-16-1"><a id="__codelineno-16-1" name="__codelineno-16-1" href="#__codelineno-16-1"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>redis-persist<span class="w"> </span>redis-cli<span class="w"> </span>BGSAVE
+</span><span id="__span-16-2"><a id="__codelineno-16-2" name="__codelineno-16-2" href="#__codelineno-16-2"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>redis-persist<span class="w"> </span>redis-cli<span class="w"> </span>LASTSAVE
+</span><span id="__span-16-3"><a id="__codelineno-16-3" name="__codelineno-16-3" href="#__codelineno-16-3"></a>docker<span class="w"> </span>cp<span class="w"> </span>redis-persist:/data/dump.rdb<span class="w"> </span>./dump-cadangan.rdb
+</span></code></pre></div>
+<p>Kenapa: cadangan harus berada di luar volume, idealnya di luar mesin. Menyalin file RDB aman walau server sedang berjalan, karena file RDB tidak pernah diubah setelah dibuat dan file baru memakai nama sementara lalu di-<em>rename</em> secara atomik setelah selesai.<sup id="fnref14:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
+<p><strong>Diharapkan:</strong> <code>docker cp</code> tidak mencetak apa pun bila berhasil, dan file <code>dump-cadangan.rdb</code> muncul di folder tempat kamu menjalankannya. Pastikan <code>LASTSAVE</code> sudah naik sebelum menyalin.</p>
+<p>Aturan cadangan dari dokumentasi resmi:<sup id="fnref15:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
+<ul>
+<li>Buat snapshot terjadwal, misalnya per jam dan per hari, dengan nama berisi tanggal dan jam, lalu hapus yang sudah terlalu lama.</li>
+<li>Minimal sekali sehari, pindahkan satu salinan <strong>ke luar mesin</strong> atau pusat data.</li>
+<li>Setelah memindahkan, periksa ukuran file (dan idealnya SHA1) dan pasang peringatan bila transfer gagal.</li>
+</ul>
+<div class="admonition warning">
+<p class="admonition-title">Cadangan AOF lebih rumit</p>
+<p>Menyalin folder <code>appendonlydir</code> saat rewrite berlangsung bisa menghasilkan cadangan yang tidak valid. Dokumentasi resmi menyarankan mematikan rewrite otomatis sementara (<code>CONFIG SET auto-aof-rewrite-percentage 0</code>), memastikan <code>aof_rewrite_in_progress</code> bernilai <code>0</code>, menyalin folder, lalu mengembalikan nilai semula.<sup id="fnref18:1"><a class="footnote-ref" href="#fn:1">1</a></sup> Redis versi terbaru juga punya keluarga perintah <code>BACKUP</code> untuk ini; lihat dokumentasi persistence.<sup id="fnref19:1"><a class="footnote-ref" href="#fn:1">1</a></sup></p>
+</div>
+<h3 id="langkah-10-bersihkan">Langkah 10: Bersihkan<a class="headerlink" href="#langkah-10-bersihkan" title="Permanent link">&para;</a></h3>
+<p><strong>Lingkungan: terminal</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-17-1"><a id="__codelineno-17-1" name="__codelineno-17-1" href="#__codelineno-17-1"></a>docker<span class="w"> </span>rm<span class="w"> </span>-f<span class="w"> </span>redis-persist
+</span><span id="__span-17-2"><a id="__codelineno-17-2" name="__codelineno-17-2" href="#__codelineno-17-2"></a>docker<span class="w"> </span>volume<span class="w"> </span>rm<span class="w"> </span>redis-data
+</span></code></pre></div>
+<div class="admonition danger">
+<p class="admonition-title">Perintah ini menghapus data</p>
+<p><code>docker volume rm redis-data</code> menghapus seluruh file persistence (<code>dump.rdb</code> dan <code>appendonlydir</code>) secara permanen. Lakukan hanya bila kamu sudah selesai berlatih. <code>dump-cadangan.rdb</code> di folder kerjamu tidak terpengaruh.</p>
+</div>
+<h2 id="kesalahan-umum-dan-troubleshooting">Kesalahan umum dan troubleshooting<a class="headerlink" href="#kesalahan-umum-dan-troubleshooting" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Gejala</th>
+<th>Penyebab dan solusi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>LASTSAVE</code> tidak naik setelah <code>BGSAVE</code></td>
+<td>Snapshot belum selesai atau gagal. Cek <code>rdb_last_bgsave_status</code> di <code>INFO persistence</code>; nilainya harus <code>ok</code>.</td>
+</tr>
+<tr>
+<td><code>BGSAVE</code> membalas galat</td>
+<td>Sudah ada <code>BGSAVE</code> atau rewrite AOF yang berjalan. Tunggu, atau pakai <code>BGSAVE SCHEDULE</code> agar dijadwalkan.<sup id="fnref2:4"><a class="footnote-ref" href="#fn:4">4</a></sup></td>
+</tr>
+<tr>
+<td>Data hilang setelah <code>docker rm</code> lalu <code>docker run</code></td>
+<td>Volume tidak dipasang atau namanya berbeda. Pakai <code>-v redis-data:/data</code> yang sama setiap kali.</td>
+</tr>
+<tr>
+<td>AOF aktif lewat <code>CONFIG SET</code>, tetapi mati setelah <code>docker restart</code></td>
+<td><code>CONFIG SET</code> tidak mengubah perintah awal container. Tambahkan <code>--appendonly yes</code> saat <code>docker run</code>, atau ubah <code>redis.conf</code> / <code>CONFIG REWRITE</code>.<sup id="fnref20:1"><a class="footnote-ref" href="#fn:1">1</a></sup><sup id="fnref2:8"><a class="footnote-ref" href="#fn:8">8</a></sup></td>
+</tr>
+<tr>
+<td>Data terbaru hilang setelah <code>docker kill</code></td>
+<td>Hanya RDB aktif, atau AOF memakai <code>everysec</code> sehingga ~1 detik tulisan terakhir bisa hilang. Pakai AOF, atau <code>appendfsync always</code> bila butuh lebih aman (lebih lambat).<sup id="fnref21:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+</tr>
+<tr>
+<td>Log: <code>short read while loading the AOF file</code> / <code>Truncating the AOF</code></td>
+<td>File AOF terpotong karena crash saat menulis. Redis versi baru tetap memuatnya dan membuang perintah terakhir yang tidak utuh.<sup id="fnref22:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+</tr>
+<tr>
+<td>Log: <code>Bad file format reading the append only file</code></td>
+<td>AOF rusak di tengah. Cadangkan file, jalankan <code>redis-check-aof</code> tanpa <code>--fix</code> untuk melihat masalahnya. <code>--fix</code> bisa membuang bagian file dari titik rusak hingga akhir.<sup id="fnref23:1"><a class="footnote-ref" href="#fn:1">1</a></sup></td>
+</tr>
+<tr>
+<td>Container tidak bisa menulis ke <code>/data</code></td>
+<td>Folder yang dipetakan harus bisa ditulis oleh proses Redis.<sup id="fnref5:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Status verifikasi</p>
+<p>Sintaks perintah, nama pengaturan, nilai bawaan, dan perilaku dicocokkan dengan dokumentasi resmi Redis dan Docker Hub. Perintah dan blok output di bab ini belum dijalankan di Redis nyata saat bab ini ditulis, jadi bandingkan dengan hasilmu sendiri. Teks persis balasan <code>BGREWRITEAOF</code> dan nomor file AOF khususnya perlu dicocokkan.</p>
+</div>
+<h2 id="latihan">Latihan<a class="headerlink" href="#latihan" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Jalankan Langkah 1–3, lalu periksa <code>INFO persistence</code> dan temukan nilai <code>rdb_changes_since_last_save</code> sebelum dan sesudah <code>BGSAVE</code>. Apa artinya angka itu?</li>
+<li>Sebelum menjalankan: bila kamu <code>SET x 1</code>, menunggu 2 detik, lalu <code>docker kill</code> pada server yang hanya memakai RDB dengan <code>save 3600 1</code>, apakah <code>x</code> selamat? Jalankan dan bandingkan.</li>
+<li>Aktifkan AOF dengan <code>appendfsync always</code> lewat <code>CONFIG SET appendfsync always</code>, lalu jelaskan kenapa pengaturan ini lebih aman tetapi lebih lambat.</li>
+<li>Lakukan <code>INCR hitung</code> sebanyak 50 kali, jalankan <code>BGREWRITEAOF</code>, dan bandingkan isi folder <code>appendonlydir</code> sebelum dan sesudahnya. Kenapa ukurannya bisa berbeda?</li>
+<li>Jelaskan dengan kata-katamu kenapa sebaiknya memakai RDB dan AOF bersamaan, dan mana yang dipakai saat Redis restart.</li>
+</ol>
+<details class="success">
+<summary>Petunjuk</summary>
+<ol>
+<li>Angka itu menghitung perubahan sejak snapshot terakhir.</li>
+<li>Ingat: tanpa snapshot baru, hanya data dari snapshot terakhir yang ada.</li>
+<li>Pikirkan seberapa sering <code>fsync</code> terjadi pada tiap kebijakan.</li>
+<li>Rewrite menyimpan perintah minimal yang membentuk data saat ini.</li>
+<li>Lihat bagian "Cara kerja" untuk alasan dan urutan prioritas.</li>
+</ol>
+</details>
+<h2 id="ringkasan">Ringkasan<a class="headerlink" href="#ringkasan" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Redis menyimpan data di memori; <strong>persistence</strong> menulisnya ke disk agar bertahan saat restart atau mati mendadak.</li>
+<li><strong>RDB</strong> adalah snapshot berkala (<code>dump.rdb</code>): ringkas dan cocok untuk cadangan, tetapi bisa kehilangan data beberapa menit. <strong>AOF</strong> mencatat setiap perintah tulis: lebih tahan (bawaan <code>everysec</code>, ~1 detik), tetapi lebih besar. Gunakan keduanya bila data penting.</li>
+<li><code>BGSAVE</code> dan <code>LASTSAVE</code> membuat dan memastikan snapshot; <code>CONFIG SET appendonly yes</code> mengaktifkan AOF pada server hidup; <code>BGREWRITEAOF</code> memadatkan log; <code>INFO persistence</code> memeriksa status.</li>
+<li>Di Docker, selalu pakai volume untuk <code>/data</code>, dan simpan pengaturan di perintah <code>docker run</code> atau <code>redis.conf</code>, karena <code>CONFIG SET</code> hilang saat restart.</li>
+<li>Cadangan: salin <code>dump.rdb</code> secara rutin dan simpan di luar mesin. Hindari <code>SAVE</code> di produksi dan hati-hati dengan <code>docker volume rm</code>.</li>
+</ul>
+<p>Berikutnya: <a href="../keamanan/">Keamanan</a>, yang membahas ACL, password, jaringan, dan TLS.</p>
+<h2 id="referensi-resmi">Referensi resmi<a class="headerlink" href="#referensi-resmi" title="Permanent link">&para;</a></h2>
+<p>Bacaan tambahan: <a href="https://redis.io/docs/latest/commands/info/"><code>INFO</code></a>, <a href="https://redis.io/docs/latest/commands/config-rewrite/"><code>CONFIG REWRITE</code></a>, <a href="https://redis.io/docs/latest/commands/shutdown/"><code>SHUTDOWN</code></a>.</p>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>Redis, <em>Redis persistence</em>: <a href="https://redis.io/docs/latest/operate/oss_and_stack/management/persistence/">https://redis.io/docs/latest/operate/oss_and_stack/management/persistence/</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref6:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref7:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref8:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref9:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref10:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref11:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref12:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref13:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref14:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref15:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref16:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref17:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref18:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref19:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref20:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref21:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref22:1" title="Jump back to footnote 1 in the text">&#8617;</a><a class="footnote-backref" href="#fnref23:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p>Docker Hub, <em>redis (Official Image)</em>: <a href="https://hub.docker.com/_/redis">https://hub.docker.com/_/redis</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref4:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref5:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p>Redis, <code>redis.conf</code> (8.0): <a href="https://raw.githubusercontent.com/redis/redis/8.0/redis.conf">https://raw.githubusercontent.com/redis/redis/8.0/redis.conf</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:4">
+<p>Redis, <em>BGSAVE</em>: <a href="https://redis.io/docs/latest/commands/bgsave/">https://redis.io/docs/latest/commands/bgsave/</a>&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:5">
+<p>Redis, <em>LASTSAVE</em>: <a href="https://redis.io/docs/latest/commands/lastsave/">https://redis.io/docs/latest/commands/lastsave/</a>&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 5 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:5" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+</li>
+<li id="fn:6">
+<p>Redis, <em>SAVE</em>: <a href="https://redis.io/docs/latest/commands/save/">https://redis.io/docs/latest/commands/save/</a>&#160;<a class="footnote-backref" href="#fnref:6" title="Jump back to footnote 6 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:6" title="Jump back to footnote 6 in the text">&#8617;</a></p>
+</li>
+<li id="fn:7">
+<p>Redis, <em>SHUTDOWN</em>: <a href="https://redis.io/docs/latest/commands/shutdown/">https://redis.io/docs/latest/commands/shutdown/</a>&#160;<a class="footnote-backref" href="#fnref:7" title="Jump back to footnote 7 in the text">&#8617;</a></p>
+</li>
+<li id="fn:8">
+<p>Redis, <em>CONFIG SET</em>: <a href="https://redis.io/docs/latest/commands/config-set/">https://redis.io/docs/latest/commands/config-set/</a>&#160;<a class="footnote-backref" href="#fnref:8" title="Jump back to footnote 8 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:8" title="Jump back to footnote 8 in the text">&#8617;</a></p>
+</li>
+<li id="fn:9">
+<p>Redis, <em>Redis configuration</em>: <a href="https://redis.io/docs/latest/operate/oss_and_stack/management/config/">https://redis.io/docs/latest/operate/oss_and_stack/management/config/</a>&#160;<a class="footnote-backref" href="#fnref:9" title="Jump back to footnote 9 in the text">&#8617;</a></p>
+</li>
+<li id="fn:10">
+<p>Redis, <em>BGREWRITEAOF</em>: <a href="https://redis.io/docs/latest/commands/bgrewriteaof/">https://redis.io/docs/latest/commands/bgrewriteaof/</a>&#160;<a class="footnote-backref" href="#fnref:10" title="Jump back to footnote 10 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:10" title="Jump back to footnote 10 in the text">&#8617;</a></p>
+</li>
+<li id="fn:11">
+<p>Redis, <em>Redis CLI</em> (<code>redis-cli</code> memakai raw output bila stdout bukan terminal): <a href="https://redis.io/docs/latest/develop/tools/cli/">https://redis.io/docs/latest/develop/tools/cli/</a>&#160;<a class="footnote-backref" href="#fnref:11" title="Jump back to footnote 11 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Kembali ke atas
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Sebelumnya: Operasi">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Sebelumnya
+              </span>
+              <div class="md-ellipsis">
+                Operasi
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../keamanan/" class="md-footer__link md-footer__link--next" aria-label="Selanjutnya: Keamanan">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Selanjutnya
+              </span>
+              <div class="md-ellipsis">
+                Keamanan
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.indexes", "navigation.path", "navigation.footer", "navigation.top", "navigation.tracking", "toc.follow", "search.highlight", "search.suggest", "content.code.copy", "content.code.annotate", "content.tabs.link"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Tersalin ke clipboard", "clipboard.copy": "Salin ke clipboard", "search.result.more.one": "1 lagi di halaman ini", "search.result.more.other": "# lagi di halaman ini", "search.result.none": "Tidak ada dokumen yang sesuai", "search.result.one": "1 dokumen ditemukan", "search.result.other": "# dokumen ditemukan", "search.result.placeholder": "Ketik untuk mulai pencarian", "search.result.term.missing": "Tidak ada", "select.version": "Pilih versi"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../../assets/vendor/mermaid/mermaid.min.js"></script>
+      
+        <script src="../../javascripts/mermaid-config.js"></script>
+      
+        <script src="../../javascripts/mathjax.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

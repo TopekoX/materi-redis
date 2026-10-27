@@ -1,0 +1,2956 @@
+
+<!doctype html>
+<html lang="id" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Materi Redis untuk pemula, dari dasar sampai penerapan.">
+      
+      
+      
+        <link rel="canonical" href="https://topekox.github.io/materi-redis/proyek-akhir/perancangan/">
+      
+      
+        <link rel="prev" href="../">
+      
+      
+        <link rel="next" href="../implementasi-api/">
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>Perancangan - Belajar Redis</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.ab4e12ef.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+    
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    
+    
+      
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#perancangan" class="md-skip">
+          Lewati ke isi
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Belajar Redis" class="md-header__button md-logo" aria-label="Belajar Redis" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Belajar Redis
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Perancangan
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+        <form class="md-header__option" data-md-component="palette">
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Theme: system (click for light)"  type="radio" name="__palette" id="__palette_0">
+    
+      <label class="md-header__button md-icon" title="Theme: system (click for light)" for="__palette_1" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="m14.3 16-.7-2h-3.2l-.7 2H7.8L11 7h2l3.2 9zM20 8.69V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12zm-9.15 3.96h2.3L12 9z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: light)" data-md-color-scheme="default" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Theme: light (click for dark)"  type="radio" name="__palette" id="__palette_1">
+    
+      <label class="md-header__button md-icon" title="Theme: light (click for dark)" for="__palette_2" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a4 4 0 0 0-4 4 4 4 0 0 0 4 4 4 4 0 0 0 4-4 4 4 0 0 0-4-4m0 10a6 6 0 0 1-6-6 6 6 0 0 1 6-6 6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+    
+    
+    
+    <input class="md-option" data-md-color-media="(prefers-color-scheme: dark)" data-md-color-scheme="slate" data-md-color-primary="indigo" data-md-color-accent="indigo"  aria-label="Theme: dark (click for system)"  type="radio" name="__palette" id="__palette_2">
+    
+      <label class="md-header__button md-icon" title="Theme: dark (click for system)" for="__palette_0" hidden>
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 18c-.89 0-1.74-.2-2.5-.55C11.56 16.5 13 14.42 13 12s-1.44-4.5-3.5-5.45C10.26 6.2 11.11 6 12 6a6 6 0 0 1 6 6 6 6 0 0 1-6 6m8-9.31V4h-4.69L12 .69 8.69 4H4v4.69L.69 12 4 15.31V20h4.69L12 23.31 15.31 20H20v-4.69L23.31 12z"/></svg>
+      </label>
+    
+  
+</form>
+      
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+      
+      
+        <label class="md-header__button md-icon" for="__search">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        </label>
+        <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Cari" placeholder="Cari" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.52 6.52 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Cari">
+        
+        <button type="reset" class="md-search__icon md-icon" title="Kosongkan" aria-label="Kosongkan" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" tabindex="0" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Mempersiapkan pencarian
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+      
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigasi" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Belajar Redis" class="md-nav__button md-logo" aria-label="Belajar Redis" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    Belajar Redis
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Home
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../pengenalan/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pengenalan
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_2" id="__nav_2_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Pengenalan
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pengenalan/apa-itu-redis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Apa itu Redis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pengenalan/instalasi-dengan-docker/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Instalasi dengan Docker
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pengenalan/menjalankan-redis-cli-pertama-kali/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Menjalankan redis-cli pertama kali
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pengenalan/key-dan-expiry/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Key dan expiry
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../struktur-data/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Struktur Data
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_3" id="__nav_3_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Struktur Data
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../struktur-data/string/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    String
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../struktur-data/hash/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Hash
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../struktur-data/list/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    List
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../struktur-data/set/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Set
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../struktur-data/sorted-set/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Sorted Set
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../struktur-data/bitmap-hyperloglog-geo/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Bitmap, HyperLogLog, dan Geo
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../struktur-data/memilih-struktur-data-yang-tepat/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Memilih struktur data yang tepat
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../pola-aplikasi/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pola Penerapan
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_4" id="__nav_4_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Pola Penerapan
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pola-aplikasi/caching/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Caching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pola-aplikasi/session-dan-rate-limiting/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Session dan rate limiting
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pola-aplikasi/pub-sub/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pub/Sub
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pola-aplikasi/streams-consumer-group/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Streams dan consumer group
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pola-aplikasi/transaksi/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Transaksi
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../pola-aplikasi/lua-script/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Lua script
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_5" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../python/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Python dan FastAPI
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_5" id="__nav_5_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_5_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_5">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Python dan FastAPI
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/dasar-redis-py/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dasar redis-py
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/struktur-data-di-python/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Struktur data di Python
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/pipeline-dan-connection-pool/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Pipeline dan connection pool
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/dasar-fastapi-dengan-redis/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Dasar FastAPI dengan Redis
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/fastapi-caching-dan-rate-limit/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FastAPI: caching dan rate limit
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../python/fastapi-fitur-realtime-dengan-sse/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    FastAPI: fitur realtime dengan SSE
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_6" >
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../../operasi/" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operasi
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_6" id="__nav_6_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_6_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_6">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Operasi
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operasi/persistence/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Persistence
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operasi/keamanan/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Keamanan
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operasi/monitoring/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Monitoring
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../operasi/replikasi-sentinel-dan-cluster/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Replikasi, Sentinel, dan Cluster
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+          
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_7" checked>
+        
+          
+          <div class="md-nav__link md-nav__container">
+            <a href="../" class="md-nav__link ">
+              
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Proyek Akhir
+  
+
+    
+  </span>
+  
+  
+
+            </a>
+            
+              
+              <label class="md-nav__link " for="__nav_7" id="__nav_7_label" tabindex="0">
+                <span class="md-nav__icon md-icon"></span>
+              </label>
+            
+          </div>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_7_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_7">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Proyek Akhir
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Perancangan
+  
+
+    
+  </span>
+  
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Perancangan
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Daftar isi">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Daftar isi
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#tujuan-belajar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tujuan belajar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prasyarat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prasyarat
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#konsep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Konsep
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Konsep">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#analogi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Analogi
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cara-kerja" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cara kerja
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Cara kerja">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#aplikasi-yang-dirancang-katalog-produk" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Aplikasi yang dirancang: Katalog Produk
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kamus-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kamus key
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aturan-penamaan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Aturan penamaan
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rencana-operasi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rencana operasi
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#praktik-langkah-demi-langkah" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Praktik langkah demi langkah
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Praktik langkah demi langkah">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#langkah-1-tulis-pola-akses-sebelum-menyentuh-redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 1: Tulis pola akses sebelum menyentuh Redis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-2-siapkan-container" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 2: Siapkan container
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-3-prototipekan-tiap-pola-akses-dengan-satu-perintah" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 3: Prototipekan tiap pola akses dengan satu perintah
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-4-periksa-rancangan-terhadap-kamus-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 4: Periksa rancangan terhadap kamus key
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-5-bersihkan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 5: Bersihkan
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#contoh-lengkap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Contoh lengkap
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kesalahan-umum-dan-troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kesalahan umum dan troubleshooting
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#latihan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Latihan
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ringkasan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ringkasan
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#referensi-resmi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Referensi resmi
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../implementasi-api/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Implementasi API
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../fitur-realtime/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Fitur realtime
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../operasi-dan-pengujian/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Operasi dan pengujian
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Daftar isi">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Daftar isi
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#tujuan-belajar" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Tujuan belajar
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#prasyarat" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Prasyarat
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#konsep" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Konsep
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Konsep">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#analogi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Analogi
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#cara-kerja" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Cara kerja
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Cara kerja">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#aplikasi-yang-dirancang-katalog-produk" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Aplikasi yang dirancang: Katalog Produk
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#kamus-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kamus key
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#aturan-penamaan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Aturan penamaan
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#rencana-operasi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Rencana operasi
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#praktik-langkah-demi-langkah" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Praktik langkah demi langkah
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Praktik langkah demi langkah">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#langkah-1-tulis-pola-akses-sebelum-menyentuh-redis" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 1: Tulis pola akses sebelum menyentuh Redis
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-2-siapkan-container" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 2: Siapkan container
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-3-prototipekan-tiap-pola-akses-dengan-satu-perintah" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 3: Prototipekan tiap pola akses dengan satu perintah
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-4-periksa-rancangan-terhadap-kamus-key" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 4: Periksa rancangan terhadap kamus key
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#langkah-5-bersihkan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Langkah 5: Bersihkan
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#contoh-lengkap" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Contoh lengkap
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#kesalahan-umum-dan-troubleshooting" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Kesalahan umum dan troubleshooting
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#latihan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Latihan
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#ringkasan" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Ringkasan
+      
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#referensi-resmi" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Referensi resmi
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+                
+
+
+
+  
+
+
+  <nav class="md-path" aria-label="Navigasi" >
+    <ol class="md-path__list">
+      
+        
+  
+  
+    <li class="md-path__item">
+      <a href="../.." class="md-path__link">
+        
+  <span class="md-ellipsis">
+    Home
+  </span>
+
+      </a>
+    </li>
+  
+
+      
+      
+        
+  
+  
+    
+    
+      <li class="md-path__item">
+        <a href="../" class="md-path__link">
+          
+  <span class="md-ellipsis">
+    Proyek Akhir
+  </span>
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ol>
+  </nav>
+
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+
+
+<h1 id="perancangan">Perancangan<a class="headerlink" href="#perancangan" title="Permanent link">&para;</a></h1>
+<h2 id="tujuan-belajar">Tujuan belajar<a class="headerlink" href="#tujuan-belajar" title="Permanent link">&para;</a></h2>
+<p>Setelah bab ini kamu bisa:</p>
+<ul class="task-list">
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Menjelaskan kenapa merancang Redis dimulai dari <em>pola akses</em>, bukan dari bentuk data.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Mengubah daftar fitur aplikasi menjadi kamus key: nama, tipe data, TTL, dan dampak bila data hilang.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Memberi nama key yang konsisten dan aman untuk dibatasi dengan ACL.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Menguji rancangan dengan satu perintah <code>redis-cli</code> per pola akses, lalu memeriksa tipe, TTL, dan ukurannya.</li>
+<li class="task-list-item"><label class="task-list-control"><input type="checkbox" disabled/><span class="task-list-indicator"></span></label> Memusatkan penyusunan nama key di satu modul Python yang akan dipakai bab-bab berikutnya.</li>
+</ul>
+<h2 id="prasyarat">Prasyarat<a class="headerlink" href="#prasyarat" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Sudah menyelesaikan bagian <a href="../../struktur-data/">Struktur Data</a>, <a href="../../pola-aplikasi/">Pola Penerapan</a>, <a href="../../python/">Python dan FastAPI</a>, dan <a href="../../operasi/">Operasi</a>. Bab ini merangkum dan tidak mengulang penjelasannya; tiap keputusan di bawah menautkan bab asalnya.</li>
+<li>Docker terpasang dan kamu bisa membuat container (lihat <a href="../../pengenalan/instalasi-dengan-docker/">Instalasi dengan Docker</a>). Praktik memakai container baru <code>redis-proyek</code>.</li>
+<li>Redis 7.0 atau lebih baru. Opsi <code>NX</code> pada <code>EXPIRE</code> baru ada sejak 7.0.<sup id="fnref:2"><a class="footnote-ref" href="#fn:2">2</a></sup> Image <code>redis:latest</code> memenuhinya.</li>
+<li>Python 3 untuk contoh lengkap. Contoh itu tidak membutuhkan paket tambahan dan tidak menyambung ke Redis.</li>
+</ul>
+<h2 id="konsep">Konsep<a class="headerlink" href="#konsep" title="Permanent link">&para;</a></h2>
+<p>Di database SQL, kamu biasanya merancang tabel dulu (apa saja datanya), baru memikirkan kuerinya. Di Redis urutannya dibalik. Redis tidak punya kueri bebas; setiap pembacaan harus lewat perintah yang bekerja pada <em>satu key dengan satu tipe</em>. Karena itu kamu mulai dari pertanyaan: "bagaimana aplikasi akan membaca dan menulis data ini?" Jawabannya (pola akses) menentukan tipe data, nama key, dan masa hidupnya.</p>
+<p>Rancangan yang baik menjawab enam pertanyaan untuk setiap kebutuhan data:</p>
+<table>
+<thead>
+<tr>
+<th>Pertanyaan</th>
+<th>Menentukan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Siapa menulis dan siapa membaca?</td>
+<td>Tipe data dan perintah yang dipakai</td>
+</tr>
+<tr>
+<td>Seberapa sering?</td>
+<td>Apakah cocok di Redis, dan risiko key panas</td>
+</tr>
+<tr>
+<td>Berapa lama data berguna?</td>
+<td>TTL</td>
+</tr>
+<tr>
+<td>Berapa banyak dan seberapa besar?</td>
+<td>Memori dan risiko key raksasa</td>
+</tr>
+<tr>
+<td>Apa yang terjadi bila data hilang?</td>
+<td>Perlu <a href="../../operasi/persistence/">Persistence</a> atau tidak</td>
+</tr>
+<tr>
+<td>Siapa yang boleh menyentuhnya?</td>
+<td>Pola nama key untuk <a href="../../operasi/keamanan/">ACL</a></td>
+</tr>
+</tbody>
+</table>
+<h3 id="analogi">Analogi<a class="headerlink" href="#analogi" title="Permanent link">&para;</a></h3>
+<p>Bayangkan menata dapur restoran. Kamu tidak menata rak berdasarkan "jenis barang menurut katalog toko", melainkan berdasarkan <em>cara koki mengambilnya</em>: bumbu yang dipakai tiap menit di dekat kompor, bahan yang dipakai seminggu sekali di gudang belakang, bahan basi dibuang tiap hari. Rancangan Redis sama: tata data menurut cara aplikasi memakainya.</p>
+<div class="admonition note">
+<p class="admonition-title">Batas analogi</p>
+<p>Dapur bisa ditata ulang kapan saja tanpa merusak resep. Mengubah nama key di aplikasi yang sudah berjalan berarti data lama "hilang dari pandangan" (key lama tetap ada tetapi tidak dibaca lagi). Itu sebabnya nama key dirancang dari awal dan dibuat di satu tempat saja.</p>
+</div>
+<h2 id="cara-kerja">Cara kerja<a class="headerlink" href="#cara-kerja" title="Permanent link">&para;</a></h2>
+<h3 id="aplikasi-yang-dirancang-katalog-produk">Aplikasi yang dirancang: Katalog Produk<a class="headerlink" href="#aplikasi-yang-dirancang-katalog-produk" title="Permanent link">&para;</a></h3>
+<p>Proyek akhir ini membangun API katalog produk kecil. Sumber kebenaran data produk adalah database di luar Redis (di bab implementasi disimulasikan dengan kode Python). Redis dipakai untuk lima keperluan:</p>
+<table>
+<thead>
+<tr>
+<th>Kode</th>
+<th>Fitur</th>
+<th>Cara Redis membantu</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>F1</td>
+<td>Detail produk</td>
+<td>Cache agar tidak selalu membaca database (<a href="../../pola-aplikasi/caching/">Caching</a>)</td>
+</tr>
+<tr>
+<td>F2</td>
+<td>Batas permintaan per klien</td>
+<td>Pembatas laju jendela tetap (<a href="../../pola-aplikasi/session-dan-rate-limiting/">Session dan rate limiting</a>)</td>
+</tr>
+<tr>
+<td>F3</td>
+<td>Produk terpopuler</td>
+<td>Peringkat berdasarkan jumlah dilihat (<a href="../../struktur-data/sorted-set/">Sorted Set</a>)</td>
+</tr>
+<tr>
+<td>F4</td>
+<td>Jumlah pengunjung unik per hari</td>
+<td>Hitungan perkiraan (<a href="../../struktur-data/bitmap-hyperloglog-geo/">Bitmap, HyperLogLog, dan Geo</a>)</td>
+</tr>
+<tr>
+<td>F5</td>
+<td>Notifikasi perubahan harga dan stok</td>
+<td>Log peristiwa yang bisa dikejar klien (<a href="../../pola-aplikasi/streams-consumer-group/">Streams dan consumer group</a>)</td>
+</tr>
+</tbody>
+</table>
+<pre class="mermaid"><code>flowchart LR
+    K["Klien"] --&gt; A["API"]
+    A -- "F2: INCR + EXPIRE" --&gt; R[("Redis")]
+    A -- "F1: GET / SET EX" --&gt; R
+    A -- "miss: baca" --&gt; D[("Database sumber")]
+    A -- "F3: ZINCRBY&lt;br/&gt;F4: PFADD" --&gt; R
+    D -- "harga/stok berubah" --&gt; A
+    A -- "F5: XADD" --&gt; R
+    R -- "F5: XREAD" --&gt; S["Aliran SSE ke klien"]</code></pre>
+<h3 id="kamus-key">Kamus key<a class="headerlink" href="#kamus-key" title="Permanent link">&para;</a></h3>
+<p>Hasil perancangan berupa satu tabel: kamus key. Inilah dokumen yang dibaca semua orang di tim.</p>
+<table>
+<thead>
+<tr>
+<th>Fitur</th>
+<th>Key</th>
+<th>Tipe</th>
+<th>TTL</th>
+<th>Pembaca/penulis</th>
+<th>Bila hilang</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>F1</td>
+<td><code>katalog:cache:produk:&lt;id&gt;</code></td>
+<td>String (JSON)</td>
+<td>300 detik</td>
+<td>API baca dan tulis</td>
+<td>Aman: dibuat ulang dari database</td>
+</tr>
+<tr>
+<td>F2</td>
+<td><code>katalog:rate:&lt;klien&gt;</code></td>
+<td>String (angka)</td>
+<td>60 detik</td>
+<td>API tulis dan baca</td>
+<td>Aman: jendela hitung mulai ulang</td>
+</tr>
+<tr>
+<td>F3</td>
+<td><code>katalog:populer</code></td>
+<td>Sorted Set</td>
+<td>tanpa TTL</td>
+<td>API tulis; halaman peringkat baca</td>
+<td>Kehilangan riwayat peringkat; tidak fatal</td>
+</tr>
+<tr>
+<td>F4</td>
+<td><code>katalog:pengunjung:&lt;YYYYMMDD&gt;</code></td>
+<td>HyperLogLog</td>
+<td>7 hari</td>
+<td>API tulis; laporan baca</td>
+<td>Hitungan hari itu hilang</td>
+</tr>
+<tr>
+<td>F5</td>
+<td><code>katalog:peristiwa</code></td>
+<td>Stream</td>
+<td>tanpa TTL, panjang dibatasi</td>
+<td>Layanan harga/stok tulis; SSE baca</td>
+<td>Notifikasi yang belum terkirim hilang</td>
+</tr>
+</tbody>
+</table>
+<p>Alasan di balik pilihan tipe:</p>
+<ul>
+<li><strong>F1 String JSON, bukan Hash.</strong> Detail produk selalu dibaca dan ditulis utuh, jadi satu <code>GET</code> cukup. Hash baru lebih baik bila sering mengubah satu field saja (lihat <a href="../../struktur-data/memilih-struktur-data-yang-tepat/">Memilih struktur data yang tepat</a>).</li>
+<li><strong>F2 String counter.</strong> <code>INCR</code> bersifat atomik, dan expiry membuat jendela berakhir sendiri.</li>
+<li><strong>F3 Sorted Set.</strong> Skor adalah jumlah dilihat; urutan peringkat dijaga Redis, tidak dihitung ulang aplikasi.</li>
+<li><strong>F4 HyperLogLog, bukan Set.</strong> Kita hanya butuh jumlah <em>perkiraan</em>, dan HyperLogLog memakai memori kecil dan tetap, berapa pun jumlah pengunjungnya. Set menyimpan semua anggota.</li>
+<li><strong>F5 Stream, bukan Pub/Sub.</strong> Pub/Sub tidak menyimpan pesan, sehingga klien yang sedang terputus kehilangan notifikasi. Stream menyimpan riwayat yang bisa dikejar.</li>
+</ul>
+<h3 id="aturan-penamaan">Aturan penamaan<a class="headerlink" href="#aturan-penamaan" title="Permanent link">&para;</a></h3>
+<ol>
+<li><strong>Awalan aplikasi</strong> (<code>katalog:</code>) pada semua key. Satu pola <code>katalog:*</code> cukup untuk membatasi ACL, mencari key dengan <code>SCAN</code>, dan membedakan dari aplikasi lain di server yang sama.</li>
+<li>Pemisah <code>:</code> dan urutan <strong>fungsi → objek → id</strong> (<code>cache:produk:42</code>), sesuai konvensi <a href="../../pengenalan/key-dan-expiry/">Key dan expiry</a>.<sup id="fnref:1"><a class="footnote-ref" href="#fn:1">1</a></sup></li>
+<li>Huruf kecil, tanpa spasi. Tanggal ditulis <code>YYYYMMDD</code> agar urut alfabet sama dengan urut waktu.</li>
+<li><strong>Jangan memasukkan data pribadi</strong> (email, nomor telepon) ke nama key. Nama key muncul di log dan di <code>SLOWLOG</code> (<a href="../../operasi/monitoring/">Monitoring</a>). Pakai id.</li>
+<li>Jangan beri nama dengan <code>:</code> di dalam bagian variabel (mis. id klien berisi <code>:</code>), karena bisa membuat dua key berbeda tampak sama.</li>
+<li>Nama key disusun di <strong>satu modul</strong>, bukan ditulis ulang di tiap tempat.</li>
+</ol>
+<h3 id="rencana-operasi">Rencana operasi<a class="headerlink" href="#rencana-operasi" title="Permanent link">&para;</a></h3>
+<p>Keputusan dari bagian <a href="../../operasi/">Operasi</a> yang sudah bisa ditentukan sejak rancangan:</p>
+<table>
+<thead>
+<tr>
+<th>Aspek</th>
+<th>Keputusan</th>
+<th>Alasan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Persistence</td>
+<td>RDB dan AOF aktif</td>
+<td><code>populer</code>, <code>pengunjung</code>, dan <code>peristiwa</code> bernilai; cache dan rate memang bisa hilang (<a href="../../operasi/persistence/">Persistence</a>)</td>
+</tr>
+<tr>
+<td>ACL</td>
+<td>Pengguna aplikasi dibatasi <code>~katalog:*</code>, tanpa kategori <code>@dangerous</code></td>
+<td>Kebocoran kredensial tidak membuka seluruh data (<a href="../../operasi/keamanan/">Keamanan</a>)</td>
+</tr>
+<tr>
+<td>Monitoring</td>
+<td>Pantau <code>evicted_keys</code>, <code>SLOWLOG</code>, dan ukuran <code>katalog:populer</code></td>
+<td>Cache dan peringkat adalah yang pertama membengkak (<a href="../../operasi/monitoring/">Monitoring</a>)</td>
+</tr>
+</tbody>
+</table>
+<h2 id="praktik-langkah-demi-langkah">Praktik langkah demi langkah<a class="headerlink" href="#praktik-langkah-demi-langkah" title="Permanent link">&para;</a></h2>
+<p>Perintah di Langkah 2 sampai 4 dijalankan di sesi interaktif <code>redis-cli</code> (<code>docker exec -it</code>), sehingga bentuk keluarannya sama dengan blok di bawah. Output di bawah adalah output yang <strong>diharapkan</strong> berdasarkan dokumentasi, bukan hasil eksekusi di komputermu. Nilai seperti sisa TTL, ID Stream, dan ukuran byte akan berbeda.</p>
+<h3 id="langkah-1-tulis-pola-akses-sebelum-menyentuh-redis">Langkah 1: Tulis pola akses sebelum menyentuh Redis<a class="headerlink" href="#langkah-1-tulis-pola-akses-sebelum-menyentuh-redis" title="Permanent link">&para;</a></h3>
+<p><strong>Lingkungan: dokumen (tanpa perintah)</strong></p>
+<p>Untuk setiap fitur F1 sampai F5, isi tabel enam pertanyaan dari bagian Konsep. Contoh untuk F2:</p>
+<table>
+<thead>
+<tr>
+<th>Pertanyaan</th>
+<th>Jawaban F2</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Siapa menulis dan membaca?</td>
+<td>API, pada setiap permintaan</td>
+</tr>
+<tr>
+<td>Seberapa sering?</td>
+<td>Sekali per permintaan: sering</td>
+</tr>
+<tr>
+<td>Berapa lama berguna?</td>
+<td>60 detik (satu jendela)</td>
+</tr>
+<tr>
+<td>Berapa banyak?</td>
+<td>Satu key kecil per klien aktif</td>
+</tr>
+<tr>
+<td>Bila hilang?</td>
+<td>Jendela mulai ulang; tidak masalah</td>
+</tr>
+<tr>
+<td>Siapa boleh menyentuh?</td>
+<td>Hanya pengguna aplikasi</td>
+</tr>
+</tbody>
+</table>
+<p>Kenapa langkah ini diperlukan: tabel inilah yang membuat pilihan "String + <code>INCR</code>" terbukti masuk akal, bukan sekadar kebiasaan. Bila jawaban "bila hilang?" ternyata "tidak boleh hilang", rancangannya berubah (mis. data itu seharusnya di database, bukan hanya di Redis).</p>
+<h3 id="langkah-2-siapkan-container">Langkah 2: Siapkan container<a class="headerlink" href="#langkah-2-siapkan-container" title="Permanent link">&para;</a></h3>
+<p><strong>Lingkungan: terminal</strong></p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>docker<span class="w"> </span>run<span class="w"> </span>-d<span class="w"> </span>--name<span class="w"> </span>redis-proyek<span class="w"> </span>redis:latest
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>docker<span class="w"> </span><span class="nb">exec</span><span class="w"> </span>-it<span class="w"> </span>redis-proyek<span class="w"> </span>redis-cli
+</span></code></pre></div>
+<p>Kenapa: container baru memastikan hanya key rancangan ini yang ada, sehingga hasil <code>DBSIZE</code> dan <code>SCAN</code> bisa dibandingkan dengan kamus key. Perintah kedua membuka sesi interaktif tempat semua perintah berikut dijalankan.</p>
+<p><strong>Diharapkan:</strong> ID container yang panjang, lalu prompt <code>127.0.0.1:6379&gt;</code>.</p>
+<h3 id="langkah-3-prototipekan-tiap-pola-akses-dengan-satu-perintah">Langkah 3: Prototipekan tiap pola akses dengan satu perintah<a class="headerlink" href="#langkah-3-prototipekan-tiap-pola-akses-dengan-satu-perintah" title="Permanent link">&para;</a></h3>
+<p><strong>Lingkungan: redis-cli</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>SET katalog:cache:produk:1 "{\"id\":1,\"nama\":\"Kopi Arabika\",\"harga\":45000}" EX 300
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>GET katalog:cache:produk:1
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>INCR katalog:rate:klien-1
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>EXPIRE katalog:rate:klien-1 60 NX
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>INCR katalog:rate:klien-1
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a>EXPIRE katalog:rate:klien-1 60 NX
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a>ZINCRBY katalog:populer 1 produk:1
+</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a>ZINCRBY katalog:populer 1 produk:1
+</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a>ZINCRBY katalog:populer 1 produk:2
+</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a>ZRANGE katalog:populer 0 2 REV WITHSCORES
+</span><span id="__span-1-11"><a id="__codelineno-1-11" name="__codelineno-1-11" href="#__codelineno-1-11"></a>PFADD katalog:pengunjung:20261027 klien-1 klien-2 klien-1
+</span><span id="__span-1-12"><a id="__codelineno-1-12" name="__codelineno-1-12" href="#__codelineno-1-12"></a>PFCOUNT katalog:pengunjung:20261027
+</span><span id="__span-1-13"><a id="__codelineno-1-13" name="__codelineno-1-13" href="#__codelineno-1-13"></a>EXPIRE katalog:pengunjung:20261027 604800
+</span><span id="__span-1-14"><a id="__codelineno-1-14" name="__codelineno-1-14" href="#__codelineno-1-14"></a>XADD katalog:peristiwa MAXLEN ~ 1000 * produk 1 jenis harga nilai 47000
+</span><span id="__span-1-15"><a id="__codelineno-1-15" name="__codelineno-1-15" href="#__codelineno-1-15"></a>XADD katalog:peristiwa MAXLEN ~ 1000 * produk 2 jenis stok nilai 0
+</span><span id="__span-1-16"><a id="__codelineno-1-16" name="__codelineno-1-16" href="#__codelineno-1-16"></a>XRANGE katalog:peristiwa - +
+</span></code></pre></div>
+<p>Kenapa langkah ini diperlukan: satu perintah per pola akses membuktikan bahwa setiap kebutuhan di kamus key bisa dipenuhi <em>tanpa</em> kueri tambahan. Bila untuk satu fitur kamu butuh banyak perintah rumit, tipe datanya mungkin keliru.</p>
+<table>
+<thead>
+<tr>
+<th>Perintah</th>
+<th>Fungsi dan alasan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SET ... EX 300</code></td>
+<td>Menulis cache dan TTL-nya sekaligus, dalam satu langkah atomik (lihat <a href="../../pengenalan/key-dan-expiry/">Key dan expiry</a>).</td>
+</tr>
+<tr>
+<td><code>INCR</code> lalu <code>EXPIRE ... 60 NX</code></td>
+<td>Menaikkan counter, lalu memasang TTL <strong>hanya bila belum ada</strong>. <code>NX</code> mencegah jendela diperpanjang di setiap permintaan, tetapi opsi ini butuh Redis 7.0.<sup id="fnref2:2"><a class="footnote-ref" href="#fn:2">2</a></sup></td>
+</tr>
+<tr>
+<td><code>ZINCRBY ... 1 produk:1</code></td>
+<td>Menambah skor satu produk; key dibuat otomatis bila belum ada.<sup id="fnref:4"><a class="footnote-ref" href="#fn:4">4</a></sup></td>
+</tr>
+<tr>
+<td><code>ZRANGE ... 0 2 REV WITHSCORES</code></td>
+<td>Tiga produk teratas dari skor tertinggi, beserta skornya.</td>
+</tr>
+<tr>
+<td><code>PFADD</code> / <code>PFCOUNT</code></td>
+<td>Mencatat pengunjung (duplikat tidak dihitung dua kali) dan membaca jumlah perkiraannya.<sup id="fnref:5"><a class="footnote-ref" href="#fn:5">5</a></sup></td>
+</tr>
+<tr>
+<td><code>XADD ... MAXLEN ~ 1000 *</code></td>
+<td>Menambah peristiwa dengan ID otomatis (<code>*</code>) dan membatasi panjang Stream sekitar 1000 entri. Tanda <code>~</code> berarti pemangkasan perkiraan, lebih murah.<sup id="fnref:3"><a class="footnote-ref" href="#fn:3">3</a></sup></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Diharapkan:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>OK
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a>"{\"id\":1,\"nama\":\"Kopi Arabika\",\"harga\":45000}"
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>(integer) 1
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a>(integer) 1
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a>(integer) 2
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a>(integer) 0
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a>"1"
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a>"2"
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a>"1"
+</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a>1) "produk:1"
+</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a>2) "2"
+</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a>3) "produk:2"
+</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a>4) "1"
+</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a>(integer) 1
+</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a>(integer) 2
+</span><span id="__span-2-16"><a id="__codelineno-2-16" name="__codelineno-2-16" href="#__codelineno-2-16"></a>(integer) 1
+</span><span id="__span-2-17"><a id="__codelineno-2-17" name="__codelineno-2-17" href="#__codelineno-2-17"></a>"1761566400000-0"
+</span><span id="__span-2-18"><a id="__codelineno-2-18" name="__codelineno-2-18" href="#__codelineno-2-18"></a>"1761566400001-0"
+</span><span id="__span-2-19"><a id="__codelineno-2-19" name="__codelineno-2-19" href="#__codelineno-2-19"></a>1) 1) "1761566400000-0"
+</span><span id="__span-2-20"><a id="__codelineno-2-20" name="__codelineno-2-20" href="#__codelineno-2-20"></a>   2) 1) "produk"
+</span><span id="__span-2-21"><a id="__codelineno-2-21" name="__codelineno-2-21" href="#__codelineno-2-21"></a>      2) "1"
+</span><span id="__span-2-22"><a id="__codelineno-2-22" name="__codelineno-2-22" href="#__codelineno-2-22"></a>      3) "jenis"
+</span><span id="__span-2-23"><a id="__codelineno-2-23" name="__codelineno-2-23" href="#__codelineno-2-23"></a>      4) "harga"
+</span><span id="__span-2-24"><a id="__codelineno-2-24" name="__codelineno-2-24" href="#__codelineno-2-24"></a>      5) "nilai"
+</span><span id="__span-2-25"><a id="__codelineno-2-25" name="__codelineno-2-25" href="#__codelineno-2-25"></a>      6) "47000"
+</span><span id="__span-2-26"><a id="__codelineno-2-26" name="__codelineno-2-26" href="#__codelineno-2-26"></a>2) 1) "1761566400001-0"
+</span><span id="__span-2-27"><a id="__codelineno-2-27" name="__codelineno-2-27" href="#__codelineno-2-27"></a>   2) 1) "produk"
+</span><span id="__span-2-28"><a id="__codelineno-2-28" name="__codelineno-2-28" href="#__codelineno-2-28"></a>      2) "2"
+</span><span id="__span-2-29"><a id="__codelineno-2-29" name="__codelineno-2-29" href="#__codelineno-2-29"></a>      3) "jenis"
+</span><span id="__span-2-30"><a id="__codelineno-2-30" name="__codelineno-2-30" href="#__codelineno-2-30"></a>      4) "stok"
+</span><span id="__span-2-31"><a id="__codelineno-2-31" name="__codelineno-2-31" href="#__codelineno-2-31"></a>      5) "nilai"
+</span><span id="__span-2-32"><a id="__codelineno-2-32" name="__codelineno-2-32" href="#__codelineno-2-32"></a>      6) "0"
+</span></code></pre></div>
+<p>Cara membaca: <code>INCR</code> pertama bernilai 1 dan <code>EXPIRE ... NX</code> membalas <code>1</code> (TTL terpasang); <code>INCR</code> kedua bernilai 2 dan <code>EXPIRE ... NX</code> membalas <code>0</code> karena TTL sudah ada dan tidak disentuh. <code>ZINCRBY</code> membalas skor baru sebagai string. <code>PFADD</code> membalas <code>1</code> karena isi berubah, dan <code>PFCOUNT</code> membalas <code>2</code> meski <code>klien-1</code> dimasukkan dua kali. Dua ID Stream di atas hanya ilustrasi; nilai nyatanya berbeda.</p>
+<h3 id="langkah-4-periksa-rancangan-terhadap-kamus-key">Langkah 4: Periksa rancangan terhadap kamus key<a class="headerlink" href="#langkah-4-periksa-rancangan-terhadap-kamus-key" title="Permanent link">&para;</a></h3>
+<p><strong>Lingkungan: redis-cli</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>SCAN 0 MATCH katalog:* COUNT 100
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>DBSIZE
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>TYPE katalog:cache:produk:1
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>TYPE katalog:rate:klien-1
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>TYPE katalog:populer
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a>TYPE katalog:pengunjung:20261027
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>TYPE katalog:peristiwa
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>TTL katalog:cache:produk:1
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a>TTL katalog:populer
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>MEMORY USAGE katalog:cache:produk:1
+</span></code></pre></div>
+<p>Kenapa: ini "uji penerimaan" rancangan. Setiap baris kamus key (nama, tipe, TTL) dicocokkan dengan kenyataan di Redis.</p>
+<table>
+<thead>
+<tr>
+<th>Perintah</th>
+<th>Fungsi dan alasan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>SCAN 0 MATCH katalog:* COUNT 100</code></td>
+<td>Mendaftar key berawalan <code>katalog:</code> secara bertahap, tanpa memblokir server (berbeda dari <code>KEYS</code>).<sup id="fnref:6"><a class="footnote-ref" href="#fn:6">6</a></sup></td>
+</tr>
+<tr>
+<td><code>TYPE</code></td>
+<td>Mengecek tipe tiap key.</td>
+</tr>
+<tr>
+<td><code>TTL</code></td>
+<td><code>-1</code> berarti tanpa expiry, <code>-2</code> berarti key tidak ada.</td>
+</tr>
+<tr>
+<td><code>MEMORY USAGE</code></td>
+<td>Perkiraan byte satu key; berguna untuk menghitung kebutuhan memori (lihat <a href="../../operasi/monitoring/">Monitoring</a>).</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Diharapkan:</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>1) "0"
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>2) 1) "katalog:rate:klien-1"
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>   2) "katalog:populer"
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>   3) "katalog:cache:produk:1"
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>   4) "katalog:pengunjung:20261027"
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>   5) "katalog:peristiwa"
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>(integer) 5
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>string
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a>string
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>zset
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a>string
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a>stream
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a>(integer) 300
+</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a>(integer) -1
+</span><span id="__span-4-15"><a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a>(integer) 120
+</span></code></pre></div>
+<p>Cara membaca: kursor <code>0</code> berarti iterasi selesai, dan urutan key bisa berbeda. <code>DBSIZE</code> bernilai 5 (lima key kamus). <code>TYPE</code> untuk key HyperLogLog adalah <code>string</code> karena HyperLogLog disimpan sebagai String; itu wajar. Sisa TTL bisa beberapa detik di bawah 300. Angka <code>MEMORY USAGE</code> hanya ilustrasi.</p>
+<h3 id="langkah-5-bersihkan">Langkah 5: Bersihkan<a class="headerlink" href="#langkah-5-bersihkan" title="Permanent link">&para;</a></h3>
+<p><strong>Lingkungan: redis-cli, lalu terminal</strong></p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>EXIT
+</span></code></pre></div>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>docker<span class="w"> </span>rm<span class="w"> </span>-f<span class="w"> </span>redis-proyek
+</span></code></pre></div>
+<div class="admonition danger">
+<p class="admonition-title">Perintah ini menghapus data</p>
+<p><code>docker rm -f</code> menghapus container dan semua datanya. Container ini hanya untuk latihan dan tidak memakai volume, jadi tidak ada yang perlu diselamatkan.</p>
+</div>
+<h2 id="contoh-lengkap">Contoh lengkap<a class="headerlink" href="#contoh-lengkap" title="Permanent link">&para;</a></h2>
+<p>Modul Python yang menjadi satu-satunya tempat penyusunan nama key. Bab-bab berikutnya akan mengimpornya.</p>
+<p><strong>Lingkungan: Python</strong> · Kebutuhan: Python 3, tanpa paket tambahan</p>
+<div class="language-python highlight"><span class="filename">kunci.py</span><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="sd">"""kunci.py: satu-satunya tempat yang boleh menyusun nama key proyek katalog."""</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="n">AWALAN</span> <span class="o">=</span> <span class="s2">"katalog"</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="c1"># TTL dalam detik. None berarti key tidak kedaluwarsa sendiri.</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="n">TTL_CACHE_PRODUK</span> <span class="o">=</span> <span class="mi">300</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a><span class="n">TTL_RATE</span> <span class="o">=</span> <span class="mi">60</span>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a><span class="n">TTL_PENGUNJUNG</span> <span class="o">=</span> <span class="mi">7</span> <span class="o">*</span> <span class="mi">24</span> <span class="o">*</span> <span class="mi">3600</span>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="n">PANJANG_STREAM</span> <span class="o">=</span> <span class="mi">1000</span>
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>
+</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a><span class="k">def</span><span class="w"> </span><span class="nf">_susun</span><span class="p">(</span><span class="o">*</span><span class="n">bagian</span><span class="p">):</span>
+</span><span id="__span-7-13"><a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a>    <span class="n">teks</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">b</span><span class="p">)</span> <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">bagian</span><span class="p">]</span>
+</span><span id="__span-7-14"><a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a>    <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">teks</span><span class="p">:</span>
+</span><span id="__span-7-15"><a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a>        <span class="k">if</span> <span class="ow">not</span> <span class="n">b</span> <span class="ow">or</span> <span class="s2">":"</span> <span class="ow">in</span> <span class="n">b</span><span class="p">:</span>
+</span><span id="__span-7-16"><a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a>            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">"bagian key tidak boleh kosong atau memuat ':': </span><span class="si">{</span><span class="n">b</span><span class="si">!r}</span><span class="s2">"</span><span class="p">)</span>
+</span><span id="__span-7-17"><a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a>    <span class="k">return</span> <span class="s2">":"</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">AWALAN</span><span class="p">,</span> <span class="o">*</span><span class="n">teks</span><span class="p">])</span>
+</span><span id="__span-7-18"><a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a>
+</span><span id="__span-7-19"><a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a>
+</span><span id="__span-7-20"><a id="__codelineno-7-20" name="__codelineno-7-20" href="#__codelineno-7-20"></a><span class="k">def</span><span class="w"> </span><span class="nf">cache_produk</span><span class="p">(</span><span class="n">produk_id</span><span class="p">):</span>
+</span><span id="__span-7-21"><a id="__codelineno-7-21" name="__codelineno-7-21" href="#__codelineno-7-21"></a>    <span class="k">return</span> <span class="n">_susun</span><span class="p">(</span><span class="s2">"cache"</span><span class="p">,</span> <span class="s2">"produk"</span><span class="p">,</span> <span class="n">produk_id</span><span class="p">)</span>
+</span><span id="__span-7-22"><a id="__codelineno-7-22" name="__codelineno-7-22" href="#__codelineno-7-22"></a>
+</span><span id="__span-7-23"><a id="__codelineno-7-23" name="__codelineno-7-23" href="#__codelineno-7-23"></a>
+</span><span id="__span-7-24"><a id="__codelineno-7-24" name="__codelineno-7-24" href="#__codelineno-7-24"></a><span class="k">def</span><span class="w"> </span><span class="nf">rate</span><span class="p">(</span><span class="n">klien</span><span class="p">):</span>
+</span><span id="__span-7-25"><a id="__codelineno-7-25" name="__codelineno-7-25" href="#__codelineno-7-25"></a>    <span class="k">return</span> <span class="n">_susun</span><span class="p">(</span><span class="s2">"rate"</span><span class="p">,</span> <span class="n">klien</span><span class="p">)</span>
+</span><span id="__span-7-26"><a id="__codelineno-7-26" name="__codelineno-7-26" href="#__codelineno-7-26"></a>
+</span><span id="__span-7-27"><a id="__codelineno-7-27" name="__codelineno-7-27" href="#__codelineno-7-27"></a>
+</span><span id="__span-7-28"><a id="__codelineno-7-28" name="__codelineno-7-28" href="#__codelineno-7-28"></a><span class="k">def</span><span class="w"> </span><span class="nf">populer</span><span class="p">():</span>
+</span><span id="__span-7-29"><a id="__codelineno-7-29" name="__codelineno-7-29" href="#__codelineno-7-29"></a>    <span class="k">return</span> <span class="n">_susun</span><span class="p">(</span><span class="s2">"populer"</span><span class="p">)</span>
+</span><span id="__span-7-30"><a id="__codelineno-7-30" name="__codelineno-7-30" href="#__codelineno-7-30"></a>
+</span><span id="__span-7-31"><a id="__codelineno-7-31" name="__codelineno-7-31" href="#__codelineno-7-31"></a>
+</span><span id="__span-7-32"><a id="__codelineno-7-32" name="__codelineno-7-32" href="#__codelineno-7-32"></a><span class="k">def</span><span class="w"> </span><span class="nf">pengunjung</span><span class="p">(</span><span class="n">tanggal</span><span class="p">):</span>
+</span><span id="__span-7-33"><a id="__codelineno-7-33" name="__codelineno-7-33" href="#__codelineno-7-33"></a>    <span class="k">return</span> <span class="n">_susun</span><span class="p">(</span><span class="s2">"pengunjung"</span><span class="p">,</span> <span class="n">tanggal</span><span class="p">)</span>
+</span><span id="__span-7-34"><a id="__codelineno-7-34" name="__codelineno-7-34" href="#__codelineno-7-34"></a>
+</span><span id="__span-7-35"><a id="__codelineno-7-35" name="__codelineno-7-35" href="#__codelineno-7-35"></a>
+</span><span id="__span-7-36"><a id="__codelineno-7-36" name="__codelineno-7-36" href="#__codelineno-7-36"></a><span class="k">def</span><span class="w"> </span><span class="nf">peristiwa</span><span class="p">():</span>
+</span><span id="__span-7-37"><a id="__codelineno-7-37" name="__codelineno-7-37" href="#__codelineno-7-37"></a>    <span class="k">return</span> <span class="n">_susun</span><span class="p">(</span><span class="s2">"peristiwa"</span><span class="p">)</span>
+</span><span id="__span-7-38"><a id="__codelineno-7-38" name="__codelineno-7-38" href="#__codelineno-7-38"></a>
+</span><span id="__span-7-39"><a id="__codelineno-7-39" name="__codelineno-7-39" href="#__codelineno-7-39"></a>
+</span><span id="__span-7-40"><a id="__codelineno-7-40" name="__codelineno-7-40" href="#__codelineno-7-40"></a><span class="n">KAMUS</span> <span class="o">=</span> <span class="p">[</span>
+</span><span id="__span-7-41"><a id="__codelineno-7-41" name="__codelineno-7-41" href="#__codelineno-7-41"></a>    <span class="p">(</span><span class="s2">"cache_produk"</span><span class="p">,</span> <span class="n">cache_produk</span><span class="p">(</span><span class="mi">42</span><span class="p">),</span> <span class="s2">"String"</span><span class="p">,</span> <span class="n">TTL_CACHE_PRODUK</span><span class="p">),</span>
+</span><span id="__span-7-42"><a id="__codelineno-7-42" name="__codelineno-7-42" href="#__codelineno-7-42"></a>    <span class="p">(</span><span class="s2">"rate"</span><span class="p">,</span> <span class="n">rate</span><span class="p">(</span><span class="s2">"klien-1"</span><span class="p">),</span> <span class="s2">"String"</span><span class="p">,</span> <span class="n">TTL_RATE</span><span class="p">),</span>
+</span><span id="__span-7-43"><a id="__codelineno-7-43" name="__codelineno-7-43" href="#__codelineno-7-43"></a>    <span class="p">(</span><span class="s2">"populer"</span><span class="p">,</span> <span class="n">populer</span><span class="p">(),</span> <span class="s2">"Sorted Set"</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+</span><span id="__span-7-44"><a id="__codelineno-7-44" name="__codelineno-7-44" href="#__codelineno-7-44"></a>    <span class="p">(</span><span class="s2">"pengunjung"</span><span class="p">,</span> <span class="n">pengunjung</span><span class="p">(</span><span class="s2">"20261027"</span><span class="p">),</span> <span class="s2">"HyperLogLog"</span><span class="p">,</span> <span class="n">TTL_PENGUNJUNG</span><span class="p">),</span>
+</span><span id="__span-7-45"><a id="__codelineno-7-45" name="__codelineno-7-45" href="#__codelineno-7-45"></a>    <span class="p">(</span><span class="s2">"peristiwa"</span><span class="p">,</span> <span class="n">peristiwa</span><span class="p">(),</span> <span class="s2">"Stream"</span><span class="p">,</span> <span class="kc">None</span><span class="p">),</span>
+</span><span id="__span-7-46"><a id="__codelineno-7-46" name="__codelineno-7-46" href="#__codelineno-7-46"></a><span class="p">]</span>
+</span><span id="__span-7-47"><a id="__codelineno-7-47" name="__codelineno-7-47" href="#__codelineno-7-47"></a>
+</span><span id="__span-7-48"><a id="__codelineno-7-48" name="__codelineno-7-48" href="#__codelineno-7-48"></a>
+</span><span id="__span-7-49"><a id="__codelineno-7-49" name="__codelineno-7-49" href="#__codelineno-7-49"></a><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s2">"__main__"</span><span class="p">:</span>
+</span><span id="__span-7-50"><a id="__codelineno-7-50" name="__codelineno-7-50" href="#__codelineno-7-50"></a>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="s1">'fungsi'</span><span class="si">:</span><span class="s2">&lt;14</span><span class="si">}{</span><span class="s1">'contoh key'</span><span class="si">:</span><span class="s2">&lt;32</span><span class="si">}{</span><span class="s1">'tipe'</span><span class="si">:</span><span class="s2">&lt;13</span><span class="si">}</span><span class="s2">ttl"</span><span class="p">)</span>
+</span><span id="__span-7-51"><a id="__codelineno-7-51" name="__codelineno-7-51" href="#__codelineno-7-51"></a>    <span class="k">for</span> <span class="n">fungsi</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">tipe</span><span class="p">,</span> <span class="n">ttl</span> <span class="ow">in</span> <span class="n">KAMUS</span><span class="p">:</span>
+</span><span id="__span-7-52"><a id="__codelineno-7-52" name="__codelineno-7-52" href="#__codelineno-7-52"></a>        <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">"</span><span class="si">{</span><span class="n">fungsi</span><span class="si">:</span><span class="s2">&lt;14</span><span class="si">}{</span><span class="n">key</span><span class="si">:</span><span class="s2">&lt;32</span><span class="si">}{</span><span class="n">tipe</span><span class="si">:</span><span class="s2">&lt;13</span><span class="si">}{</span><span class="n">ttl</span><span class="w"> </span><span class="k">if</span><span class="w"> </span><span class="n">ttl</span><span class="w"> </span><span class="k">else</span><span class="w"> </span><span class="s1">'-'</span><span class="si">}</span><span class="s2">"</span><span class="p">)</span>
+</span><span id="__span-7-53"><a id="__codelineno-7-53" name="__codelineno-7-53" href="#__codelineno-7-53"></a>    <span class="k">try</span><span class="p">:</span>
+</span><span id="__span-7-54"><a id="__codelineno-7-54" name="__codelineno-7-54" href="#__codelineno-7-54"></a>        <span class="n">rate</span><span class="p">(</span><span class="s2">"klien:1"</span><span class="p">)</span>
+</span><span id="__span-7-55"><a id="__codelineno-7-55" name="__codelineno-7-55" href="#__codelineno-7-55"></a>    <span class="k">except</span> <span class="ne">ValueError</span> <span class="k">as</span> <span class="n">galat</span><span class="p">:</span>
+</span><span id="__span-7-56"><a id="__codelineno-7-56" name="__codelineno-7-56" href="#__codelineno-7-56"></a>        <span class="nb">print</span><span class="p">(</span><span class="s2">"ditolak:"</span><span class="p">,</span> <span class="n">galat</span><span class="p">)</span>
+</span></code></pre></div>
+<p>Penjelasan baris penting:</p>
+<table>
+<thead>
+<tr>
+<th>Baris</th>
+<th>Penjelasan</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>AWALAN = "katalog"</code></td>
+<td>Awalan semua key. Mengubahnya di sini mengubah seluruh aplikasi, dan satu pola ACL <code>katalog:*</code> tetap berlaku.</td>
+</tr>
+<tr>
+<td><code>TTL_*</code> dan <code>PANJANG_STREAM</code></td>
+<td>Angka kamus key dikumpulkan sebagai konstanta bernama, bukan angka "ajaib" yang tersebar di kode.</td>
+</tr>
+<tr>
+<td><code>_susun(*bagian)</code></td>
+<td>Satu-satunya fungsi yang menggabungkan bagian dengan <code>:</code>. Bagian kosong atau yang memuat <code>:</code> ditolak dengan <code>ValueError</code>, sehingga dua key berbeda tidak bisa tampak sama.</td>
+</tr>
+<tr>
+<td><code>cache_produk</code>, <code>rate</code>, <code>populer</code>, <code>pengunjung</code>, <code>peristiwa</code></td>
+<td>Satu fungsi per baris kamus key. Aplikasi memanggil fungsi, bukan menulis string nama key.</td>
+</tr>
+<tr>
+<td><code>KAMUS</code></td>
+<td>Daftar yang bisa dicetak dan diuji, sehingga dokumentasi dan kode tidak mudah berbeda.</td>
+</tr>
+<tr>
+<td><code>if __name__ == "__main__"</code></td>
+<td>Blok ini hanya jalan bila file dijalankan langsung, bukan saat diimpor modul lain.</td>
+</tr>
+</tbody>
+</table>
+<p>Cara menjalankan: simpan sebagai <code>kunci.py</code> lalu jalankan <code>python kunci.py</code>. Hasil yang diharapkan (<strong>terverifikasi</strong>: dijalankan dengan Python 3.14.7 pada 27 Oktober 2026):</p>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>fungsi        contoh key                      tipe         ttl
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a>cache_produk  katalog:cache:produk:42         String       300
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a>rate          katalog:rate:klien-1            String       60
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a>populer       katalog:populer                 Sorted Set   -
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a>pengunjung    katalog:pengunjung:20261027     HyperLogLog  604800
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a>peristiwa     katalog:peristiwa               Stream       -
+</span><span id="__span-8-7"><a id="__codelineno-8-7" name="__codelineno-8-7" href="#__codelineno-8-7"></a>ditolak: bagian key tidak boleh kosong atau memuat ':': 'klien:1'
+</span></code></pre></div>
+<p>Cara membaca: lima baris pertama cocok dengan kamus key. Baris terakhir membuktikan <code>rate("klien:1")</code> ditolak karena id mengandung <code>:</code>. Kolom <code>ttl</code> memakai detik; <code>604800</code> adalah 7 hari, dan <code>-</code> berarti tanpa TTL.</p>
+<h2 id="kesalahan-umum-dan-troubleshooting">Kesalahan umum dan troubleshooting<a class="headerlink" href="#kesalahan-umum-dan-troubleshooting" title="Permanent link">&para;</a></h2>
+<table>
+<thead>
+<tr>
+<th>Gejala</th>
+<th>Penyebab dan solusi</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>WRONGTYPE Operation against a key holding the wrong kind of value</code></td>
+<td>Dua fitur memakai nama key yang sama dengan tipe berbeda. Beri awalan fungsi yang berbeda di kamus key.</td>
+</tr>
+<tr>
+<td><code>EXPIRE ... NX</code> membalas galat sintaks</td>
+<td>Redis di bawah 7.0, opsi <code>NX</code> belum ada.<sup id="fnref3:2"><a class="footnote-ref" href="#fn:2">2</a></sup> Pakai Redis 7.0+, atau pasang TTL hanya saat <code>INCR</code> membalas <code>1</code>.</td>
+</tr>
+<tr>
+<td>Counter <code>katalog:rate:&lt;klien&gt;</code> tidak pernah kedaluwarsa</td>
+<td><code>INCR</code> berhasil tetapi <code>EXPIRE</code> tidak sempat jalan (proses berhenti di antaranya). Ini risiko pola dua perintah di <a href="../../pola-aplikasi/session-dan-rate-limiting/">Session dan rate limiting</a>; atasi dengan transaksi atau Lua script.</td>
+</tr>
+<tr>
+<td>TTL cache hilang setelah diperbarui</td>
+<td><code>SET</code> tanpa <code>EX</code> menimpa key dan menghapus TTL-nya (<a href="../../pengenalan/key-dan-expiry/">Key dan expiry</a>). Selalu sertakan <code>EX</code> saat menulis cache.</td>
+</tr>
+<tr>
+<td>Stream <code>katalog:peristiwa</code> terus membesar</td>
+<td><code>XADD</code> tanpa <code>MAXLEN</code> tidak membatasi panjang.<sup id="fnref2:3"><a class="footnote-ref" href="#fn:3">3</a></sup> Selalu tambahkan batas.</td>
+</tr>
+<tr>
+<td><code>katalog:populer</code> makin besar tanpa batas</td>
+<td>Sorted Set tidak punya TTL. Rencanakan pemangkasan (mis. <code>ZREMRANGEBYRANK</code>) atau periode peringkat per hari.</td>
+</tr>
+<tr>
+<td>Setelah mengganti nama key, data lama "hilang"</td>
+<td>Aplikasi membaca nama baru, sementara key lama masih ada. Karena itu nama key dibuat satu kali di <code>kunci.py</code> dan tidak diubah sembarangan.</td>
+</tr>
+<tr>
+<td><code>SCAN</code> tidak menampilkan semua key dalam sekali panggil</td>
+<td>Wajar: <code>SCAN</code> bertahap. Lanjutkan sampai kursor <code>0</code>.<sup id="fnref2:6"><a class="footnote-ref" href="#fn:6">6</a></sup></td>
+</tr>
+</tbody>
+</table>
+<div class="admonition note">
+<p class="admonition-title">Status verifikasi</p>
+<p>Contoh <code>kunci.py</code> benar-benar dijalankan (Python 3.14.7) dan outputnya di atas adalah hasil nyata. Perintah <code>redis-cli</code> dan blok outputnya <strong>belum dijalankan</strong> di Redis nyata saat bab ini ditulis (Docker tidak aktif); sintaksnya dicocokkan dengan dokumentasi resmi. Angka sisa TTL, ID Stream, dan ukuran byte hanya ilustrasi.</p>
+</div>
+<h2 id="latihan">Latihan<a class="headerlink" href="#latihan" title="Permanent link">&para;</a></h2>
+<ol>
+<li>Tambahkan fitur F6 "keranjang belanja per pengguna": jawab enam pertanyaan, pilih tipe data (Hash atau lainnya), tentukan nama key dan TTL, lalu tambahkan fungsinya ke <code>kunci.py</code>.</li>
+<li>Sebelum menjalankan: apa yang dikembalikan <code>TYPE katalog:pengunjung:20261027</code> untuk key HyperLogLog? Jalankan Langkah 3 dan 4, lalu bandingkan.</li>
+<li>Ubah <code>kunci.py</code> agar <code>pengunjung()</code> menolak tanggal yang bukan 8 digit angka. Uji dengan <code>pengunjung("2026-10-27")</code>.</li>
+<li>Untuk F5, hitung kasar: bila satu entri Stream sekitar 100 byte dan batasnya 1000 entri, berapa kira-kira memori maksimum? Lalu ukur satu entri sebenarnya dengan <code>MEMORY USAGE</code> dan bandingkan dengan perkiraanmu.</li>
+<li>Jelaskan dengan kata-katamu kenapa F5 memakai Stream, bukan Pub/Sub, dan kapan jawabannya akan berbeda.</li>
+</ol>
+<details class="success">
+<summary>Petunjuk</summary>
+<ol>
+<li>Keranjang sering diubah per item, jadi pertimbangkan Hash; tentukan juga dampak bila hilang.</li>
+<li>Ingat HyperLogLog dibangun di atas String.</li>
+<li>Periksa <code>len(tanggal) == 8</code> dan <code>tanggal.isdigit()</code> sebelum memanggil <code>_susun</code>.</li>
+<li>Kalikan jumlah entri dengan ukuran per entri; ingat <code>MAXLEN ~</code> bersifat perkiraan.</li>
+<li>Pikirkan klien yang sedang terputus saat pesan dikirim.</li>
+</ol>
+</details>
+<h2 id="ringkasan">Ringkasan<a class="headerlink" href="#ringkasan" title="Permanent link">&para;</a></h2>
+<ul>
+<li>Rancangan Redis dimulai dari <strong>pola akses</strong>, lalu tipe data, nama key, TTL, ukuran, dan dampak bila data hilang. Hasilnya satu tabel: kamus key.</li>
+<li>Proyek akhir ini punya lima keperluan: cache produk (String JSON), pembatas laju (String counter), peringkat (Sorted Set), pengunjung unik (HyperLogLog), dan peristiwa (Stream dengan batas panjang).</li>
+<li>Penamaan: awalan aplikasi <code>katalog:</code>, urutan fungsi → objek → id, huruf kecil, tanpa data pribadi, dan disusun di satu modul <code>kunci.py</code>.</li>
+<li>Uji rancangan dengan satu perintah per pola akses, lalu periksa <code>TYPE</code>, <code>TTL</code>, <code>SCAN</code>, dan <code>MEMORY USAGE</code>.</li>
+<li>Keputusan operasional (persistence, ACL, monitoring) ditentukan sejak awal, bukan sesudah aplikasi jadi.</li>
+</ul>
+<p>Berikutnya: <a href="../implementasi-api/">Implementasi API</a>, yang memakai kamus key dan <code>kunci.py</code> ini untuk membangun cache dan pembatas laju di FastAPI.</p>
+<h2 id="referensi-resmi">Referensi resmi<a class="headerlink" href="#referensi-resmi" title="Permanent link">&para;</a></h2>
+<p>Bacaan tambahan: <a href="https://redis.io/docs/latest/commands/zrange/"><code>ZRANGE</code></a>, <a href="https://redis.io/docs/latest/commands/pfcount/"><code>PFCOUNT</code></a>, <a href="https://redis.io/docs/latest/commands/memory-usage/"><code>MEMORY USAGE</code></a>.</p>
+<div class="footnote">
+<hr />
+<ol>
+<li id="fn:1">
+<p>Redis, <em>Keys and values</em>: <a href="https://redis.io/docs/latest/develop/using-commands/keyspace/">https://redis.io/docs/latest/develop/using-commands/keyspace/</a>&#160;<a class="footnote-backref" href="#fnref:1" title="Jump back to footnote 1 in the text">&#8617;</a></p>
+</li>
+<li id="fn:2">
+<p>Redis, <em>EXPIRE</em>: <a href="https://redis.io/docs/latest/commands/expire/">https://redis.io/docs/latest/commands/expire/</a>&#160;<a class="footnote-backref" href="#fnref:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:2" title="Jump back to footnote 2 in the text">&#8617;</a><a class="footnote-backref" href="#fnref3:2" title="Jump back to footnote 2 in the text">&#8617;</a></p>
+</li>
+<li id="fn:3">
+<p>Redis, <em>XADD</em>: <a href="https://redis.io/docs/latest/commands/xadd/">https://redis.io/docs/latest/commands/xadd/</a>&#160;<a class="footnote-backref" href="#fnref:3" title="Jump back to footnote 3 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:3" title="Jump back to footnote 3 in the text">&#8617;</a></p>
+</li>
+<li id="fn:4">
+<p>Redis, <em>ZINCRBY</em>: <a href="https://redis.io/docs/latest/commands/zincrby/">https://redis.io/docs/latest/commands/zincrby/</a>&#160;<a class="footnote-backref" href="#fnref:4" title="Jump back to footnote 4 in the text">&#8617;</a></p>
+</li>
+<li id="fn:5">
+<p>Redis, <em>PFADD</em>: <a href="https://redis.io/docs/latest/commands/pfadd/">https://redis.io/docs/latest/commands/pfadd/</a>&#160;<a class="footnote-backref" href="#fnref:5" title="Jump back to footnote 5 in the text">&#8617;</a></p>
+</li>
+<li id="fn:6">
+<p>Redis, <em>SCAN</em>: <a href="https://redis.io/docs/latest/commands/scan/">https://redis.io/docs/latest/commands/scan/</a>&#160;<a class="footnote-backref" href="#fnref:6" title="Jump back to footnote 6 in the text">&#8617;</a><a class="footnote-backref" href="#fnref2:6" title="Jump back to footnote 6 in the text">&#8617;</a></p>
+</li>
+</ol>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8z"/></svg>
+  Kembali ke atas
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../" class="md-footer__link md-footer__link--prev" aria-label="Sebelumnya: Proyek Akhir">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Sebelumnya
+              </span>
+              <div class="md-ellipsis">
+                Proyek Akhir
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../implementasi-api/" class="md-footer__link md-footer__link--next" aria-label="Selanjutnya: Implementasi API">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Selanjutnya
+              </span>
+              <div class="md-ellipsis">
+                Implementasi API
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../..", "features": ["navigation.indexes", "navigation.path", "navigation.footer", "navigation.top", "navigation.tracking", "toc.follow", "search.highlight", "search.suggest", "content.code.copy", "content.code.annotate", "content.tabs.link"], "search": "../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Tersalin ke clipboard", "clipboard.copy": "Salin ke clipboard", "search.result.more.one": "1 lagi di halaman ini", "search.result.more.other": "# lagi di halaman ini", "search.result.none": "Tidak ada dokumen yang sesuai", "search.result.one": "1 dokumen ditemukan", "search.result.other": "# dokumen ditemukan", "search.result.placeholder": "Ketik untuk mulai pencarian", "search.result.term.missing": "Tidak ada", "select.version": "Pilih versi"}, "version": null}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+        <script src="../../assets/vendor/mermaid/mermaid.min.js"></script>
+      
+        <script src="../../javascripts/mermaid-config.js"></script>
+      
+        <script src="../../javascripts/mathjax.js"></script>
+      
+        <script src="https://cdn.jsdelivr.net/npm/mathjax@3.2.2/es5/tex-mml-chtml.js"></script>
+      
+    
+  </body>
+</html>

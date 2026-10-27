@@ -1,0 +1,55 @@
+/* Minimal, theme-aware overrides. Colours come from Material variables. */
+
+/* Comfortable reading measure and spacing */
+.md-grid {
+  max-width: 70rem;
+}
+.md-typeset {
+  line-height: 1.7;
+}
+.md-typeset h1 {
+  margin-bottom: 1rem;
+}
+.md-typeset h2 {
+  margin-top: 2.2em;
+  padding-bottom: 0.2em;
+  border-bottom: 1px solid var(--md-default-fg-color--lightest);
+}
+
+/* Visible keyboard focus in both schemes */
+.md-typeset a:focus-visible,
+.md-content button:focus-visible,
+.md-typeset summary:focus-visible {
+  outline: 2px solid var(--md-accent-fg-color);
+  outline-offset: 2px;
+}
+
+/* Long display equations scroll inside their block, never the page */
+.md-typeset div.arithmatex {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0.25em 0;
+}
+
+/* Tables: subtle zebra using theme variables */
+.md-typeset table:not([class]) tbody tr:nth-child(even) {
+  background-color: var(--md-default-fg-color--lightest);
+}
+
+/* Wrap long words (URLs, identifiers) in narrow viewports */
+@media (max-width: 44.9375em) {
+  .md-typeset {
+    overflow-wrap: anywhere;
+  }
+  .md-typeset pre,
+  .md-typeset table {
+    overflow-wrap: normal;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  * {
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+}
