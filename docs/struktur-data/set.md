@@ -61,7 +61,7 @@ Satu Set dapat menampung hingga 2^32 - 1 (sekitar 4 miliar) anggota.[^1]
 
 ## Praktik langkah demi langkah
 
-Output di bawah adalah output yang **diharapkan** berdasarkan dokumentasi, bukan hasil eksekusi di komputermu. Urutan anggota pada daftar tidak dijamin; bandingkan isinya, bukan urutannya.
+Output di bawah adalah output **terverifikasi**: dijalankan di Redis 8.10.3 pada 2026-10-27. Hasilmu bisa berbeda pada nilai yang berubah tiap eksekusi. Urutan anggota pada daftar tidak dijamin; bandingkan isinya, bukan urutannya.
 
 **Lingkungan: terminal**
 
@@ -80,7 +80,7 @@ Semua langkah berikutnya di **redis-cli**.
 
 Kenapa dua kali: untuk melihat bahwa anggota yang sudah ada diabaikan.
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 (integer) 3
@@ -97,7 +97,7 @@ Cara membaca output: `SADD` membalas jumlah anggota **baru**. Pada perintah kedu
 127.0.0.1:6379> SCARD kelas:redis
 ```
 
-**Diharapkan:** `(integer) 1`, `(integer) 0`, lalu `(integer) 4`.
+**Terverifikasi:** `(integer) 1`, `(integer) 0`, lalu `(integer) 4`.
 
 Kita memakai `SISMEMBER` ketimbang membaca semua anggota karena jauh lebih ringan: cukup bertanya "apakah ada?".
 
@@ -109,7 +109,7 @@ Kita memakai `SISMEMBER` ketimbang membaca semua anggota karena jauh lebih ringa
 127.0.0.1:6379> SREM kelas:redis "rina"
 ```
 
-**Diharapkan** (urutan bisa berbeda):
+**Terverifikasi** (urutan bisa berbeda):
 
 ```text
 1) "budi"
@@ -141,7 +141,7 @@ Siapkan Set kedua:
 
 Kenapa dipakai: Redis menghitung ini di server, jadi aplikasi tidak perlu mengambil dua daftar besar lalu membandingkannya sendiri.
 
-**Diharapkan** (urutan bisa berbeda):
+**Terverifikasi** (urutan bisa berbeda):
 
 ```text
 (integer) 3
@@ -163,7 +163,7 @@ Cara membaca output: `SINTER` hanya anggota di kedua Set (`sari`, `tono`). `SUNI
 127.0.0.1:6379> SMEMBERS kelas:keduanya
 ```
 
-Kenapa dipakai: bila hasil irisan sering dibutuhkan, simpan sekali sebagai key baru daripada menghitung ulang. **Diharapkan:** `(integer) 2`, lalu `sari` dan `tono`.
+Kenapa dipakai: bila hasil irisan sering dibutuhkan, simpan sekali sebagai key baru daripada menghitung ulang. **Terverifikasi:** `(integer) 2`, lalu `sari` dan `tono`.
 
 !!! danger "`*STORE` menimpa key tujuan"
     Jika `kelas:keduanya` sudah ada, isinya diganti tanpa peringatan.[^11]
@@ -175,7 +175,7 @@ Kenapa dipakai: bila hasil irisan sering dibutuhkan, simpan sekali sebagai key b
 127.0.0.1:6379> SCARD pembaca:artikel-1
 ```
 
-**Diharapkan:** `(integer) 3`, lalu `(integer) 3`. Meski ada lima kunjungan, hanya tiga pembaca unik. Inilah kenapa Set cocok untuk menghitung yang unik.
+**Terverifikasi:** `(integer) 3`, lalu `(integer) 3`. Meski ada lima kunjungan, hanya tiga pembaca unik. Inilah kenapa Set cocok untuk menghitung yang unik.
 
 ### Langkah 7: Bersihkan data latihan
 
@@ -183,7 +183,7 @@ Kenapa dipakai: bila hasil irisan sering dibutuhkan, simpan sekali sebagai key b
 127.0.0.1:6379> DEL kelas:redis kelas:python kelas:keduanya pembaca:artikel-1
 ```
 
-**Diharapkan:** `(integer) 4`.
+**Terverifikasi:** `(integer) 4`.
 
 !!! danger "`DEL` tidak bisa dibatalkan"
     Perintah ini menyebut key satu per satu agar tidak ada key lain yang ikut terhapus.
@@ -220,16 +220,16 @@ Penjelasan baris penting:
 |---|---|
 | `r.delete(R, P)` di awal dan akhir | Memulai dan mengakhiri dari kondisi bersih; menghapus kedua key itu. |
 | `r.sadd(R, "budi", "sari", "tono")` | Menambah beberapa anggota sekaligus. |
-| `r.sismember(R, "sari")` | Mengembalikan `True` atau `False` (di redis-py versi terbaru; versi lama bisa mengembalikan `1`/`0`). |
+| `r.sismember(R, "sari")` | Mengembalikan `1` atau `0` (teramati di redis-py 8.1.0 dengan Redis 8.10.3); versi lain bisa mengembalikan `True`/`False`, jadi jangan membandingkan dengan `is True`. |
 | `sorted(...)` | Redis mengembalikan `set` Python yang tidak berurutan; `sorted` membuat output stabil untuk dibandingkan. |
 
 Cara menjalankan: `python set_irisan.py`.
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 jumlah kelas redis: 3
-sari di kelas redis: True
+sari di kelas redis: 1
 irisan: ['sari', 'tono']
 gabungan: ['budi', 'dewi', 'sari', 'tono']
 hanya redis: ['budi']
@@ -248,7 +248,7 @@ hanya redis: ['budi']
 | `SINTERSTORE` menghapus isi key tujuan | Perilaku normal: key tujuan ditimpa, dan dihapus bila hasil kosong.[^11] |
 
 !!! note "Status verifikasi"
-    Sintaks, nilai balik, dan batas ukuran dicocokkan dengan dokumentasi resmi Redis. Blok output dan skrip Python belum dijalankan di Redis sungguhan saat bab ini ditulis, jadi bandingkan dengan hasilmu sendiri.
+    Perintah, nilai balik, dan skrip di bab ini dijalankan di Redis 8.10.3 (`redis:latest`) pada 2026-10-27, dengan Python 3.12.3 dan redis-py 8.1.0. Sintaks juga dicocokkan dengan dokumentasi resmi Redis. Nilai yang berubah tiap eksekusi (ID, TTL, waktu, urutan, alamat IP) bisa berbeda di komputermu, dan teks galat bisa berbeda antarversi. Tampilan prompt interaktif `redis-cli` (prompt, Tab, riwayat) tidak teramati karena pengujian berjalan tanpa terminal interaktif.
 
 ## Latihan
 

@@ -61,7 +61,7 @@ Kadang kamu perlu melihat key apa saja yang ada. Ada dua cara:
 
 ## Praktik langkah demi langkah
 
-Lingkungan: **redis-cli**, kecuali dinyatakan lain. Output di bawah adalah output yang **diharapkan** dari dokumentasi, bukan hasil eksekusi di komputermu. Angka sisa waktu bisa sedikit berbeda.
+Lingkungan: **redis-cli**, kecuali dinyatakan lain. Output di bawah adalah output **terverifikasi**: dijalankan di Redis 8.10.3 pada 2026-10-27. Hasilmu bisa berbeda pada nilai yang berubah tiap eksekusi. Angka sisa waktu bisa sedikit berbeda.
 
 Masuk dulu:
 
@@ -96,7 +96,7 @@ Kita memakai skema `jenis:id:atribut` agar key mudah dikelompokkan dan dicari na
 | `TYPE key` | Mengembalikan jenis value, misalnya `string`, atau `none` jika key tidak ada.[^1] |
 | `DEL key` | Menghapus key dan value-nya. Mengembalikan `1` jika ada yang terhapus, `0` jika key tidak ada.[^1] |
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 (integer) 1
@@ -121,7 +121,7 @@ string
 | Balasan `1` | Expiry berhasil diatur. Balasan `0` berarti tidak diatur, misalnya karena key tidak ada.[^4] |
 | `TTL sesi:abc123` | Menampilkan sisa detik. Kita membacanya untuk membuktikan expiry aktif. |
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 (integer) 1
@@ -139,7 +139,7 @@ Tunggu lebih dari 30 detik, lalu:
 127.0.0.1:6379> TTL sesi:abc123
 ```
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 (nil)
@@ -161,7 +161,7 @@ Nilai balik `TTL` punya makna khusus:[^5]
 127.0.0.1:6379> TTL kode:otp
 ```
 
-`SET ... EX detik` menyimpan nilai dan mengatur expiry dalam satu perintah.[^3] Kita pakai ini karena lebih ringkas dan tidak ada jeda di mana key ada tanpa expiry. **Diharapkan:** `OK`, lalu angka sekitar `10` atau `9`.
+`SET ... EX detik` menyimpan nilai dan mengatur expiry dalam satu perintah.[^3] Kita pakai ini karena lebih ringkas dan tidak ada jeda di mana key ada tanpa expiry. **Terverifikasi:** `OK`, lalu angka sekitar `10` atau `9`.
 
 !!! note "Milidetik"
     Untuk milidetik tersedia `PEXPIRE` dan `PTTL`.[^3]
@@ -175,7 +175,7 @@ Nilai balik `TTL` punya makna khusus:[^5]
 127.0.0.1:6379> TTL catatan
 ```
 
-`PERSIST` menghapus expiry sehingga key hidup permanen lagi.[^3] **Diharapkan:** `OK`, `(integer) 1`, `(integer) 1`, lalu `(integer) -1` (key ada tanpa expiry).
+`PERSIST` menghapus expiry sehingga key hidup permanen lagi.[^3] **Terverifikasi:** `OK`, `(integer) 1`, `(integer) 1`, lalu `(integer) -1` (key ada tanpa expiry).
 
 ### Langkah 7: Perhatikan jebakan: `SET` menghapus expiry
 
@@ -188,7 +188,7 @@ Nilai balik `TTL` punya makna khusus:[^5]
 
 Menimpa key dengan `SET` menghapus expiry-nya. Dokumentasi menyatakan timeout dibersihkan oleh perintah yang menghapus atau menimpa isi key, seperti `DEL` dan `SET`.[^4] Perintah yang hanya mengubah isi tanpa menggantinya (misalnya `INCR`, `LPUSH`, `HSET`) tidak mengubah expiry.[^4]
 
-**Diharapkan:** `TTL` yang terakhir mengembalikan `(integer) -1`.
+**Terverifikasi:** `TTL` yang terakhir mengembalikan `(integer) -1`.
 
 ### Langkah 8: Telusuri key dengan `SCAN`
 
@@ -202,7 +202,7 @@ Menimpa key dengan `SET` menghapus expiry-nya. Dokumentasi menyatakan timeout di
 | `MATCH user:*` | Hanya key yang cocok pola glob. `*` berarti apa saja. |
 | `COUNT 100` | Petunjuk jumlah kerja per panggilan. Bawaannya 10. Ini hanya petunjuk, bukan jaminan jumlah hasil.[^6] |
 
-Balasan berbentuk dua bagian: kursor berikutnya, lalu daftar key. **Diharapkan** (urutan key tidak dijamin):
+Balasan berbentuk dua bagian: kursor berikutnya, lalu daftar key. **Terverifikasi** (urutan key tidak dijamin):
 
 ```text
 1) "0"
@@ -230,7 +230,7 @@ Aturan iterasi `SCAN`:[^6]
 docker exec redis redis-cli --scan --pattern "user:*"
 ```
 
-Opsi `--scan` di `redis-cli` memakai `SCAN` di balik layar dan mengulang kursor untukmu, jadi kamu tidak perlu menulis kursor manual.[^7] **Diharapkan:** daftar nama key, satu per baris, misalnya `user:1:nama`.
+Opsi `--scan` di `redis-cli` memakai `SCAN` di balik layar dan mengulang kursor untukmu, jadi kamu tidak perlu menulis kursor manual.[^7] **Terverifikasi:** daftar nama key, satu per baris, misalnya `user:1:nama`.
 
 ## Troubleshooting
 
@@ -245,7 +245,7 @@ Opsi `--scan` di `redis-cli` memakai `SCAN` di balik layar dan mengulang kursor 
 | `EXPIRE key 0` atau negatif menghapus key | Memang begitu: timeout non-positif membuat key langsung terhapus.[^4] |
 
 !!! note "Status verifikasi"
-    Sintaks, nilai balik, dan aturan di atas dicocokkan dengan dokumentasi resmi. Blok output belum dijalankan di Redis sungguhan saat bab ini ditulis, jadi bandingkan dengan hasilmu sendiri.
+    Perintah, nilai balik, dan skrip di bab ini dijalankan di Redis 8.10.3 (`redis:latest`) pada 2026-10-27, dengan Python 3.12.3 dan redis-py 8.1.0. Sintaks juga dicocokkan dengan dokumentasi resmi Redis. Nilai yang berubah tiap eksekusi (ID, TTL, waktu, urutan, alamat IP) bisa berbeda di komputermu, dan teks galat bisa berbeda antarversi. Tampilan prompt interaktif `redis-cli` (prompt, Tab, riwayat) tidak teramati karena pengujian berjalan tanpa terminal interaktif.
 
 ## Latihan
 

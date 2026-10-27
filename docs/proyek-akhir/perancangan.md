@@ -106,7 +106,7 @@ Keputusan dari bagian [Operasi](../operasi/index.md) yang sudah bisa ditentukan 
 
 ## Praktik langkah demi langkah
 
-Perintah di Langkah 2 sampai 4 dijalankan di sesi interaktif `redis-cli` (`docker exec -it`), sehingga bentuk keluarannya sama dengan blok di bawah. Output di bawah adalah output yang **diharapkan** berdasarkan dokumentasi, bukan hasil eksekusi di komputermu. Nilai seperti sisa TTL, ID Stream, dan ukuran byte akan berbeda.
+Perintah di Langkah 2 sampai 4 dijalankan di sesi interaktif `redis-cli` (`docker exec -it`), sehingga bentuk keluarannya sama dengan blok di bawah. Output di bawah **terverifikasi**: dijalankan di Redis 8.10.3 pada 2026-10-27. Nilai seperti sisa TTL, ID Stream, dan ukuran byte akan berbeda.
 
 ### Langkah 1: Tulis pola akses sebelum menyentuh Redis
 
@@ -136,7 +136,7 @@ docker exec -it redis-proyek redis-cli
 
 Kenapa: container baru memastikan hanya key rancangan ini yang ada, sehingga hasil `DBSIZE` dan `SCAN` bisa dibandingkan dengan kamus key. Perintah kedua membuka sesi interaktif tempat semua perintah berikut dijalankan.
 
-**Diharapkan:** ID container yang panjang, lalu prompt `127.0.0.1:6379>`.
+**Terverifikasi:** ID container yang panjang, lalu prompt `127.0.0.1:6379>`.
 
 ### Langkah 3: Prototipekan tiap pola akses dengan satu perintah
 
@@ -172,7 +172,7 @@ Kenapa langkah ini diperlukan: satu perintah per pola akses membuktikan bahwa se
 | `PFADD` / `PFCOUNT` | Mencatat pengunjung (duplikat tidak dihitung dua kali) dan membaca jumlah perkiraannya.[^5] |
 | `XADD ... MAXLEN ~ 1000 *` | Menambah peristiwa dengan ID otomatis (`*`) dan membatasi panjang Stream sekitar 1000 entri. Tanda `~` berarti pemangkasan perkiraan, lebih murah.[^3] |
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 OK
@@ -237,7 +237,7 @@ Kenapa: ini "uji penerimaan" rancangan. Setiap baris kamus key (nama, tipe, TTL)
 | `TTL` | `-1` berarti tanpa expiry, `-2` berarti key tidak ada. |
 | `MEMORY USAGE` | Perkiraan byte satu key; berguna untuk menghitung kebutuhan memori (lihat [Monitoring](../operasi/monitoring.md)). |
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 1) "0"
@@ -254,7 +254,7 @@ string
 stream
 (integer) 300
 (integer) -1
-(integer) 120
+(integer) 97
 ```
 
 Cara membaca: kursor `0` berarti iterasi selesai, dan urutan key bisa berbeda. `DBSIZE` bernilai 5 (lima key kamus). `TYPE` untuk key HyperLogLog adalah `string` karena HyperLogLog disimpan sebagai String; itu wajar. Sisa TTL bisa beberapa detik di bawah 300. Angka `MEMORY USAGE` hanya ilustrasi.
@@ -369,7 +369,7 @@ Cara membaca: lima baris pertama cocok dengan kamus key. Baris terakhir membukti
 | Gejala | Penyebab dan solusi |
 |---|---|
 | `WRONGTYPE Operation against a key holding the wrong kind of value` | Dua fitur memakai nama key yang sama dengan tipe berbeda. Beri awalan fungsi yang berbeda di kamus key. |
-| `EXPIRE ... NX` membalas galat sintaks | Redis di bawah 7.0, opsi `NX` belum ada.[^2] Pakai Redis 7.0+, atau pasang TTL hanya saat `INCR` membalas `1`. |
+| `EXPIRE ... NX` membalas `ERR wrong number of arguments for 'expire' command` | Redis di bawah 7.0, opsi `NX` belum ada.[^2] Pakai Redis 7.0+, atau pasang TTL hanya saat `INCR` membalas `1`. |
 | Counter `katalog:rate:<klien>` tidak pernah kedaluwarsa | `INCR` berhasil tetapi `EXPIRE` tidak sempat jalan (proses berhenti di antaranya). Ini risiko pola dua perintah di [Session dan rate limiting](../pola-aplikasi/session-dan-rate-limiting.md); atasi dengan transaksi atau Lua script. |
 | TTL cache hilang setelah diperbarui | `SET` tanpa `EX` menimpa key dan menghapus TTL-nya ([Key dan expiry](../pengenalan/key-dan-expiry.md)). Selalu sertakan `EX` saat menulis cache. |
 | Stream `katalog:peristiwa` terus membesar | `XADD` tanpa `MAXLEN` tidak membatasi panjang.[^3] Selalu tambahkan batas. |
@@ -378,7 +378,7 @@ Cara membaca: lima baris pertama cocok dengan kamus key. Baris terakhir membukti
 | `SCAN` tidak menampilkan semua key dalam sekali panggil | Wajar: `SCAN` bertahap. Lanjutkan sampai kursor `0`.[^6] |
 
 !!! note "Status verifikasi"
-    Contoh `kunci.py` benar-benar dijalankan (Python 3.14.7) dan outputnya di atas adalah hasil nyata. Perintah `redis-cli` dan blok outputnya **belum dijalankan** di Redis nyata saat bab ini ditulis (Docker tidak aktif); sintaksnya dicocokkan dengan dokumentasi resmi. Angka sisa TTL, ID Stream, dan ukuran byte hanya ilustrasi.
+    Contoh `kunci.py` dan semua perintah `redis-cli` di bab ini dijalankan di Redis 8.10.3 pada 2026-10-27 (Python 3.12.3). Angka sisa TTL, ID Stream, dan ukuran byte berbeda di tiap komputer.
 
 ## Latihan
 

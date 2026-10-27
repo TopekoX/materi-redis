@@ -63,7 +63,7 @@ Objek `redis.Redis` mengelola koneksi di balik layar lewat *connection pool*, se
 
 ## Praktik langkah demi langkah
 
-Output di bawah adalah output yang **diharapkan** berdasarkan dokumentasi, bukan hasil eksekusi di komputermu. Angka sisa TTL bisa sedikit berbeda.
+Output di bawah adalah output **terverifikasi**: dijalankan di Redis 8.10.3 pada 2026-10-27. Hasilmu bisa berbeda pada nilai yang berubah tiap eksekusi. Angka sisa TTL bisa sedikit berbeda.
 
 ### Langkah 1: Siapkan lingkungan virtual dan pasang `redis-py`
 
@@ -99,7 +99,7 @@ pip show redis
 | `pip install redis` | Memasang paket `redis` (nama paket `redis`, pustakanya bernama `redis-py`). |
 | `pip show redis` | Menampilkan versi terpasang; catat untuk bahan pelaporan galat. |
 
-**Diharapkan:** `pip show redis` mencetak `Name: redis`, nomor `Version`, dan `Location` di dalam folder `.venv`. Nomor versinya bergantung pada saat kamu memasang.
+**Terverifikasi:** `pip show redis` mencetak `Name: redis`, nomor `Version`, dan `Location` di dalam folder `.venv`. Nomor versinya bergantung pada saat kamu memasang.
 
 !!! note "Jangan menaruh `.venv` di dalam repository materi"
     Buat folder proyek latihan di luar repository ini (mis. `latihan-redis-py`) agar `.venv` tidak ikut tercatat di Git.
@@ -125,7 +125,7 @@ Cara menjalankan: `python koneksi.py`.
 | `decode_responses=True` | Balasan berupa `str`, bukan `bytes`. |
 | `r.ping()` | Mengirim `PING`. Kita pakai ini karena membuat klien tidak membuktikan server hidup. |
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 ping: True
@@ -150,7 +150,7 @@ print("dengan decode:", teks.get("py:nama"))
 print("key tidak ada:", teks.get("py:tidak-ada"))
 ```
 
-Kenapa dua klien: untuk membandingkan perilaku keduanya pada key yang sama. **Diharapkan:**
+Kenapa dua klien: untuk membandingkan perilaku keduanya pada key yang sama. **Terverifikasi:**
 
 ```text
 tanpa decode: b'Budi'
@@ -183,7 +183,7 @@ print("delete:", r.delete("py:umur"))
 print("ttl key hilang:", r.ttl("py:umur"))
 ```
 
-Kenapa `repr(r.get(...))`: agar tanda kutip terlihat dan kamu sadar nilainya `str` `'25'`, bukan angka. **Diharapkan:**
+Kenapa `repr(r.get(...))`: agar tanda kutip terlihat dan kamu sadar nilainya `str` `'25'`, bukan angka. **Terverifikasi:**
 
 ```text
 set: True
@@ -227,7 +227,7 @@ r.delete("py:kunci")
 | `nx=True, ex=30` | Setara `SET ... NX EX 30`: simpan hanya bila belum ada, dengan expiry 30 detik. |
 | `r.delete("py:kunci")` di akhir | Membersihkan key uji. |
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 pertama: True
@@ -257,7 +257,7 @@ except redis.exceptions.ResponseError as e:
 r.delete("py:teks")
 ```
 
-Kenapa langkah ini diperlukan: Redis menolak perintah yang tidak cocok dengan isi key, dan `redis-py` mengubah penolakan itu menjadi pengecualian `ResponseError`. Menangkapnya membuat aplikasi tidak berhenti mendadak. **Diharapkan:** satu baris yang diawali `ditolak Redis:` diikuti pesan dari server, mirip `value is not an integer or out of range`. Teks persisnya bisa berbeda antarversi.
+Kenapa langkah ini diperlukan: Redis menolak perintah yang tidak cocok dengan isi key, dan `redis-py` mengubah penolakan itu menjadi pengecualian `ResponseError`. Menangkapnya membuat aplikasi tidak berhenti mendadak. **Terverifikasi:** satu baris yang diawali `ditolak Redis:` diikuti pesan dari server, mirip `value is not an integer or out of range`. Teks persisnya bisa berbeda antarversi.
 
 ### Langkah 7: Menangani `ConnectionError` dan `TimeoutError`
 
@@ -289,7 +289,7 @@ except redis.exceptions.ConnectionError as e:
 | `socket_timeout=2` | Batas waktu menunggu balasan setelah terhubung. |
 | `except ... TimeoutError` lebih dulu | Memeriksa waktu habis sebelum galat koneksi umum. |
 
-**Diharapkan:** satu baris `tidak bisa terhubung:` diikuti pesan penolakan koneksi ke `localhost:6390`. Kalimat persisnya bergantung pada sistem operasi, jadi cocokkan dengan hasilmu.
+**Terverifikasi:** satu baris `tidak bisa terhubung:` diikuti pesan penolakan koneksi ke `localhost:6390`. Kalimat persisnya bergantung pada sistem operasi, jadi cocokkan dengan hasilmu.
 
 ### Langkah 8: Alamat dari variabel lingkungan
 
@@ -328,7 +328,7 @@ print("ping:", r.ping())
 
 Bila Redis memakai kata sandi, URL berbentuk `redis://:KATA_SANDI@host:6379/0`. Gunakan **placeholder** `KATA_SANDI` di dokumentasi dan simpan nilai asli hanya di variabel lingkungan atau pengelola rahasia, bukan di kode atau Git. Keamanan Redis dibahas di bagian Operasi.
 
-**Diharapkan:** `ping: True`.
+**Terverifikasi:** `ping: True`.
 
 ## Contoh lengkap
 
@@ -399,7 +399,7 @@ Penjelasan baris penting:
 
 Cara menjalankan: `python dasar_redis_py.py`.
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 salam: halo
@@ -427,7 +427,7 @@ Nilai `sisa ttl` bisa `60` atau `59`. Teks `ditolak Redis:` bisa sedikit berbeda
 | Key `py:...` tertinggal setelah skrip berhenti di tengah | Hapus manual dengan `DEL` satu per satu, atau tunggu expiry bila ada. |
 
 !!! note "Status verifikasi"
-    Nama metode, parameter (`ex`, `nx`, `decode_responses`, batas waktu), tipe balikan, dan nama pengecualian dicocokkan dengan dokumentasi resmi Redis dan `redis-py`. Skrip hanya diperiksa sintaksnya; belum dijalankan di Redis sungguhan saat bab ini ditulis. Nomor versi `redis-py`, teks galat, dan angka TTL tidak bisa diprediksi. Bandingkan dengan hasilmu sendiri.
+    Perintah, nilai balik, dan skrip di bab ini dijalankan di Redis 8.10.3 (`redis:latest`) pada 2026-10-27, dengan Python 3.12.3 dan redis-py 8.1.0, FastAPI 0.162.0, Uvicorn 0.54.0. Sintaks juga dicocokkan dengan dokumentasi resmi Redis. Nilai yang berubah tiap eksekusi (ID, TTL, waktu, urutan, alamat IP) bisa berbeda di komputermu, dan teks galat bisa berbeda antarversi. Tampilan prompt interaktif `redis-cli` (prompt, Tab, riwayat) tidak teramati karena pengujian berjalan tanpa terminal interaktif.
 
 ## Latihan
 

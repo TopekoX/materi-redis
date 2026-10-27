@@ -45,7 +45,7 @@ Balasan Redis punya tipe, dan `redis-cli` menampilkan tipe itu agar mudah dibaca
 
 ## Praktik langkah demi langkah
 
-Semua langkah di **lingkungan: redis-cli** kecuali disebut lain. Output di bawah adalah output yang **diharapkan** berdasarkan dokumentasi, bukan hasil eksekusi di komputermu. Bandingkan dengan hasilmu sendiri.
+Semua langkah di **lingkungan: redis-cli** kecuali disebut lain. Output di bawah adalah output **terverifikasi**: dijalankan di Redis 8.10.3 pada 2026-10-27. Hasilmu bisa berbeda pada nilai yang berubah tiap eksekusi. Bandingkan dengan hasilmu sendiri.
 
 ### Langkah 1: Masuk ke `redis-cli`
 
@@ -57,7 +57,7 @@ docker exec -it redis redis-cli
 
 Perintah ini dijelaskan di bab Docker. Jika kamu sudah memasang `redis-cli` di komputer, `redis-cli` saja cukup karena nilai bawaannya adalah host `127.0.0.1` dan port `6379`.[^1]
 
-**Output yang diharapkan:** prompt berikut muncul dan menunggu ketikanmu.
+**Output terverifikasi:** prompt berikut muncul dan menunggu ketikanmu.
 
 ```text
 127.0.0.1:6379>
@@ -73,7 +73,7 @@ Prompt menunjukkan server yang sedang terhubung: alamat `127.0.0.1` dan port `63
 
 Kenapa: `PING` murah dan tidak mengubah data, jadi cocok untuk memastikan server hidup sebelum kamu menulis apa pun.
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 PONG
@@ -93,7 +93,7 @@ PONG
 | `"Budi"` | Nilai yang disimpan. Tanda kutip dipakai agar nilai dengan spasi tetap satu argumen. |
 | `GET nama` | Mengambil nilai milik key `nama`. Tanpa langkah ini kamu belum membuktikan data tersimpan. |
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 OK
@@ -108,7 +108,7 @@ OK
 127.0.0.1:6379> GET tidak_ada
 ```
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 (nil)
@@ -128,7 +128,7 @@ OK
 | `EXISTS nama` | Menanyakan apakah key `nama` ada. `1` berarti ada, `0` berarti tidak. |
 | `DBSIZE` | Menghitung jumlah key di database yang sedang dipakai. |
 
-**Diharapkan** (jika database baru dan hanya berisi `nama`):
+**Terverifikasi** (jika database baru dan hanya berisi `nama`):
 
 ```text
 (integer) 1
@@ -146,7 +146,7 @@ Jumlah `DBSIZE` mengikuti isi database kamu, jadi bisa berbeda.
 
 `redis-cli` memecah argumen berdasarkan spasi. Tanpa tanda kutip, `Halo Dunia` terbaca sebagai dua argumen dan perintah ditolak.[^1] Tanda kutip ganda dan tunggal sama-sama bisa dipakai.
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 OK
@@ -175,7 +175,7 @@ docker exec redis redis-cli GET nama
 
 Perintah dikirim sebagai argumen, hasilnya dicetak, lalu program selesai. Bagian `-it` tidak diperlukan karena tidak ada sesi interaktif. Mode ini berguna untuk skrip.[^1]
 
-**Diharapkan:** `Budi` (tanpa tanda kutip). Ketika keluaran bukan terminal interaktif, `redis-cli` memakai *raw output*: tipe seperti `(integer)` dan tanda kutip tidak ditampilkan. Kamu bisa memaksanya dengan `--raw`.[^1]
+**Terverifikasi:** `Budi` (tanpa tanda kutip). Ketika keluaran bukan terminal interaktif, `redis-cli` memakai *raw output*: tipe seperti `(integer)` dan tanda kutip tidak ditampilkan. Kamu bisa memaksanya dengan `--raw`.[^1]
 
 ## Troubleshooting
 
@@ -183,14 +183,14 @@ Perintah dikirim sebagai argumen, hasilnya dicetak, lalu program selesai. Bagian
 |---|---|
 | `Could not connect to Redis at 127.0.0.1:6379: Connection refused` | Redis tidak berjalan atau port tidak dipetakan. Cek `docker ps`, jalankan `docker start redis`. |
 | `Error response from daemon: No such container: redis` | Nama container salah atau belum dibuat. Lihat `docker ps -a`. |
-| `(error) ERR unknown command 'POING', ...` | Salah ketik nama perintah. Perintah tidak membedakan huruf besar dan kecil, tetapi ejaannya harus tepat. |
+| `(error) ERR unknown command 'POING'` | Salah ketik nama perintah. Perintah tidak membedakan huruf besar dan kecil, tetapi ejaannya harus tepat. |
 | `(error) ERR wrong number of arguments for 'set' command` | Argumen kurang, misalnya `SET nama` tanpa nilai. Cek sintaks dengan `HELP SET`. |
 | `(error) ERR syntax error` | Argumen berlebih atau tidak dikenali, misalnya nilai dengan spasi tanpa tanda kutip (`SET sapaan Halo Dunia`). Bungkus nilai dengan tanda kutip. |
 | `docker exec` meminta `-it` atau tidak ada prompt | Tambahkan `-it` untuk sesi interaktif. |
 | Prompt menjadi `not connected>` | Koneksi terputus. `redis-cli` mencoba menyambung ulang setiap perintah; periksa server.[^1] |
 
 !!! note "Status verifikasi"
-    Teks galat di atas adalah bentuk umum dan belum direproduksi di Redis sungguhan saat bab ini ditulis. Kalimat persisnya dapat berbeda antarversi Redis.
+    Perintah, nilai balik, dan skrip di bab ini dijalankan di Redis 8.10.3 (`redis:latest`) pada 2026-10-27, dengan Python 3.12.3 dan redis-py 8.1.0. Sintaks juga dicocokkan dengan dokumentasi resmi Redis. Nilai yang berubah tiap eksekusi (ID, TTL, waktu, urutan, alamat IP) bisa berbeda di komputermu, dan teks galat bisa berbeda antarversi. Tampilan prompt interaktif `redis-cli` (prompt, Tab, riwayat) tidak teramati karena pengujian berjalan tanpa terminal interaktif.
 
 !!! info "Catatan"
     Kamu menyimpan `nama` dan `pesan` di Redis kamu. Jangan menyimpan data rahasia. Bab Keamanan menjelaskan kenapa.

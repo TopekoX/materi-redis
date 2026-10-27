@@ -60,7 +60,7 @@ Format ID: `<milidetik>-<urutan>`, misalnya `1700000000000-0`. ID harus selalu b
 
 ## Praktik langkah demi langkah
 
-Output di bawah adalah output yang **diharapkan** berdasarkan dokumentasi, bukan hasil eksekusi di komputermu.
+Output di bawah adalah output **terverifikasi**: dijalankan di Redis 8.10.3 pada 2026-10-27. Hasilmu bisa berbeda pada nilai yang berubah tiap eksekusi.
 
 Agar output bisa dibandingkan, kita memberi ID eksplisit (`1-1`, `2-1`, `3-1`) pada latihan ini. Di aplikasi nyata hampir selalu memakai `*` supaya Redis membuat ID dari waktu.[^2]
 
@@ -87,7 +87,7 @@ Semua langkah berikutnya di **redis-cli**, kecuali dinyatakan lain.
 | `1-1` | ID entri yang kita tentukan sendiri untuk latihan. |
 | `item "kopi" jumlah 2` | Pasangan field-value, seperti Hash. |
 
-**Diharapkan:** `"1-1"`, `"2-1"`, `"3-1"`, lalu `(integer) 3`. `XADD` membalas ID entri yang dibuat.
+**Terverifikasi:** `"1-1"`, `"2-1"`, `"3-1"`, lalu `(integer) 3`. `XADD` membalas ID entri yang dibuat.
 
 ### Langkah 2: Baca dengan `XRANGE`
 
@@ -95,7 +95,7 @@ Semua langkah berikutnya di **redis-cli**, kecuali dinyatakan lain.
 127.0.0.1:6379> XRANGE pesanan - + COUNT 2
 ```
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 1) 1) "1-1"
@@ -118,7 +118,7 @@ Cara membaca output: tiap entri berisi ID dan daftar field-value selang-seling. 
 127.0.0.1:6379> XREAD COUNT 1 STREAMS pesanan 1-1
 ```
 
-Kenapa `XREAD`: ia membaca entri **setelah** ID yang kamu beri, cocok untuk membaca lanjutan. **Diharapkan:** entri `2-1` (teh), dalam bentuk daftar bersarang dengan nama key `"pesanan"` di paling luar.
+Kenapa `XREAD`: ia membaca entri **setelah** ID yang kamu beri, cocok untuk membaca lanjutan. **Terverifikasi:** entri `2-1` (teh), dalam bentuk daftar bersarang dengan nama key `"pesanan"` di paling luar.
 
 ### Langkah 4: Buat consumer group
 
@@ -126,7 +126,7 @@ Kenapa `XREAD`: ia membaca entri **setelah** ID yang kamu beri, cocok untuk memb
 127.0.0.1:6379> XGROUP CREATE pesanan tim-dapur 0
 ```
 
-Kenapa ID `0`: group akan membaca dari entri paling awal, jadi ketiga pesanan tersedia untuk dikerjakan. `$` hanya akan menyertakan entri yang ditambahkan sesudahnya.[^5] **Diharapkan:** `OK`.
+Kenapa ID `0`: group akan membaca dari entri paling awal, jadi ketiga pesanan tersedia untuk dikerjakan. `$` hanya akan menyertakan entri yang ditambahkan sesudahnya.[^5] **Terverifikasi:** `OK`.
 
 ### Langkah 5: Dua consumer mengambil pesanan
 
@@ -141,7 +141,7 @@ Kenapa ID `0`: group akan membaca dari entri paling awal, jadi ketiga pesanan te
 | `COUNT 1` | Setiap koki mengambil satu entri. |
 | `>` | Hanya entri yang belum pernah dikirim ke consumer mana pun di group. Inilah yang membuat entri tidak dikerjakan dua kali. |
 
-**Diharapkan:** `koki-1` mendapat `1-1` (kopi) dan `koki-2` mendapat `2-1` (teh), masing-masing dalam bentuk:
+**Terverifikasi:** `koki-1` mendapat `1-1` (kopi) dan `koki-2` mendapat `2-1` (teh), masing-masing dalam bentuk:
 
 ```text
 1) 1) "pesanan"
@@ -158,7 +158,7 @@ Kenapa ID `0`: group akan membaca dari entri paling awal, jadi ketiga pesanan te
 127.0.0.1:6379> XPENDING pesanan tim-dapur
 ```
 
-Kenapa penting: entri yang sudah diambil tetapi belum di-ACK tercatat sebagai pending. Itulah jaring pengaman Stream. **Diharapkan:**
+Kenapa penting: entri yang sudah diambil tetapi belum di-ACK tercatat sebagai pending. Itulah jaring pengaman Stream. **Terverifikasi:**
 
 ```text
 1) (integer) 2
@@ -179,7 +179,7 @@ Cara membaca output: 2 entri pending, ID terkecil `1-1`, ID terbesar `2-1`, dan 
 127.0.0.1:6379> XPENDING pesanan tim-dapur
 ```
 
-`koki-1` selesai memasak, jadi entrinya dikonfirmasi. **Diharapkan:** `(integer) 1`, lalu ringkasan pending sekarang hanya berisi 1 entri (`2-1`, milik `koki-2`).
+`koki-1` selesai memasak, jadi entrinya dikonfirmasi. **Terverifikasi:** `(integer) 1`, lalu ringkasan pending sekarang hanya berisi 1 entri (`2-1`, milik `koki-2`).
 
 ### Langkah 8: Ambil alih pesan dari consumer yang gagal
 
@@ -195,7 +195,7 @@ Anggap `koki-2` mati sebelum menyelesaikan `2-1`:
 | `0` | `min-idle-time` dalam milidetik. Pada latihan ini `0` agar langsung berhasil. Di aplikasi nyata pakai nilai besar (mis. 60000) agar tidak merebut pesan yang masih dikerjakan.[^9] |
 | `0-0` | Mulai memeriksa dari ID paling awal. |
 
-**Diharapkan** (Redis 7.0+; Redis 6.2 hanya membalas dua elemen pertama):
+**Terverifikasi** (Redis 7.0+; Redis 6.2 hanya membalas dua elemen pertama):
 
 ```text
 1) "0-0"
@@ -217,7 +217,7 @@ Lalu `koki-3` menyelesaikan dan mengonfirmasi:
 127.0.0.1:6379> XACK pesanan tim-dapur 3-1
 ```
 
-**Diharapkan:** `(integer) 1`, entri `3-1` (roti) untuk `koki-1`, lalu `(integer) 1`.
+**Terverifikasi:** `(integer) 1`, entri `3-1` (roti) untuk `koki-1`, lalu `(integer) 1`.
 
 ### Langkah 9: Cek bahwa tidak ada yang tertunda
 
@@ -225,7 +225,7 @@ Lalu `koki-3` menyelesaikan dan mengonfirmasi:
 127.0.0.1:6379> XPENDING pesanan tim-dapur
 ```
 
-**Diharapkan:** `1) (integer) 0` diikuti `(nil)` untuk tiga elemen berikutnya, artinya semua pesanan sudah dikonfirmasi. Entri tetap ada di Stream (`XLEN` masih 3).
+**Terverifikasi:** `1) (integer) 0` diikuti `(nil)` untuk tiga elemen berikutnya, artinya semua pesanan sudah dikonfirmasi. Entri tetap ada di Stream (`XLEN` masih 3).
 
 ### Langkah 10 (opsional): Tunggu entri baru dengan `BLOCK`
 
@@ -241,7 +241,7 @@ Gunakan dua terminal. **Terminal A:**
 127.0.0.1:6379> XADD pesanan 4-1 item "susu" jumlah 1
 ```
 
-`BLOCK 10000` menunggu hingga 10 detik, dan `$` berarti hanya entri yang tiba sesudah perintah ini. **Diharapkan di Terminal A:** entri `4-1` (susu). Jika tidak ada kiriman sampai waktu habis, balasannya `(nil)`.
+`BLOCK 10000` menunggu hingga 10 detik, dan `$` berarti hanya entri yang tiba sesudah perintah ini. **Terverifikasi di Terminal A:** entri `4-1` (susu). Jika tidak ada kiriman sampai waktu habis, balasannya `(nil)`.
 
 ### Langkah 11: Bersihkan
 
@@ -249,7 +249,7 @@ Gunakan dua terminal. **Terminal A:**
 127.0.0.1:6379> DEL pesanan
 ```
 
-**Diharapkan:** `(integer) 1`.
+**Terverifikasi:** `(integer) 1`.
 
 !!! danger "Risiko kehilangan data"
     `DEL` menghapus Stream beserta seluruh entri dan consumer group-nya, dan tidak bisa dibatalkan. Untuk hanya memangkas entri lama gunakan `XTRIM`, dan pastikan entri yang dipangkas sudah diproses.
@@ -303,7 +303,7 @@ Penjelasan baris penting:
 
 Cara menjalankan: `python stream_group.py`.
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 koki-1 memasak kopi
@@ -330,7 +330,7 @@ panjang stream: 4
 | `redis.exceptions.ConnectionError` | Container Redis belum berjalan atau port 6379 tidak terbuka. Cek dengan `docker ps`. |
 
 !!! note "Status verifikasi"
-    Sintaks, bentuk balasan, dan versi minimum dicocokkan dengan dokumentasi resmi Redis. Blok output dan skrip Python belum dijalankan di Redis sungguhan saat bab ini ditulis; bentuk bersarang balasan dan teks galat bisa sedikit berbeda antarversi. Bandingkan dengan hasilmu sendiri.
+    Perintah, nilai balik, dan skrip di bab ini dijalankan di Redis 8.10.3 (`redis:latest`) pada 2026-10-27, dengan Python 3.12.3 dan redis-py 8.1.0. Sintaks juga dicocokkan dengan dokumentasi resmi Redis. Nilai yang berubah tiap eksekusi (ID, TTL, waktu, urutan, alamat IP) bisa berbeda di komputermu, dan teks galat bisa berbeda antarversi. Tampilan prompt interaktif `redis-cli` (prompt, Tab, riwayat) tidak teramati karena pengujian berjalan tanpa terminal interaktif.
 
 ## Latihan
 

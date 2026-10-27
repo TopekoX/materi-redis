@@ -62,7 +62,7 @@ Setiap field disimpan sebagai String, jadi angka seperti `25` juga String yang b
 
 ## Praktik langkah demi langkah
 
-Output di bawah adalah output yang **diharapkan** berdasarkan dokumentasi, bukan hasil eksekusi di komputermu. Bandingkan dengan hasilmu sendiri.
+Output di bawah adalah output **terverifikasi**: dijalankan di Redis 8.10.3 pada 2026-10-27. Hasilmu bisa berbeda pada nilai yang berubah tiap eksekusi. Bandingkan dengan hasilmu sendiri.
 
 **Lingkungan: terminal**
 
@@ -86,7 +86,7 @@ Kenapa langkah ini diperlukan: satu perintah membuat key sekaligus mengisi tiga 
 | `nama "Budi"` | Pasangan field dan value pertama. Tanda kutip dipakai karena kita ingin teks; `25` tidak perlu kutip. |
 | Pasangan lain | `HSET` menerima banyak pasangan sekaligus.[^2] |
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 (integer) 3
@@ -104,7 +104,7 @@ Cara membaca output: `3` adalah jumlah field **baru** yang ditambahkan, bukan ju
 
 Kita membaca tiga cara untuk melihat bedanya: `HGET` untuk satu field, `HMGET` saat hanya butuh beberapa field, dan `HGETALL` untuk seluruh objek.
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 "Budi"
@@ -133,7 +133,7 @@ Cara membaca output: `HMGET` membalas berurutan sesuai field yang diminta; `(nil
 
 Kenapa penting: `HSET` pada field yang sudah ada **menimpa** nilainya, dan pada field baru **menambahkannya**, dalam satu perintah.
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 (integer) 1
@@ -151,7 +151,7 @@ Cara membaca output: `1` karena hanya `kota` yang baru; `umur` sudah ada sehingg
 127.0.0.1:6379> HLEN pengguna:1
 ```
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 (integer) 1
@@ -175,7 +175,7 @@ Cara membaca output: `1` karena hanya `kota` yang baru; `umur` sudah ada sehingg
 
 Kenapa dipakai: seperti `INCR`, `HINCRBY` mengubah angka secara atomik, tetapi di dalam satu field, sehingga stok dan data produk lain tetap menyatu di satu key.[^8] Kita memakai angka negatif untuk mengurangi. Field yang belum ada (`terjual`) dianggap `0` dulu.
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 (integer) 2
@@ -190,7 +190,7 @@ Kenapa dipakai: seperti `INCR`, `HINCRBY` mengubah angka secara atomik, tetapi d
 127.0.0.1:6379> TTL produk:7
 ```
 
-`EXPIRE` dari bab [Key dan expiry](../pengenalan/key-dan-expiry.md) bekerja pada key, jadi seluruh Hash hilang saat waktunya habis. **Diharapkan:** `(integer) 1`, lalu angka sekitar `60`.
+`EXPIRE` dari bab [Key dan expiry](../pengenalan/key-dan-expiry.md) bekerja pada key, jadi seluruh Hash hilang saat waktunya habis. **Terverifikasi:** `(integer) 1`, lalu angka sekitar `60`.
 
 ### Langkah 7: Bersihkan data latihan
 
@@ -198,7 +198,7 @@ Kenapa dipakai: seperti `INCR`, `HINCRBY` mengubah angka secara atomik, tetapi d
 127.0.0.1:6379> DEL pengguna:1 produk:7
 ```
 
-**Diharapkan:** `(integer) 2` (atau `1` jika `produk:7` sudah kedaluwarsa).
+**Terverifikasi:** `(integer) 2` (atau `1` jika `produk:7` sudah kedaluwarsa).
 
 ## Contoh lengkap
 
@@ -239,7 +239,7 @@ Penjelasan baris penting:
 
 Cara menjalankan: `python hash_objek.py`.
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 nama: Budi
@@ -263,7 +263,7 @@ Perhatikan `umur` kembali sebagai `'25'` (String), sesuai aturan bahwa semua val
 | Python: `redis.exceptions.DataError` saat `hset` | Value bertipe tidak didukung (misalnya `None` atau `dict`). Ubah ke `str`, `int`, atau `float`. |
 
 !!! note "Status verifikasi"
-    Sintaks, nilai balik, dan batas ukuran dicocokkan dengan dokumentasi resmi Redis. Blok output dan skrip Python belum dijalankan di Redis sungguhan saat bab ini ditulis, jadi bandingkan dengan hasilmu sendiri. Teks galat persis bisa sedikit berbeda antarversi.
+    Perintah, nilai balik, dan skrip di bab ini dijalankan di Redis 8.10.3 (`redis:latest`) pada 2026-10-27, dengan Python 3.12.3 dan redis-py 8.1.0. Sintaks juga dicocokkan dengan dokumentasi resmi Redis. Nilai yang berubah tiap eksekusi (ID, TTL, waktu, urutan, alamat IP) bisa berbeda di komputermu, dan teks galat bisa berbeda antarversi. Tampilan prompt interaktif `redis-cli` (prompt, Tab, riwayat) tidak teramati karena pengujian berjalan tanpa terminal interaktif.
 
 ## Latihan
 

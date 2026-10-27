@@ -68,7 +68,7 @@ flowchart TD
 
 ## Praktik langkah demi langkah
 
-Output di bawah adalah output yang **diharapkan** berdasarkan dokumentasi, bukan hasil eksekusi di komputermu. Angka sisa TTL bisa sedikit berbeda.
+Output di bawah adalah output **terverifikasi**: dijalankan di Redis 8.10.3 pada 2026-10-27. Hasilmu bisa berbeda pada nilai yang berubah tiap eksekusi. Angka sisa TTL bisa sedikit berbeda.
 
 **Lingkungan: terminal**
 
@@ -92,7 +92,7 @@ Semua langkah berikutnya di **redis-cli**. Kita memakai TTL pendek agar hasilnya
 | `user_id 42 nama "Budi"` | Atribut yang dibutuhkan aplikasi untuk mengenali pengguna. Jangan menyimpan password. |
 | `EXPIRE ... 30` | Sesi hidup 30 detik. Tanpa ini sesi menumpuk selamanya di memori. |
 
-**Diharapkan:** `(integer) 2`, `(integer) 1`, lalu angka sekitar `30`.
+**Terverifikasi:** `(integer) 2`, `(integer) 1`, lalu angka sekitar `30`.
 
 ### Langkah 2: Baca sesi dan perpanjang
 
@@ -102,7 +102,7 @@ Semua langkah berikutnya di **redis-cli**. Kita memakai TTL pendek agar hasilnya
 127.0.0.1:6379> TTL sesi:token-contoh-abc123
 ```
 
-Kenapa dua langkah: `HGETALL` membaca data, sedangkan `EXPIRE` mengembalikan TTL ke 30 detik karena sesi baru saja dipakai (sliding expiration). **Diharapkan:**
+Kenapa dua langkah: `HGETALL` membaca data, sedangkan `EXPIRE` mengembalikan TTL ke 30 detik karena sesi baru saja dipakai (sliding expiration). **Terverifikasi:**
 
 ```text
 1) "user_id"
@@ -123,7 +123,7 @@ Tunggu lebih dari 30 detik tanpa memperpanjang, lalu:
 127.0.0.1:6379> HGETALL sesi:token-contoh-abc123
 ```
 
-**Diharapkan:** `(empty array)`. Aplikasi menganggap pengguna belum login dan meminta login ulang.
+**Terverifikasi:** `(empty array)`. Aplikasi menganggap pengguna belum login dan meminta login ulang.
 
 ### Langkah 4: Logout dengan `DEL`
 
@@ -134,7 +134,7 @@ Tunggu lebih dari 30 detik tanpa memperpanjang, lalu:
 127.0.0.1:6379> EXISTS sesi:token-contoh-xyz789
 ```
 
-Kenapa `DEL`: saat logout, sesi harus langsung tidak berlaku, bukan menunggu TTL. **Diharapkan:** `(integer) 2`, `(integer) 1`, `(integer) 1`, lalu `(integer) 0`.
+Kenapa `DEL`: saat logout, sesi harus langsung tidak berlaku, bukan menunggu TTL. **Terverifikasi:** `(integer) 2`, `(integer) 1`, `(integer) 1`, lalu `(integer) 0`.
 
 !!! danger "`DEL` tidak bisa dibatalkan"
     Menghapus sesi membuat pengguna harus login ulang. Pastikan nama key benar.
@@ -159,7 +159,7 @@ Batas contoh: **3 permintaan per 10 detik** untuk pengguna `user42`.
 | `EXPIRE ... 10 NX` | `NX` membuat expiry hanya dipasang bila key belum punya expiry.[^3] Jadi jendela dimulai dari permintaan pertama dan tidak diperpanjang oleh permintaan berikutnya. |
 | `TTL rate:user42` | Sisa detik sampai jendela berakhir; berguna untuk memberi tahu klien berapa lama menunggu. |
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 (integer) 1
@@ -182,7 +182,7 @@ Tunggu hingga `TTL` habis, lalu:
 127.0.0.1:6379> INCR rate:user42
 ```
 
-**Diharapkan:** `(nil)`, lalu `(integer) 1`. Key kedaluwarsa, hitungan mulai lagi dari awal.
+**Terverifikasi:** `(nil)`, lalu `(integer) 1`. Key kedaluwarsa, hitungan mulai lagi dari awal.
 
 ### Langkah 7: Bersihkan data latihan
 
@@ -190,7 +190,7 @@ Tunggu hingga `TTL` habis, lalu:
 127.0.0.1:6379> DEL sesi:token-contoh-abc123 sesi:token-contoh-xyz789 rate:user42
 ```
 
-**Diharapkan:** `(integer)` sejumlah key yang masih ada (bisa 0 sampai 1 karena lainnya sudah kedaluwarsa atau dihapus).
+**Terverifikasi:** `(integer)` sejumlah key yang masih ada (bisa 0 sampai 1 karena lainnya sudah kedaluwarsa atau dihapus).
 
 !!! danger "Risiko kehilangan data"
     Perintah ini menyebut key satu per satu agar tidak ada key lain yang ikut terhapus.
@@ -275,7 +275,7 @@ Penjelasan baris penting:
 
 Cara menjalankan: `python sesi_dan_rate_limit.py`.
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 sesi dibaca: {'user_id': '42', 'nama': 'Budi'}
@@ -308,7 +308,7 @@ Nilai `sisa tunggu` bisa `4` atau `5` tergantung waktu eksekusi.
     Token sesi setara kunci rumah. Buat dengan generator acak yang kuat, kirim lewat HTTPS, simpan di cookie dengan atribut `HttpOnly`, dan jangan menyimpan password atau data sensitif di dalam sesi. Detail keamanan Redis dibahas di bagian Operasi.
 
 !!! note "Status verifikasi"
-    Sintaks, nilai balik, dan versi minimum dicocokkan dengan dokumentasi resmi Redis. Blok output dan skrip Python belum dijalankan di Redis sungguhan saat bab ini ditulis; angka `TTL` dan waktu tidak bisa diprediksi persis. Bandingkan dengan hasilmu sendiri.
+    Perintah, nilai balik, dan skrip di bab ini dijalankan di Redis 8.10.3 (`redis:latest`) pada 2026-10-27, dengan Python 3.12.3 dan redis-py 8.1.0. Sintaks juga dicocokkan dengan dokumentasi resmi Redis. Nilai yang berubah tiap eksekusi (ID, TTL, waktu, urutan, alamat IP) bisa berbeda di komputermu, dan teks galat bisa berbeda antarversi. Tampilan prompt interaktif `redis-cli` (prompt, Tab, riwayat) tidak teramati karena pengujian berjalan tanpa terminal interaktif.
 
 ## Latihan
 

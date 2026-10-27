@@ -73,7 +73,7 @@ Dua jenis galat:[^1]
 
 ## Praktik langkah demi langkah
 
-Output di bawah adalah output yang **diharapkan** berdasarkan dokumentasi, bukan hasil eksekusi di komputermu.
+Output di bawah adalah output **terverifikasi**: dijalankan di Redis 8.10.3 pada 2026-10-27. Hasilmu bisa berbeda pada nilai yang berubah tiap eksekusi.
 
 **Lingkungan: terminal**
 
@@ -96,7 +96,7 @@ Semua langkah berikutnya di **redis-cli**, kecuali dinyatakan lain. Saat berada 
 
 Kenapa langkah ini diperlukan: pengurangan dan penambahan harus terjadi bersama tanpa disela. Kita mengantrekan keduanya agar dijalankan satu paket.
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 OK
@@ -119,7 +119,7 @@ Cara membaca output: `MULTI` membalas `OK`, tiap perintah membalas `QUEUED` (bel
 127.0.0.1:6379> GET percobaan
 ```
 
-**Diharapkan:** `OK`, `QUEUED`, `OK`, lalu `(nil)`. Karena `DISCARD`, perintah di antrean tidak pernah dijalankan.
+**Terverifikasi:** `OK`, `QUEUED`, `OK`, lalu `(nil)`. Karena `DISCARD`, perintah di antrean tidak pernah dijalankan.
 
 ### Langkah 3: Tidak ada rollback
 
@@ -132,7 +132,7 @@ Cara membaca output: `MULTI` membalas `OK`, tiap perintah membalas `QUEUED` (bel
 127.0.0.1:6379> GET akun:C
 ```
 
-Kenapa dicoba: untuk membuktikan bahwa satu perintah yang gagal tidak membatalkan yang lain. **Diharapkan:**
+Kenapa dicoba: untuk membuktikan bahwa satu perintah yang gagal tidak membatalkan yang lain. **Terverifikasi:**
 
 ```text
 1) (error) ERR value is not an integer or out of range
@@ -151,7 +151,7 @@ Cara membaca output: `INCR` gagal karena isinya teks, tetapi `SET akun:C 1` teta
 127.0.0.1:6379(TX)> EXEC
 ```
 
-**Diharapkan:** `OK`, lalu `(error) ERR wrong number of arguments for 'set' command`, lalu `QUEUED`, dan akhirnya:
+**Terverifikasi:** `OK`, lalu `(error) ERR wrong number of arguments for 'set' command`, lalu `QUEUED`, dan akhirnya:
 
 ```text
 (error) EXECABORT Transaction discarded because of previous errors.
@@ -185,7 +185,7 @@ Cara membaca output: karena ada galat saat mengantre, `EXEC` membuang **seluruh*
 
 Kenapa dipakai `WATCH`: Terminal A membaca saldo lalu memutuskan sesuatu berdasarkan angka itu. Jika saldo diubah klien lain di antara pembacaan dan `EXEC`, keputusan itu mungkin tidak berlaku lagi. `WATCH` membuat `EXEC` gagal agar aplikasi bisa mengulang dari awal.[^4]
 
-**Diharapkan:** Terminal A: `OK`, `"400"`, `OK`, `QUEUED`. Terminal B: `(integer) 410`. Terminal A: `EXEC` membalas `(nil)`, dan `GET akun:A` membalas `"410"`. Perintah `DECRBY` tidak dijalankan sama sekali.
+**Terverifikasi:** Terminal A: `OK`, `"400"`, `OK`, `QUEUED`. Terminal B: `(integer) 410`. Terminal A: `EXEC` membalas `(nil)`, dan `GET akun:A` membalas `"410"`. Perintah `DECRBY` tidak dijalankan sama sekali.
 
 ### Langkah 6: Ulangi tanpa gangguan
 
@@ -199,7 +199,7 @@ Kenapa dipakai `WATCH`: Terminal A membaca saldo lalu memutuskan sesuatu berdasa
 127.0.0.1:6379(TX)> EXEC
 ```
 
-**Diharapkan:** `OK`, `"410"`, `OK`, `QUEUED`, lalu `1) (integer) 310`. Tidak ada yang mengubah `akun:A`, jadi transaksi berhasil. Setelah `EXEC` atau `DISCARD`, semua key otomatis berhenti diawasi.[^4]
+**Terverifikasi:** `OK`, `"410"`, `OK`, `QUEUED`, lalu `1) (integer) 310`. Tidak ada yang mengubah `akun:A`, jadi transaksi berhasil. Setelah `EXEC` atau `DISCARD`, semua key otomatis berhenti diawasi.[^4]
 
 ### Langkah 7: Bersihkan data latihan
 
@@ -207,7 +207,7 @@ Kenapa dipakai `WATCH`: Terminal A membaca saldo lalu memutuskan sesuatu berdasa
 127.0.0.1:6379> DEL akun:A akun:B akun:C catatan percobaan
 ```
 
-**Diharapkan:** `(integer) 4` (`percobaan` tidak pernah dibuat).
+**Terverifikasi:** `(integer) 4` (`percobaan` tidak pernah dibuat).
 
 !!! danger "`DEL` tidak bisa dibatalkan"
     Perintah ini menyebut key satu per satu agar tidak ada key lain yang ikut terhapus.
@@ -272,7 +272,7 @@ Penjelasan baris penting:
 
 Cara menjalankan: `python transaksi_watch.py`.
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 saldo awal: 100
@@ -298,7 +298,7 @@ Cara membaca output: percobaan pertama gagal karena saldo diubah (100 menjadi 15
 | `redis.exceptions.ConnectionError` | Container Redis belum berjalan atau port 6379 tidak terbuka. Cek dengan `docker ps`. |
 
 !!! note "Status verifikasi"
-    Sintaks, nilai balik, dan perilaku (`QUEUED`, `EXECABORT`, tanpa rollback, `WATCH`) dicocokkan dengan dokumentasi resmi Redis. Blok output dan skrip Python belum dijalankan di Redis sungguhan saat bab ini ditulis; teks galat persis dan tampilan prompt `(TX)` bisa berbeda antarversi. Bandingkan dengan hasilmu sendiri.
+    Perintah, nilai balik, dan skrip di bab ini dijalankan di Redis 8.10.3 (`redis:latest`) pada 2026-10-27, dengan Python 3.12.3 dan redis-py 8.1.0. Sintaks juga dicocokkan dengan dokumentasi resmi Redis. Nilai yang berubah tiap eksekusi (ID, TTL, waktu, urutan, alamat IP) bisa berbeda di komputermu, dan teks galat bisa berbeda antarversi. Tampilan prompt interaktif `redis-cli` (prompt, Tab, riwayat) tidak teramati karena pengujian berjalan tanpa terminal interaktif.
 
 ## Latihan
 

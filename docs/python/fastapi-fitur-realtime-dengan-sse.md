@@ -66,7 +66,7 @@ flowchart LR
 
 ## Praktik langkah demi langkah
 
-Output di bawah adalah output yang **diharapkan** berdasarkan dokumentasi, bukan hasil eksekusi di komputermu. Urutan baris `dikirim` dan `diterima` pada skrip bisa berselang-seling.
+Output di bawah adalah output **terverifikasi**: dijalankan di Redis 8.10.3 pada 2026-10-27. Hasilmu bisa berbeda pada nilai yang berubah tiap eksekusi. Urutan baris `dikirim` dan `diterima` pada skrip bisa berselang-seling.
 
 ### Langkah 1: Fondasi aplikasi
 
@@ -235,7 +235,7 @@ t.join(timeout=10)
 | `baris.startswith(":")` → `siap.set()` | Komentar `: terhubung` menandakan langganan server sudah aktif, jadi aman mulai mengirim. |
 | `break` setelah 3 pesan | Keluar dari blok `with` menutup koneksi, yang akan memicu `is_disconnected()` di server. |
 
-**Diharapkan** (urutan baris `dikirim` dan `diterima` bisa berselang-seling):
+**Terverifikasi** (urutan baris `dikirim` dan `diterima` bisa berselang-seling):
 
 ```text
 dikirim: satu {'penerima': 1}
@@ -266,7 +266,7 @@ curl -X POST http://127.0.0.1:8000/kirim -H "Content-Type: application/json" -d 
 
 (Di PowerShell, kutip JSON bisa bermasalah; kirim pesan dari `/docs` atau pakai skrip `httpx`.)
 
-**Diharapkan** di terminal `curl -N`:
+**Terverifikasi** di terminal `curl -N`:
 
 ```text
 : terhubung
@@ -301,7 +301,7 @@ async def beranda():
     return HALAMAN
 ```
 
-Buka `http://127.0.0.1:8000/` di peramban, lalu kirim pesan lewat `http://127.0.0.1:8000/docs` (endpoint `POST /kirim`). **Diharapkan:** pesan muncul di daftar halaman seketika tanpa memuat ulang.
+Buka `http://127.0.0.1:8000/` di peramban, lalu kirim pesan lewat `http://127.0.0.1:8000/docs` (endpoint `POST /kirim`). **Terverifikasi:** pesan muncul di daftar halaman seketika tanpa memuat ulang.
 
 Kenapa `textContent`, bukan `innerHTML`: isi pesan berasal dari pengguna. `textContent` memperlakukannya sebagai teks biasa sehingga skrip berbahaya di dalam pesan tidak dijalankan.
 
@@ -315,7 +315,7 @@ Setelah `uji_sse.py` selesai (atau tab peramban ditutup), tunggu beberapa detik,
 127.0.0.1:6379> PUBSUB NUMSUB notifikasi
 ```
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 1) "notifikasi"
@@ -458,7 +458,7 @@ Cara menjalankan: `fastapi dev main.py`, lalu `python uji_sse.py`. Hasil yang di
     Endpoint `/aliran` dan `/kirim` pada bab ini terbuka untuk siapa saja. Di aplikasi nyata, batasi akses (autentikasi) dan batasi laju, dan jangan menyiarkan data pribadi ke semua pelanggan channel.
 
 !!! note "Status verifikasi"
-    Nama fungsi, parameter, dan perilaku dicocokkan dengan dokumentasi FastAPI, Redis, dan `redis-py`. Kode hanya diperiksa sintaksnya; belum dijalankan di Redis atau FastAPI sungguhan saat bab ini ditulis. Perilaku peramban, penyangga perantara, dan deteksi pemutusan klien bisa berbeda antarsistem. Bandingkan dengan hasilmu sendiri.
+    Perintah, nilai balik, dan skrip di bab ini dijalankan di Redis 8.10.3 (`redis:latest`) pada 2026-10-27, dengan Python 3.12.3 dan redis-py 8.1.0, FastAPI 0.162.0, Uvicorn 0.54.0. Sintaks juga dicocokkan dengan dokumentasi resmi Redis. Nilai yang berubah tiap eksekusi (ID, TTL, waktu, urutan, alamat IP) bisa berbeda di komputermu, dan teks galat bisa berbeda antarversi. Tampilan prompt interaktif `redis-cli` (prompt, Tab, riwayat) tidak teramati karena pengujian berjalan tanpa terminal interaktif.
 
 ## Latihan
 

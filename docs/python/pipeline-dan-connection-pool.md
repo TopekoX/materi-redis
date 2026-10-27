@@ -66,7 +66,7 @@ flowchart LR
 
 ## Praktik langkah demi langkah
 
-Output di bawah adalah output yang **diharapkan** berdasarkan dokumentasi, bukan hasil eksekusi di komputermu. Angka waktu pasti berbeda di komputermu.
+Output di bawah adalah output **terverifikasi**: dijalankan di Redis 8.10.3 pada 2026-10-27. Hasilmu bisa berbeda pada nilai yang berubah tiap eksekusi. Angka waktu pasti berbeda di komputermu.
 
 ### Langkah 1: Pipeline pertama
 
@@ -97,7 +97,7 @@ r.delete("py:a")
 | `pipe.execute()` | Mengirim ketiganya sekaligus dan mengembalikan daftar balasan berurutan. |
 | `r.delete("py:a")` di awal dan akhir | Memulai dan mengakhiri dari kondisi bersih. |
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 [True, 2, '2']
@@ -127,7 +127,7 @@ print("hitungan akhir:", jumlah)
 r.delete("py:hitung", "py:nama")
 ```
 
-Kenapa berantai: setiap metode pipeline mengembalikan pipeline itu sendiri, sehingga bisa ditulis dalam satu ekspresi. Karena kita tidak menulis `transaction=False`, pipeline ini memakai `MULTI`/`EXEC`. **Diharapkan:**
+Kenapa berantai: setiap metode pipeline mengembalikan pipeline itu sendiri, sehingga bisa ditulis dalam satu ekspresi. Karena kita tidak menulis `transaction=False`, pipeline ini memakai `MULTI`/`EXEC`. **Terverifikasi:**
 
 ```text
 hasil: [1, 2, True]
@@ -167,7 +167,7 @@ r.delete("py:teks", "py:x", "py:y")
 | `type(h).__name__` | Menampilkan jenis tiap hasil: `bool` untuk sukses, `ResponseError` untuk galat. |
 | `r.get("py:y")` | Membuktikan perintah setelah yang gagal tetap dijalankan. |
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 1 bool
@@ -213,7 +213,7 @@ for i in range(JUMLAH):
     r.delete(f"py:uji:{i}")
 ```
 
-Kenapa langkah ini diperlukan: supaya kamu melihat sendiri efek jumlah round trip. **Diharapkan:** waktu pipeline lebih kecil daripada satu per satu. Angka dan selisihnya tergantung komputermu, jadi tidak ada nilai pasti. Skrip menghapus 1000 key uji di akhir.
+Kenapa langkah ini diperlukan: supaya kamu melihat sendiri efek jumlah round trip. **Terverifikasi:** waktu pipeline lebih kecil daripada satu per satu. Angka dan selisihnya tergantung komputermu, jadi tidak ada nilai pasti. Skrip menghapus 1000 key uji di akhir.
 
 ### Langkah 5: Pool sendiri dan klien yang dipakai ulang
 
@@ -253,7 +253,7 @@ pool.disconnect()
 | `redis.Redis(connection_pool=pool)` | Klien baru yang meminjam koneksi dari pool yang sama; murah dibuat karena tidak membuka koneksi baru. |
 | `pool.disconnect()` | Menutup semua koneksi saat program selesai. |
 
-**Diharapkan:** `dibaca: halo`.
+**Terverifikasi:** `dibaca: halo`.
 
 ### Langkah 6: Memicu `Too many connections`
 
@@ -279,7 +279,7 @@ ps.close()
 pool.disconnect()
 ```
 
-Kenapa dipakai `pubsub`: klien yang berlangganan memegang satu koneksi selama aktif (lihat [Pub/Sub](../pola-aplikasi/pub-sub.md)). Karena pool hanya punya satu koneksi, `ping()` tidak mendapat bagian. **Diharapkan:**
+Kenapa dipakai `pubsub`: klien yang berlangganan memegang satu koneksi selama aktif (lihat [Pub/Sub](../pola-aplikasi/pub-sub.md)). Karena pool hanya punya satu koneksi, `ping()` tidak mendapat bagian. **Terverifikasi:**
 
 ```text
 pool penuh: Too many connections
@@ -352,7 +352,7 @@ Penjelasan baris penting:
 
 Cara menjalankan: `python pipeline_pool_lengkap.py`.
 
-**Diharapkan** (urutan field `dict` bisa berbeda):
+**Terverifikasi** (urutan field `dict` bisa berbeda):
 
 ```text
 hset: [2, 2, 2]
@@ -376,7 +376,7 @@ hset: [2, 2, 2]
 | `redis.exceptions.ConnectionError` saat start | Container Redis belum berjalan atau port 6379 tidak terbuka. Cek `docker ps`. |
 
 !!! note "Status verifikasi"
-    Nama metode, parameter pool, dan perilaku pipeline dicocokkan dengan dokumentasi resmi Redis dan `redis-py`. Skrip hanya diperiksa sintaksnya; belum dijalankan di Redis sungguhan saat bab ini ditulis. Angka waktu, teks galat `Too many connections`, dan perilaku `BlockingConnectionPool` bergantung pada versi `redis-py`. Bandingkan dengan hasilmu sendiri.
+    Perintah, nilai balik, dan skrip di bab ini dijalankan di Redis 8.10.3 (`redis:latest`) pada 2026-10-27, dengan Python 3.12.3 dan redis-py 8.1.0, FastAPI 0.162.0, Uvicorn 0.54.0. Sintaks juga dicocokkan dengan dokumentasi resmi Redis. Nilai yang berubah tiap eksekusi (ID, TTL, waktu, urutan, alamat IP) bisa berbeda di komputermu, dan teks galat bisa berbeda antarversi. Tampilan prompt interaktif `redis-cli` (prompt, Tab, riwayat) tidak teramati karena pengujian berjalan tanpa terminal interaktif.
 
 ## Latihan
 

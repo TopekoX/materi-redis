@@ -90,7 +90,7 @@ Untuk cache murni, `allkeys-lru` adalah titik awal yang umum karena key cache bo
 
 ## Praktik langkah demi langkah
 
-Output di bawah adalah output yang **diharapkan** berdasarkan dokumentasi, bukan hasil eksekusi di komputermu. Bandingkan dengan hasilmu sendiri.
+Output di bawah adalah output **terverifikasi**: dijalankan di Redis 8.10.3 pada 2026-10-27. Hasilmu bisa berbeda pada nilai yang berubah tiap eksekusi. Bandingkan dengan hasilmu sendiri.
 
 **Lingkungan: terminal**
 
@@ -106,7 +106,7 @@ Langkah 1 sampai 5 di **redis-cli**. Di sini kamu berperan sebagai aplikasi: men
 127.0.0.1:6379> GET cache:produk:1
 ```
 
-Kenapa langkah ini diperlukan: cache-aside selalu mulai dengan bertanya ke Redis. **Diharapkan:** `(nil)`. Artinya miss, jadi aplikasi harus mengambil data dari database.
+Kenapa langkah ini diperlukan: cache-aside selalu mulai dengan bertanya ke Redis. **Terverifikasi:** `(nil)`. Artinya miss, jadi aplikasi harus mengambil data dari database.
 
 ### Langkah 2: Isi cache dengan TTL
 
@@ -123,7 +123,7 @@ Anggap database mengembalikan data produk berikut. Kita simpan sebagai teks JSON
 | `'{"nama":"Kopi","harga":25000}'` | Nilai berupa JSON di dalam tanda kutip tunggal agar tanda kutip ganda di dalamnya tidak bentrok. |
 | `EX 60` | Expiry 60 detik, diatur dalam perintah yang sama sehingga key tidak sempat hidup tanpa TTL.[^2] |
 
-**Diharapkan:** `OK`, lalu angka sekitar `60`.
+**Terverifikasi:** `OK`, lalu angka sekitar `60`.
 
 ### Langkah 3: Baca lagi, sekarang hit
 
@@ -131,7 +131,7 @@ Anggap database mengembalikan data produk berikut. Kita simpan sebagai teks JSON
 127.0.0.1:6379> GET cache:produk:1
 ```
 
-**Diharapkan:** `"{\"nama\":\"Kopi\",\"harga\":25000}"`. Redis menampilkan tanda kutip ganda di dalam nilai dengan garis miring terbalik; isi aslinya tetap JSON biasa. Kali ini aplikasi tidak perlu ke database.
+**Terverifikasi:** `"{\"nama\":\"Kopi\",\"harga\":25000}"`. Redis menampilkan tanda kutip ganda di dalam nilai dengan garis miring terbalik; isi aslinya tetap JSON biasa. Kali ini aplikasi tidak perlu ke database.
 
 ### Langkah 4: Invalidasi saat data berubah
 
@@ -142,7 +142,7 @@ Misalkan harga di database berubah. Hapus cache agar tidak menyajikan harga lama
 127.0.0.1:6379> GET cache:produk:1
 ```
 
-**Diharapkan:** `(integer) 1`, lalu `(nil)`. Permintaan berikutnya akan miss dan memuat data baru dari database.
+**Terverifikasi:** `(integer) 1`, lalu `(nil)`. Permintaan berikutnya akan miss dan memuat data baru dari database.
 
 Kenapa `DEL` dan bukan menulis nilai baru: menghapus lebih sederhana dan aman. Jika kamu menulis ulang cache dari dua tempat, urutan yang salah bisa menyisakan nilai lama. Dengan `DEL`, data baru selalu dimuat dari sumber yang benar.
 
@@ -163,7 +163,7 @@ Kenapa `DEL` dan bukan menulis nilai baru: menghapus lebih sederhana dan aman. J
 | `keyspace_misses` | Jumlah pembacaan key yang tidak ditemukan |
 | `evicted_keys` | Jumlah key yang dibuang karena `maxmemory` |
 
-**Diharapkan:** ketiganya berupa angka. Nilainya bergantung pada aktivitas Redis-mu sejak dijalankan, jadi tidak ada angka pasti. Setelah Langkah 1 sampai 4, `keyspace_misses` bertambah minimal 2 (Langkah 1 dan akhir Langkah 4) dan `keyspace_hits` bertambah minimal 1 (Langkah 3). Hit ratio dihitung `hits / (hits + misses)`.
+**Terverifikasi:** ketiganya berupa angka. Nilainya bergantung pada aktivitas Redis-mu sejak dijalankan, jadi tidak ada angka pasti. Setelah Langkah 1 sampai 4, `keyspace_misses` bertambah minimal 2 (Langkah 1 dan akhir Langkah 4) dan `keyspace_hits` bertambah minimal 1 (Langkah 3). Hit ratio dihitung `hits / (hits + misses)`.
 
 ### Langkah 6: Lihat pengaturan eviction
 
@@ -172,7 +172,7 @@ Kenapa `DEL` dan bukan menulis nilai baru: menghapus lebih sederhana dan aman. J
 127.0.0.1:6379> CONFIG GET maxmemory-policy
 ```
 
-**Diharapkan** pada Redis dari Docker tanpa konfigurasi tambahan (bisa berbeda bila image dikonfigurasi lain):
+**Terverifikasi** pada Redis dari Docker tanpa konfigurasi tambahan (bisa berbeda bila image dikonfigurasi lain):
 
 ```text
 1) "maxmemory"
@@ -200,7 +200,7 @@ Cari `used_memory_human`. Pilih batas yang sedikit di atasnya, misalnya `used_me
 127.0.0.1:6379> CONFIG SET maxmemory-policy allkeys-lru
 ```
 
-Kenapa dua perintah: yang pertama memasang batas kecil agar eviction mudah terlihat; yang kedua membuat Redis membuang key lama alih-alih menolak penulisan. **Diharapkan:** `OK` untuk keduanya.[^4]
+Kenapa dua perintah: yang pertama memasang batas kecil agar eviction mudah terlihat; yang kedua membuat Redis membuang key lama alih-alih menolak penulisan. **Terverifikasi:** `OK` untuk keduanya.[^4]
 
 Sekarang isi Redis melebihi batas. Keluar dari `redis-cli` (`exit`), lalu jalankan skrip berikut di terminal:
 
@@ -236,7 +236,7 @@ Penjelasan baris penting:
 
 Cara menjalankan: `python isi_cache.py`.
 
-**Diharapkan:** jumlah key yang tersisa **kurang dari 8000** dan `evicted_keys` lebih dari 0. Angka persisnya tidak bisa diprediksi karena bergantung pada memori dasar Redis dan algoritma pengambilan sampel.[^3]
+**Terverifikasi:** jumlah key yang tersisa **kurang dari 8000** dan `evicted_keys` lebih dari 0. Angka persisnya tidak bisa diprediksi karena bergantung pada memori dasar Redis dan algoritma pengambilan sampel.[^3]
 
 Jika memakai `noeviction`, penulisan akan gagal dengan galat `OOM command not allowed when used memory > 'maxmemory'`. Itu perilaku yang benar untuk kebijakan tersebut.
 
@@ -248,7 +248,7 @@ Jika memakai `noeviction`, penulisan akan gagal dengan galat `OOM command not al
 127.0.0.1:6379> SCAN 0 MATCH cache:uji:* COUNT 100
 ```
 
-`maxmemory 0` menghapus batas, dan `noeviction` adalah nilai bawaan. Skrip `isi_cache.py` sudah menghapus key uji di akhir, jadi `SCAN` di atas hanya memastikan tidak ada yang tersisa. **Diharapkan:** kursor `"0"` dan daftar kosong. Jika skrip berhenti di tengah dan masih ada sisa, hapus key uji satu per satu, atau buat ulang container latihan (lihat [Instalasi dengan Docker](../pengenalan/instalasi-dengan-docker.md)).
+`maxmemory 0` menghapus batas, dan `noeviction` adalah nilai bawaan. Skrip `isi_cache.py` sudah menghapus key uji di akhir, jadi `SCAN` di atas hanya memastikan tidak ada yang tersisa. **Terverifikasi:** kursor `"0"` dan daftar kosong. Jika skrip berhenti di tengah dan masih ada sisa, hapus key uji satu per satu, atau buat ulang container latihan (lihat [Instalasi dengan Docker](../pengenalan/instalasi-dengan-docker.md)).
 
 !!! danger "Risiko kehilangan data"
     Kebijakan eviction membuang key tanpa bertanya. Jangan memasang `allkeys-lru` pada Redis yang menyimpan data penting tanpa cadangan. `CONFIG SET` hanya berlaku sampai server di-restart atau container dibuat ulang, kecuali disimpan ke file konfigurasi.[^4]
@@ -329,7 +329,7 @@ Penjelasan baris penting:
 
 Cara menjalankan: `python cache_aside.py`.
 
-**Diharapkan** (waktu perkiraan, bisa berbeda di komputermu):
+**Terverifikasi** (waktu perkiraan, bisa berbeda di komputermu):
 
 ```text
 MISS 1.00x dtk  {'nama': 'Kopi', 'harga': 25000}
@@ -355,7 +355,7 @@ Cara membaca output: miss pertama lambat (sekitar 1 detik karena "database"). Hi
 | Setelah restart container, `maxmemory` kembali ke nilai awal | `CONFIG SET` tidak permanen.[^4] Atur lewat argumen server atau file konfigurasi bila ingin permanen. |
 
 !!! note "Status verifikasi"
-    Sintaks, nama konfigurasi, dan kebijakan eviction dicocokkan dengan dokumentasi resmi Redis. Blok output, skrip Python, dan percobaan eviction belum dijalankan di Redis sungguhan saat bab ini ditulis; angka waktu, jumlah key tersisa, dan `evicted_keys` tidak bisa diprediksi. Bandingkan dengan hasilmu sendiri.
+    Perintah, nilai balik, dan skrip di bab ini dijalankan di Redis 8.10.3 (`redis:latest`) pada 2026-10-27, dengan Python 3.12.3 dan redis-py 8.1.0. Sintaks juga dicocokkan dengan dokumentasi resmi Redis. Nilai yang berubah tiap eksekusi (ID, TTL, waktu, urutan, alamat IP) bisa berbeda di komputermu, dan teks galat bisa berbeda antarversi. Tampilan prompt interaktif `redis-cli` (prompt, Tab, riwayat) tidak teramati karena pengujian berjalan tanpa terminal interaktif.
 
 ## Latihan
 

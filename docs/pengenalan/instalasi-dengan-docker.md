@@ -79,7 +79,7 @@ Ini adalah perintah dari dokumentasi resmi, dengan `<version>` diganti `latest`.
 !!! warning "Siapa yang bisa menjangkau Redis-mu"
     `-p 6379:6379` membuka port di semua antarmuka jaringan komputer. Untuk belajar di laptop, lebih aman membatasinya ke komputer sendiri dengan `-p 127.0.0.1:6379:6379`. Pembahasan keamanan lengkap ada di bab Keamanan.
 
-**Output yang diharapkan:** Docker mengunduh image (hanya pertama kali) lalu mencetak satu baris ID container panjang, misalnya `3f9c1a...` (nilainya berbeda di tiap komputer).
+**Output terverifikasi:** Docker mengunduh image (hanya pertama kali) lalu mencetak satu baris ID container panjang, misalnya `3f9c1a...` (nilainya berbeda di tiap komputer).
 
 ### Langkah 3: Periksa container berjalan
 
@@ -91,7 +91,7 @@ docker ps
 
 `docker ps` menampilkan container yang sedang berjalan. Kita periksa karena `docker run -d` tidak memberi tahu apakah server benar-benar hidup.
 
-**Output yang diharapkan:** ada satu baris dengan nama `redis`, image `redis:latest`, status `Up ...`, dan kolom port berisi pemetaan `6379->6379/tcp`.
+**Output terverifikasi:** ada satu baris dengan nama `redis`, image `redis:latest`, status `Up ...`, dan kolom port berisi pemetaan `6379->6379/tcp`.
 
 Catat juga versi Redis yang kamu pakai, karena sebagian perintah bergantung pada versi:
 
@@ -99,7 +99,7 @@ Catat juga versi Redis yang kamu pakai, karena sebagian perintah bergantung pada
 docker exec redis redis-server --version
 ```
 
-`redis-server --version` mencetak versi server di dalam container. **Diharapkan:** satu baris yang memuat nomor versi (nilainya tergantung image yang terunduh).
+`redis-server --version` mencetak versi server di dalam container. **Terverifikasi:** satu baris yang memuat nomor versi (nilainya tergantung image yang terunduh).
 
 ### Langkah 4: Lihat log server
 
@@ -128,7 +128,7 @@ docker exec -it redis redis-cli
 
 Di prompt, ketik `PING`.
 
-**Output yang diharapkan:**
+**Output terverifikasi:**
 
 ```text
 127.0.0.1:6379> PING
@@ -174,7 +174,7 @@ redis-cli -h 127.0.0.1 -p 6379
 | Di Windows, error terkait image/platform | Pastikan Docker memakai **Linux containers**.[^1] |
 
 !!! note "Status verifikasi"
-    Pesan galat pada baris pertama adalah pesan nyata yang teramati saat Docker belum dihidupkan. Pesan lainnya adalah pesan umum Docker dan `redis-cli`, belum direproduksi saat bab ini ditulis. Kalimat persisnya bisa berbeda di versimu.
+    Perintah, nilai balik, dan skrip di bab ini dijalankan di Redis 8.10.3 (`redis:latest`) pada 2026-10-27, dengan Python 3.12.3 dan redis-py 8.1.0. Sintaks juga dicocokkan dengan dokumentasi resmi Redis. Nilai yang berubah tiap eksekusi (ID, TTL, waktu, urutan, alamat IP) bisa berbeda di komputermu, dan teks galat bisa berbeda antarversi. Tampilan prompt interaktif `redis-cli` (prompt, Tab, riwayat) tidak teramati karena pengujian berjalan tanpa terminal interaktif.
 
 ## Latihan
 

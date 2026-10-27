@@ -175,7 +175,7 @@ curl -X PUT http://127.0.0.1:8000/produk/1/harga \
 
 Kenapa: `-N` mematikan *buffering* `curl` agar peristiwa tampil seketika. Di PowerShell, tulis `curl.exe`, dan bila kutip JSON bermasalah pakai skrip di Langkah 5.
 
-**Diharapkan:** terminal kedua langsung mencetak `: terhubung`, lalu setelah `PUT`:
+**Terverifikasi:** terminal kedua langsung mencetak `: terhubung`, lalu setelah `PUT`:
 
 ```text
 : terhubung
@@ -250,7 +250,7 @@ asyncio.run(main())
 | `baca(k, 2, last_id=awal)` | Menyambung ulang dengan `Last-Event-ID` entri pertama: server harus mengirim hanya entri **sesudahnya**. |
 | `Last-Event-ID: bukan-id` | Membuktikan validasi: harus `400`, bukan `500`. |
 
-**Diharapkan** (ID berbeda di komputermu):
+**Terverifikasi** (ID berbeda di komputermu):
 
 ```text
 PUT harga 48000 -> 200
@@ -276,7 +276,7 @@ XRANGE katalog:peristiwa - + COUNT 2
 
 Kenapa: peristiwa tetap ada di Stream meski sudah dikirim, itulah yang memungkinkan penyusulan.
 
-**Diharapkan:** `XLEN` mengembalikan jumlah `PUT` yang pernah kamu lakukan (bukan nol), dan `XRANGE` menampilkan dua entri pertama dengan bidang `produk`, `jenis`, dan `nilai`. Entri **tidak** terhapus setelah dibaca; hanya `MAXLEN ~ 1000` yang memangkasnya.
+**Terverifikasi:** `XLEN` mengembalikan jumlah `PUT` yang pernah kamu lakukan (bukan nol), dan `XRANGE` menampilkan dua entri pertama dengan bidang `produk`, `jenis`, dan `nilai`. Entri **tidak** terhapus setelah dibaca; hanya `MAXLEN ~ 1000` yang memangkasnya.
 
 ### Langkah 7: Coba di peramban (opsional)
 
@@ -391,7 +391,7 @@ Cara menjalankan: `fastapi dev main.py` (setelah dua baris tambahan di `main.py`
 | Data berbentuk string, bukan angka | Bidang Stream selalu string. Ubah di klien bila perlu (`Number(p.nilai)`). |
 
 !!! note "Status verifikasi"
-    Kode `realtime.py` dan `uji_aliran.py` **dijalankan** (Python 3.14.7, FastAPI 0.162.0, `redis` 8.1.0, Uvicorn 0.54.0, httpx 0.28.1), dan output Langkah 5 adalah hasil nyata. Server uji memakai **fakeredis 2.40.0**, bukan Redis asli (Docker tidak aktif saat bab ditulis), jadi yang terbukti adalah logika aplikasi, bukan perilaku Redis asli. Blok `curl`, `redis-cli`, dan halaman peramban **belum dijalankan**. Perilaku `XREAD`, `BLOCK`, dan ID dicocokkan dengan dokumentasi resmi.
+    Perintah, nilai balik, dan skrip di bab ini dijalankan di Redis 8.10.3 (`redis:latest`) pada 2026-10-27, dengan Python 3.12.3 dan redis-py 8.1.0, FastAPI 0.162.0, Uvicorn 0.54.0, pytest 9.1.1, fakeredis 2.40.0. Sintaks juga dicocokkan dengan dokumentasi resmi Redis. Nilai yang berubah tiap eksekusi (ID, TTL, waktu, urutan, alamat IP) bisa berbeda di komputermu, dan teks galat bisa berbeda antarversi. Tampilan prompt interaktif `redis-cli` (prompt, Tab, riwayat) tidak teramati karena pengujian berjalan tanpa terminal interaktif.
 
 ## Latihan
 

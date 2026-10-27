@@ -57,7 +57,7 @@ Aturan penting:
 
 ## Praktik langkah demi langkah
 
-Output di bawah adalah output yang **diharapkan** berdasarkan dokumentasi, bukan hasil eksekusi di komputermu.
+Output di bawah adalah output **terverifikasi**: dijalankan di Redis 8.10.3 pada 2026-10-27. Hasilmu bisa berbeda pada nilai yang berubah tiap eksekusi.
 
 Buka **dua terminal**. Di masing-masing, masuk dengan:
 
@@ -79,7 +79,7 @@ Sebut saja **Terminal A** (pelanggan) dan **Terminal B** (penerbit).
 
 Kenapa dulu: pelanggan harus sudah aktif sebelum pesan dikirim, karena pesan tidak disimpan.
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 Reading messages... (press Ctrl-C to quit or any other key to type a command)
@@ -98,9 +98,9 @@ Cara membaca output: baris pertama bertuliskan jenis balasan (`subscribe`), lalu
 127.0.0.1:6379> PUBLISH berita "halo semua"
 ```
 
-**Diharapkan di Terminal B:** `(integer) 1`. Angka itu adalah jumlah pelanggan yang menerima pesan, bukan jumlah pesan.
+**Terverifikasi di Terminal B:** `(integer) 1`. Angka itu adalah jumlah pelanggan yang menerima pesan, bukan jumlah pesan.
 
-**Diharapkan di Terminal A:**
+**Terverifikasi di Terminal A:**
 
 ```text
 1) "message"
@@ -118,7 +118,7 @@ Cara membaca output: jenis `message`, channel asal, lalu isi pesan.
 127.0.0.1:6379> PUBLISH sepi "tidak ada yang dengar"
 ```
 
-**Diharapkan:** `(integer) 0`. Tidak ada galat, tetapi pesan hilang karena tidak ada penerima. Ini bukti bahwa Pub/Sub tidak menyimpan pesan.
+**Terverifikasi:** `(integer) 0`. Tidak ada galat, tetapi pesan hilang karena tidak ada penerima. Ini bukti bahwa Pub/Sub tidak menyimpan pesan.
 
 ### Langkah 4: Langganan dengan pola
 
@@ -140,9 +140,9 @@ Tekan Ctrl-C di Terminal A untuk keluar dari mode langganan, lalu:
 
 Kenapa `PSUBSCRIBE`: satu perintah menangkap banyak channel bernama serupa tanpa menyebutnya satu per satu.
 
-**Diharapkan di Terminal B:** `(integer) 1`, `(integer) 1`, lalu `(integer) 0` (channel `hiburan` tidak cocok pola).
+**Terverifikasi di Terminal B:** `(integer) 1`, `(integer) 1`, lalu `(integer) 0` (channel `hiburan` tidak cocok pola).
 
-**Diharapkan di Terminal A** (dua pesan pertama saja):
+**Terverifikasi di Terminal A** (dua pesan pertama saja):
 
 ```text
 1) "pmessage"
@@ -168,7 +168,7 @@ Dengan Terminal A masih berlangganan:
 127.0.0.1:6379> PUBSUB NUMPAT
 ```
 
-**Diharapkan:** untuk `NUMSUB`, `1) "berita"` dan `2) (integer) 0` (tidak ada yang berlangganan channel itu secara langsung karena Terminal A memakai pola). Untuk `NUMPAT`, `(integer) 1` (satu pola aktif).
+**Terverifikasi:** untuk `NUMSUB`, `1) "berita"` dan `2) (integer) 0` (tidak ada yang berlangganan channel itu secara langsung karena Terminal A memakai pola). Untuk `NUMPAT`, `(integer) 1` (satu pola aktif).
 
 ### Langkah 6: Berhenti berlangganan
 
@@ -236,7 +236,7 @@ Penjelasan baris penting:
 
 Cara menjalankan: `python pubsub_demo.py`.
 
-**Diharapkan** (urutan baris `dikirim` dan `diterima` bisa berselang-seling):
+**Terverifikasi** (urutan baris `dikirim` dan `diterima` bisa berselang-seling):
 
 ```text
 dikirim pesan-1 ke 1 pelanggan
@@ -262,7 +262,7 @@ tanpa pelanggan: 0
 | Contoh Python berhenti tanpa "diterima" | `siap` tidak terpicu atau waktu habis. Pastikan Redis berjalan dan jalankan ulang. |
 
 !!! note "Status verifikasi"
-    Sintaks, bentuk balasan, dan aturan mode langganan dicocokkan dengan dokumentasi resmi Redis. Blok output dan skrip Python belum dijalankan di Redis sungguhan saat bab ini ditulis; urutan baris pada contoh Python bisa berbeda. Bandingkan dengan hasilmu sendiri.
+    Perintah, nilai balik, dan skrip di bab ini dijalankan di Redis 8.10.3 (`redis:latest`) pada 2026-10-27, dengan Python 3.12.3 dan redis-py 8.1.0. Sintaks juga dicocokkan dengan dokumentasi resmi Redis. Nilai yang berubah tiap eksekusi (ID, TTL, waktu, urutan, alamat IP) bisa berbeda di komputermu, dan teks galat bisa berbeda antarversi. Tampilan prompt interaktif `redis-cli` (prompt, Tab, riwayat) tidak teramati karena pengujian berjalan tanpa terminal interaktif.
 
 ## Latihan
 

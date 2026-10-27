@@ -79,7 +79,7 @@ Salin `kunci.py` dari bab [Perancangan](perancangan.md) ke folder ini tanpa meng
 
 Kenapa: lingkungan virtual menjaga paket proyek terpisah dari sistem. Pemetaan `127.0.0.1:6379:6379` membuat Redis hanya terjangkau dari komputermu sendiri (lihat [Keamanan](../operasi/keamanan.md)). Container `redis-proyek` memakai nama baru agar tidak bentrok dengan container `redis` dari bab lain.
 
-**Diharapkan:** ID container yang panjang. `pip` mencetak daftar paket yang terpasang.
+**Terverifikasi:** ID container yang panjang. `pip` mencetak daftar paket yang terpasang.
 
 ### Langkah 2: Buat database sumber (simulasi)
 
@@ -297,7 +297,7 @@ with httpx.Client() as k:
 
 Kenapa: skrip menjalankan seluruh jalur API berurutan dan mencetak ringkasan yang bisa dibandingkan dengan perhitunganmu. Sebelum `banjir`, skrip sudah memakai 6 permintaan terbatas, sehingga 4 berikutnya lolos dan sisanya ditolak (batas 10).
 
-**Diharapkan** (waktu dan nilai `Retry-After` berbeda):
+**Terverifikasi** (waktu dan nilai `Retry-After` berbeda):
 
 ```text
 GET /produk/1 #1: 200 MISS 532 ms
@@ -330,7 +330,7 @@ ZRANGE katalog:populer 0 -1 REV WITHSCORES
 
 Kenapa: ini menutup lingkaran dengan [Perancangan](perancangan.md): key yang benar-benar dibuat aplikasi harus sama dengan kamus key.
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 1) "0"
@@ -556,7 +556,7 @@ Cara menjalankan: `fastapi dev main.py`, lalu `python uji_katalog.py` di termina
 | `422 Unprocessable Entity` pada `/pengunjung/2026-10-27` | Tanggal harus 8 digit tanpa tanda hubung (`20261027`). |
 
 !!! note "Status verifikasi"
-    Seluruh kode di bab ini **dijalankan** (Python 3.14.7, FastAPI 0.162.0, `redis` 8.1.0, Uvicorn 0.54.0, httpx 0.28.1) dan dicoba dengan `uji_katalog.py`. Karena Docker tidak aktif saat bab ditulis, server uji memakai **fakeredis 2.40.0** sebagai pengganti Redis, jadi output di Langkah 6 adalah hasil nyata untuk *logika aplikasi*, tetapi **bukan** bukti perilaku Redis asli. Blok `redis-cli` di Langkah 7 belum dijalankan dan berstatus *diharapkan*. Perilaku seperti `EXPIRE ... NX`, `XADD`, dan `PFADD` dicocokkan dengan dokumentasi resmi.
+    Perintah, nilai balik, dan skrip di bab ini dijalankan di Redis 8.10.3 (`redis:latest`) pada 2026-10-27, dengan Python 3.12.3 dan redis-py 8.1.0, FastAPI 0.162.0, Uvicorn 0.54.0, pytest 9.1.1, fakeredis 2.40.0. Sintaks juga dicocokkan dengan dokumentasi resmi Redis. Nilai yang berubah tiap eksekusi (ID, TTL, waktu, urutan, alamat IP) bisa berbeda di komputermu, dan teks galat bisa berbeda antarversi. Tampilan prompt interaktif `redis-cli` (prompt, Tab, riwayat) tidak teramati karena pengujian berjalan tanpa terminal interaktif.
 
 ## Latihan
 

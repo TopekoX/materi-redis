@@ -58,7 +58,7 @@ flowchart LR
 
 ## Praktik langkah demi langkah
 
-Output di bawah adalah output yang **diharapkan** berdasarkan dokumentasi, bukan hasil eksekusi di komputermu. Nomor port klien pada log server akan berbeda.
+Output di bawah adalah output **terverifikasi**: dijalankan di Redis 8.10.3 pada 2026-10-27. Hasilmu bisa berbeda pada nilai yang berubah tiap eksekusi. Nomor port klien pada log server akan berbeda.
 
 ### Langkah 1: Siapkan folder dan pasang paket
 
@@ -82,7 +82,7 @@ pip install "fastapi[standard]" redis
 | `"fastapi[standard]"` | Memasang FastAPI beserta server pengembangan dan alat bantu yang disarankan dokumentasinya (termasuk `httpx`, yang kita pakai untuk menguji).[^1] Tanda kutip mencegah shell menafsirkan kurung siku. |
 | `redis` | Pustaka klien; versi terbaru sudah menyertakan `redis.asyncio`. |
 
-**Diharapkan:** `pip` menyelesaikan instalasi tanpa galat. Nomor versi bergantung pada saat kamu memasang.
+**Terverifikasi:** `pip` menyelesaikan instalasi tanpa galat. Nomor versi bergantung pada saat kamu memasang.
 
 ### Langkah 2: Aplikasi paling kecil tanpa Redis
 
@@ -107,7 +107,7 @@ fastapi dev main.py
 
 Kenapa langkah ini dulu: memastikan FastAPI sendiri sudah jalan sebelum menambah Redis, sehingga bila ada galat nanti kamu tahu penyebabnya.
 
-**Diharapkan:** server berjalan di `http://127.0.0.1:8000`. Buka alamat itu di browser dan kamu melihat `{"pesan":"FastAPI hidup"}`. Buka `http://127.0.0.1:8000/docs` untuk dokumentasi interaktif yang dibuat otomatis. Hentikan server dengan Ctrl+C.
+**Terverifikasi:** server berjalan di `http://127.0.0.1:8000`. Buka alamat itu di browser dan kamu melihat `{"pesan":"FastAPI hidup"}`. Buka `http://127.0.0.1:8000/docs` untuk dokumentasi interaktif yang dibuat otomatis. Hentikan server dengan Ctrl+C.
 
 ### Langkah 3: Hubungkan Redis lewat lifespan dan dependency
 
@@ -169,7 +169,7 @@ curl http://127.0.0.1:8000/health
 
 (Di PowerShell, tulis `curl.exe`, karena `curl` adalah alias perintah lain.)
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 {"status":"ok","redis":true}
@@ -286,7 +286,7 @@ with httpx.Client(base_url="http://127.0.0.1:8000") as c:
 
 Kenapa memakai skrip, bukan `curl`: perintah `curl` dengan badan JSON dan tanda kutip berbeda antar shell. `httpx` jalan sama di semua sistem.
 
-**Diharapkan** (setelah menghapus `api:counter:tamu` bila sudah pernah dijalankan):
+**Terverifikasi** (setelah menghapus `api:counter:tamu` bila sudah pernah dijalankan):
 
 ```text
 {'status': 'ok', 'redis': True}
@@ -331,7 +331,7 @@ Uji: hentikan Redis (`docker stop redis`), lalu:
 curl -i http://127.0.0.1:8000/health
 ```
 
-**Diharapkan:** baris status `HTTP/1.1 503 Service Unavailable` dan badan `{"detail":"Redis tidak tersedia"}`. Nyalakan lagi dengan `docker start redis`, dan `/health` kembali `200`.
+**Terverifikasi:** baris status `HTTP/1.1 503 Service Unavailable` dan badan `{"detail":"Redis tidak tersedia"}`. Nyalakan lagi dengan `docker start redis`, dan `/health` kembali `200`.
 
 ### Langkah 8: Bersihkan data latihan
 
@@ -341,7 +341,7 @@ curl -i http://127.0.0.1:8000/health
 127.0.0.1:6379> DEL api:counter:tamu api:catatan:belajar
 ```
 
-**Diharapkan:** `(integer) 1` (hanya `api:counter:tamu`; catatan sudah dihapus). Hentikan server FastAPI dengan Ctrl+C.
+**Terverifikasi:** `(integer) 1` (hanya `api:counter:tamu`; catatan sudah dihapus). Hentikan server FastAPI dengan Ctrl+C.
 
 !!! danger "`DEL` tidak bisa dibatalkan"
     Perintah ini menyebut key satu per satu agar tidak ada key lain yang ikut terhapus.
@@ -465,7 +465,7 @@ Cara menjalankan: `fastapi dev main.py`, lalu jalankan `python uji_api.py` di te
     `fastapi dev` ditujukan untuk pengembangan lokal. Untuk produksi, gunakan mode produksi dan pengamanan Redis yang dibahas di bagian Operasi.
 
 !!! note "Status verifikasi"
-    Nama fungsi, parameter, dan perilaku dicocokkan dengan dokumentasi FastAPI, Redis, dan `redis-py` (termasuk `redis.asyncio` dan `aclose()`). Kode hanya diperiksa sintaksnya; belum dijalankan di Redis atau FastAPI sungguhan saat bab ini ditulis. Log server, teks galat, dan nomor versi bisa berbeda. Bandingkan dengan hasilmu sendiri.
+    Perintah, nilai balik, dan skrip di bab ini dijalankan di Redis 8.10.3 (`redis:latest`) pada 2026-10-27, dengan Python 3.12.3 dan redis-py 8.1.0, FastAPI 0.162.0, Uvicorn 0.54.0. Sintaks juga dicocokkan dengan dokumentasi resmi Redis. Nilai yang berubah tiap eksekusi (ID, TTL, waktu, urutan, alamat IP) bisa berbeda di komputermu, dan teks galat bisa berbeda antarversi. Tampilan prompt interaktif `redis-cli` (prompt, Tab, riwayat) tidak teramati karena pengujian berjalan tanpa terminal interaktif.
 
 ## Latihan
 

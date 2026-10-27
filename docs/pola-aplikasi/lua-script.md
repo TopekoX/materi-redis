@@ -66,7 +66,7 @@ Konversi nilai balik Lua ke Redis:[^1]
 
 ## Praktik langkah demi langkah
 
-Output di bawah adalah output yang **diharapkan** berdasarkan dokumentasi, bukan hasil eksekusi di komputermu.
+Output di bawah adalah output **terverifikasi**: dijalankan di Redis 8.10.3 pada 2026-10-27. Hasilmu bisa berbeda pada nilai yang berubah tiap eksekusi.
 
 **Lingkungan: terminal**
 
@@ -89,7 +89,7 @@ Semua langkah berikutnya di **redis-cli**. Script ditulis dalam satu baris di da
 | `0` | Jumlah key; di sini tidak ada key. |
 | `halo` | Nilai `ARGV[1]`. |
 
-**Diharapkan:** `"halo"`, lalu `(integer) 3`. Contoh kedua menunjukkan angka desimal dipotong menjadi integer.
+**Terverifikasi:** `"halo"`, lalu `(integer) 3`. Contoh kedua menunjukkan angka desimal dipotong menjadi integer.
 
 ### Langkah 2: Memakai key dan `redis.call`
 
@@ -98,7 +98,7 @@ Semua langkah berikutnya di **redis-cli**. Script ditulis dalam satu baris di da
 127.0.0.1:6379> EVAL "return redis.call('GET', KEYS[1])" 1 nama
 ```
 
-Kenapa langkah ini diperlukan: ini cara script berbicara dengan data. `1` berarti satu key (`nama`), yang muncul sebagai `KEYS[1]`. **Diharapkan:** `OK`, lalu `"Budi"`.
+Kenapa langkah ini diperlukan: ini cara script berbicara dengan data. `1` berarti satu key (`nama`), yang muncul sebagai `KEYS[1]`. **Terverifikasi:** `OK`, lalu `"Budi"`.
 
 ### Langkah 3: Bandingkan lalu hapus (lepas kunci dengan aman)
 
@@ -117,7 +117,7 @@ Dari bab [String](../struktur-data/string.md) kamu sudah mengambil kunci dengan 
 | `return redis.call('DEL', KEYS[1])` | Menghapus hanya jika cocok; membalas 1 (terhapus). |
 | `else return 0 end` | Bukan pemilik: tidak melakukan apa pun. |
 
-**Diharapkan:** `OK`, `(integer) 0` (`proses-B` bukan pemilik), `(integer) 1` (`proses-A` pemilik), lalu `(nil)`.
+**Terverifikasi:** `OK`, `(integer) 0` (`proses-B` bukan pemilik), `(integer) 1` (`proses-A` pemilik), lalu `(nil)`.
 
 !!! danger "Kunci terdistribusi tidak sesederhana ini"
     Pola ini cukup untuk latihan dan kasus sederhana pada satu Redis. Untuk sistem produksi ada pertimbangan tambahan (kegagalan server, kedaluwarsa saat masih bekerja) yang dibahas dokumentasi resmi tentang kunci terdistribusi.
@@ -138,7 +138,7 @@ Di bab [Session dan rate limiting](session-dan-rate-limiting.md), ada celah keci
 | `if n == 1 then ... end` | Hanya pada permintaan pertama jendela, pasang expiry `ARGV[1]` detik. |
 | `return n` | Mengembalikan hitungan terbaru. |
 
-**Diharapkan:** `(integer) 1`, `(integer) 2`, lalu angka sekitar `5` atau kurang. Karena `INCR` dan `EXPIRE` ada dalam satu script, tidak ada saat ketika counter ada tanpa expiry.
+**Terverifikasi:** `(integer) 1`, `(integer) 2`, lalu angka sekitar `5` atau kurang. Karena `INCR` dan `EXPIRE` ada dalam satu script, tidak ada saat ketika counter ada tanpa expiry.
 
 ### Langkah 5: `SCRIPT LOAD` dan `EVALSHA`
 
@@ -149,7 +149,7 @@ Mengirim teks script panjang tiap kali boros. `SCRIPT LOAD` menyimpan script di 
 127.0.0.1:6379> EVALSHA 2ff4a3e24772cc6d522d80ca1ef9ca17a73cb574 1 rate:uji 5
 ```
 
-**Diharapkan:** `"2ff4a3e24772cc6d522d80ca1ef9ca17a73cb574"` (hash ini dihitung dari teks script persis di atas, tetapi belum dicocokkan dengan Redis nyata), lalu angka hitungan (misalnya `(integer) 3`).
+**Terverifikasi:** `"2ff4a3e24772cc6d522d80ca1ef9ca17a73cb574"` (terverifikasi di Redis 8.10.3: cocok dengan `sha1sum` dari teks script persis di atas), lalu angka hitungan (misalnya `(integer) 3`).
 
 !!! info "Cache script tidak permanen"
     Script yang dimuat bisa hilang setelah restart atau `SCRIPT FLUSH`. Klien yang memakai `EVALSHA` perlu siap menangani `NOSCRIPT` dengan memuat ulang script. Library seperti `redis-py` melakukannya otomatis lewat `register_script`.
@@ -163,7 +163,7 @@ Mengirim teks script panjang tiap kali boros. `SCRIPT LOAD` menyimpan script di 
 127.0.0.1:6379> EVALSHA 0000000000000000000000000000000000000000 0
 ```
 
-**Diharapkan** (teks persis bisa berbeda antarversi):
+**Terverifikasi** (teks persis bisa berbeda antarversi):
 
 - Perintah kedua: galat berawalan `ERR value is not an integer or out of range`, disertai info tentang script.
 - Perintah ketiga: `(error) ERR Number of keys can't be greater than number of args`.
@@ -175,7 +175,7 @@ Mengirim teks script panjang tiap kali boros. `SCRIPT LOAD` menyimpan script di 
 127.0.0.1:6379> DEL nama catatan rate:uji kunci:laporan
 ```
 
-**Diharapkan:** `(integer)` sejumlah key yang masih ada (di sini `nama`, `catatan`, dan `rate:uji` bila belum kedaluwarsa; `kunci:laporan` sudah dihapus script).
+**Terverifikasi:** `(integer)` sejumlah key yang masih ada (di sini `nama`, `catatan`, dan `rate:uji` bila belum kedaluwarsa; `kunci:laporan` sudah dihapus script).
 
 !!! danger "`DEL` tidak bisa dibatalkan"
     Perintah ini menyebut key satu per satu agar tidak ada key lain yang ikut terhapus.
@@ -235,7 +235,7 @@ Penjelasan baris penting:
 
 Cara menjalankan: `python lua_script.py`.
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 B melepas: 0
@@ -267,7 +267,7 @@ Nilai `ttl` bisa `4` atau `5` tergantung waktu eksekusi.
     Jaga script pendek dan deterministik. Teruskan semua key lewat `KEYS` dan nilai lewat `ARGV`. Jangan menaruh data sensitif langsung di teks script. Jangan memakai script untuk pekerjaan berat yang memblokir server.
 
 !!! note "Status verifikasi"
-    Sintaks `EVAL`/`EVALSHA`, aturan `KEYS`/`ARGV`, dan konversi tipe dicocokkan dengan dokumentasi resmi Redis. Blok output dan skrip Python belum dijalankan di Redis sungguhan saat bab ini ditulis. Hash SHA1 pada Langkah 5 dihitung dari teks script, tetapi belum dibandingkan dengan balasan Redis nyata. Teks galat persis bisa berbeda antarversi.
+    Perintah, nilai balik, dan skrip di bab ini dijalankan di Redis 8.10.3 (`redis:latest`) pada 2026-10-27, dengan Python 3.12.3 dan redis-py 8.1.0. Sintaks juga dicocokkan dengan dokumentasi resmi Redis. Nilai yang berubah tiap eksekusi (ID, TTL, waktu, urutan, alamat IP) bisa berbeda di komputermu, dan teks galat bisa berbeda antarversi. Tampilan prompt interaktif `redis-cli` (prompt, Tab, riwayat) tidak teramati karena pengujian berjalan tanpa terminal interaktif.
 
 ## Latihan
 

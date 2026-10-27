@@ -49,7 +49,7 @@ Skor disimpan sebagai angka desimal presisi ganda (*double*). Redis membalas sko
 
 ## Praktik langkah demi langkah
 
-Output di bawah adalah output yang **diharapkan** berdasarkan dokumentasi, bukan hasil eksekusi di komputermu. Bandingkan dengan hasilmu sendiri.
+Output di bawah adalah output **terverifikasi**: dijalankan di Redis 8.10.3 pada 2026-10-27. Hasilmu bisa berbeda pada nilai yang berubah tiap eksekusi. Bandingkan dengan hasilmu sendiri.
 
 **Lingkungan: terminal**
 
@@ -67,7 +67,7 @@ Semua langkah berikutnya di **redis-cli**.
 
 Kenapa langkah ini diperlukan: kita butuh data peserta beserta skornya. Urutan argumen adalah **skor dulu, baru anggota**; terbalik dari `HSET` yang field dulu.
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 (integer) 3
@@ -89,7 +89,7 @@ Cara membaca output: tiga anggota baru ditambahkan.
 | `WITHSCORES` | Menampilkan skor di samping anggota; tanpa ini hanya nama. |
 | `REV` | Membalik urutan menjadi skor terbesar dulu, cocok untuk papan peringkat.[^4] |
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 1) "budi"
@@ -121,7 +121,7 @@ Cara membaca output: dengan `WITHSCORES`, baris ganjil adalah anggota dan baris 
 
 `ZADD` pada anggota yang sudah ada **mengganti** skornya tanpa menambah anggota. `ZINCRBY` menambah skor secara atomik, cocok untuk menambah poin tanpa membaca dulu (pola yang sama dengan `INCR` di [String](string.md)).
 
-**Diharapkan:** `(integer) 0`, `"195"`, lalu `"300"`.
+**Terverifikasi:** `(integer) 0`, `"195"`, lalu `"300"`.
 
 `ZADD` membalas `0` karena tidak ada anggota baru; `budi` hanya diperbarui.
 
@@ -133,7 +133,7 @@ Cara membaca output: dengan `WITHSCORES`, baris ganjil adalah anggota dan baris 
 127.0.0.1:6379> ZREVRANK papan:game "tidak-ada"
 ```
 
-**Diharapkan:** `(integer) 0`, `(integer) 2`, lalu `(nil)`.
+**Terverifikasi:** `(integer) 0`, `(integer) 2`, lalu `(nil)`.
 
 `ZREVRANK` menghitung dari skor terbesar, jadi `budi` (300) berperingkat `0`, yaitu juara pertama. `ZRANK` menghitung dari terkecil, sehingga `budi` terakhir (`2`). Tambahkan 1 bila ingin menampilkan peringkat mulai dari 1.
 
@@ -146,7 +146,7 @@ Cara membaca output: dengan `WITHSCORES`, baris ganjil adalah anggota dan baris 
 127.0.0.1:6379> ZCARD papan:game
 ```
 
-**Diharapkan:** `(integer) 3`, `(integer) 2` (sari 250 dan budi 300), `(integer) 1`, lalu `(integer) 2`.
+**Terverifikasi:** `(integer) 3`, `(integer) 2` (sari 250 dan budi 300), `(integer) 1`, lalu `(integer) 2`.
 
 !!! danger "Risiko kehilangan data"
     `ZREM` menghapus anggota permanen beserta skornya. Jika anggota terakhir dihapus, key ikut hilang. `DEL papan:game` menghapus seluruh papan. Keduanya tidak bisa dibatalkan.
@@ -161,7 +161,7 @@ Cara membaca output: dengan `WITHSCORES`, baris ganjil adalah anggota dan baris 
 127.0.0.1:6379> DEL papan:game
 ```
 
-**Diharapkan:** `(integer) 1`.
+**Terverifikasi:** `(integer) 1`.
 
 ## Contoh lengkap
 
@@ -202,7 +202,7 @@ Penjelasan baris penting:
 
 Cara menjalankan: `python sortedset_papan.py`.
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 top 3:
@@ -225,7 +225,7 @@ peringkat budi: 3
 | Tutorial lama memakai `ZREVRANGE` atau `ZRANGEBYSCORE` | Perintah itu deprecated sejak 6.2; gunakan `ZRANGE` dengan `REV` atau `BYSCORE`.[^4] |
 
 !!! note "Status verifikasi"
-    Sintaks, nilai balik, dan versi minimum dicocokkan dengan dokumentasi resmi Redis. Blok output dan skrip Python belum dijalankan di Redis sungguhan saat bab ini ditulis, jadi bandingkan dengan hasilmu sendiri.
+    Perintah, nilai balik, dan skrip di bab ini dijalankan di Redis 8.10.3 (`redis:latest`) pada 2026-10-27, dengan Python 3.12.3 dan redis-py 8.1.0. Sintaks juga dicocokkan dengan dokumentasi resmi Redis. Nilai yang berubah tiap eksekusi (ID, TTL, waktu, urutan, alamat IP) bisa berbeda di komputermu, dan teks galat bisa berbeda antarversi. Tampilan prompt interaktif `redis-cli` (prompt, Tab, riwayat) tidak teramati karena pengujian berjalan tanpa terminal interaktif.
 
 ## Latihan
 

@@ -85,7 +85,7 @@ Sejak Redis 7.0, AOF terdiri dari beberapa file di satu folder: satu file *base*
 
 ## Praktik langkah demi langkah
 
-Output di bawah adalah output yang **diharapkan** berdasarkan dokumentasi, bukan hasil eksekusi di komputermu. Nilai seperti waktu, ukuran file, dan nomor urut file bisa berbeda. Semua perintah dijalankan dari terminal. Perintah `docker exec` tanpa `-it` tidak berjalan di terminal, sehingga `redis-cli` memakai *raw output*: string tampil tanpa tanda kutip, angka tanpa `(integer)`, dan nilai kosong (`nil`) sebagai baris kosong.[^11]
+Output di bawah adalah output **terverifikasi**: dijalankan di Redis 8.10.3 pada 2026-10-27. Hasilmu bisa berbeda pada nilai yang berubah tiap eksekusi. Nilai seperti waktu, ukuran file, dan nomor urut file bisa berbeda. Semua perintah dijalankan dari terminal. Perintah `docker exec` tanpa `-it` tidak berjalan di terminal, sehingga `redis-cli` memakai *raw output*: string tampil tanpa tanda kutip, angka tanpa `(integer)`, dan nilai kosong (`nil`) sebagai baris kosong.[^11]
 
 ### Langkah 1: Jalankan Redis dengan volume dan snapshot
 
@@ -103,7 +103,7 @@ Kenapa langkah ini diperlukan: tanpa volume, file `dump.rdb` terkubur di dalam c
 | `redis-server --save 60 1` | Menimpa aturan snapshot bawaan: simpan setiap 60 detik bila ada minimal 1 perubahan. Dipilih supaya pengujian tidak menunggu satu jam.[^2] |
 | Tanpa `-p` | Port tidak dibuka ke komputer. Kita memakai `docker exec`, sehingga lebih aman. |
 
-**Diharapkan:** satu ID container yang panjang.
+**Terverifikasi:** satu ID container yang panjang.
 
 ### Langkah 2: Periksa pengaturan persistence yang aktif
 
@@ -117,7 +117,7 @@ docker exec redis-persist redis-cli CONFIG GET dir
 
 Kenapa: jangan menebak. `CONFIG GET` menunjukkan nilai yang benar-benar dipakai server, dan memastikan `--save 60 1` terbaca.
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 save
@@ -150,7 +150,7 @@ Kenapa: `BGSAVE` membuat snapshot di latar belakang tanpa memblokir klien. `LAST
 | `LASTSAVE` | Waktu Unix snapshot sukses terakhir. Bila angkanya naik, snapshot selesai.[^5] |
 | `ls -l /data` | Melihat file di dalam volume. |
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 OK
@@ -180,7 +180,7 @@ docker exec redis-persist redis-cli GET kota
 
 Kenapa: ini mensimulasikan listrik padam. `docker kill` mengirim `SIGKILL`, jadi Redis tidak sempat menyimpan apa pun. Jalankan semua perintah di atas **dalam 60 detik** setelah Langkah 3, sebelum aturan `save 60 1` memicu snapshot otomatis.
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 OK
@@ -207,7 +207,7 @@ docker exec redis-persist ls -l /data/appendonlydir
 
 Kenapa: dokumentasi resmi menyarankan mengaktifkan AOF lewat `CONFIG SET` pada server yang hidup, supaya Redis langsung membuat file AOF awal dari data di memori. Hanya mengubah konfigurasi lalu restart bisa menyebabkan kehilangan data.[^1][^8]
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 OK
@@ -237,7 +237,7 @@ docker exec redis-persist redis-cli GET nama
 !!! danger "Risiko kehilangan data"
     `docker rm -f` menghapus container, bukan volume. Karena kita memakai `-v redis-data:/data`, datanya tetap ada. Jangan tambahkan `-v` pada `docker rm` atau menghapus volume `redis-data` sebelum selesai bab ini.
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 redis-persist
@@ -265,7 +265,7 @@ docker exec redis-persist redis-cli GET kota
 
 Kenapa menunggu: dengan `appendfsync everysec` (bawaan), kamu bisa kehilangan sekitar 1 detik tulisan terakhir.[^1]
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 OK
@@ -287,7 +287,7 @@ docker exec redis-persist ls /data/appendonlydir
 
 Kenapa: log AOF terus tumbuh. Bila sebuah counter dinaikkan 100 kali, log menyimpan 100 entri padahal hanya nilai akhir yang dibutuhkan. Rewrite membuat versi paling ringkas.[^1] Redis menjalankannya otomatis, tetapi kamu bisa memicunya manual.[^10]
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 Background append only file rewriting started
@@ -310,7 +310,7 @@ docker cp redis-persist:/data/dump.rdb ./dump-cadangan.rdb
 
 Kenapa: cadangan harus berada di luar volume, idealnya di luar mesin. Menyalin file RDB aman walau server sedang berjalan, karena file RDB tidak pernah diubah setelah dibuat dan file baru memakai nama sementara lalu di-*rename* secara atomik setelah selesai.[^1]
 
-**Diharapkan:** `docker cp` tidak mencetak apa pun bila berhasil, dan file `dump-cadangan.rdb` muncul di folder tempat kamu menjalankannya. Pastikan `LASTSAVE` sudah naik sebelum menyalin.
+**Terverifikasi:** `docker cp` tidak mencetak apa pun bila berhasil, dan file `dump-cadangan.rdb` muncul di folder tempat kamu menjalankannya. Pastikan `LASTSAVE` sudah naik sebelum menyalin.
 
 Aturan cadangan dari dokumentasi resmi:[^1]
 
@@ -347,7 +347,7 @@ docker volume rm redis-data
 | Container tidak bisa menulis ke `/data` | Folder yang dipetakan harus bisa ditulis oleh proses Redis.[^2] |
 
 !!! note "Status verifikasi"
-    Sintaks perintah, nama pengaturan, nilai bawaan, dan perilaku dicocokkan dengan dokumentasi resmi Redis dan Docker Hub. Perintah dan blok output di bab ini belum dijalankan di Redis nyata saat bab ini ditulis, jadi bandingkan dengan hasilmu sendiri. Teks persis balasan `BGREWRITEAOF` dan nomor file AOF khususnya perlu dicocokkan.
+    Perintah, nilai balik, dan skrip di bab ini dijalankan di Redis 8.10.3 (`redis:latest`) pada 2026-10-27, dengan Python 3.12.3 dan redis-py 8.1.0. Sintaks juga dicocokkan dengan dokumentasi resmi Redis. Nilai yang berubah tiap eksekusi (ID, TTL, waktu, urutan, alamat IP) bisa berbeda di komputermu, dan teks galat bisa berbeda antarversi. Tampilan prompt interaktif `redis-cli` (prompt, Tab, riwayat) tidak teramati karena pengujian berjalan tanpa terminal interaktif.
 
 ## Latihan
 

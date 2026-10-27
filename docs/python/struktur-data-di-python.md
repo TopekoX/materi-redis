@@ -52,7 +52,7 @@ Bayangkan Redis sebagai lemari arsip yang hanya menyimpan kertas bertulisan teks
 | Set | `SADD` → `sadd(k, *v)` | `int` (anggota baru) |
 | | `SMEMBERS` → `smembers(k)` | `set` |
 | | `SINTER` → `sinter(k1, k2)` | `set` |
-| | `SISMEMBER` → `sismember(k, v)` | `True`/`False` (versi lama bisa `1`/`0`) |
+| | `SISMEMBER` → `sismember(k, v)` | `1`/`0` di redis-py 8.1.0 (versi lain bisa `True`/`False`) |
 | Sorted Set | `ZADD` → `zadd(k, {"a": 100})` | `int` (anggota baru) |
 | | `ZRANGE ... REV WITHSCORES` → `zrange(k, 0, -1, desc=True, withscores=True)` | `list` pasangan `(str, float)` |
 | | `ZINCRBY` → `zincrby(k, n, a)` | `float` |
@@ -63,7 +63,7 @@ Perhatikan urutan argumen yang berbeda dari perintah mentah: `zadd` menerima `di
 
 ## Praktik langkah demi langkah
 
-Output di bawah adalah output yang **diharapkan** berdasarkan dokumentasi, bukan hasil eksekusi di komputermu. Urutan elemen `set` dan `dict` bisa berbeda.
+Output di bawah adalah output **terverifikasi**: dijalankan di Redis 8.10.3 pada 2026-10-27. Hasilmu bisa berbeda pada nilai yang berubah tiap eksekusi. Urutan elemen `set` dan `dict` bisa berbeda.
 
 Setiap skrip memakai klien yang sama:
 
@@ -109,7 +109,7 @@ r.delete("py:pengguna:1")
 | `r.hgetall("py:tidak-ada")` | Key tidak ada menghasilkan `{}` (dict kosong), bukan `None`. |
 | `r.delete(...)` di awal dan akhir | Memulai dan mengakhiri dari kondisi bersih. |
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 hset: 2
@@ -143,7 +143,7 @@ print("lpop kosong:", r.lpop("py:kosong"))
 r.delete("py:antrean")
 ```
 
-Kenapa `lpop` ada dua bentuk: tanpa `count` mengembalikan satu `str`, dengan `count` mengembalikan `list`.[^4] **Diharapkan:**
+Kenapa `lpop` ada dua bentuk: tanpa `count` mengembalikan satu `str`, dengan `count` mengembalikan `list`.[^4] **Terverifikasi:**
 
 ```text
 rpush: 4
@@ -180,16 +180,16 @@ r.delete("py:redis", "py:python")
 |---|---|
 | `r.smembers(...)` | Mengembalikan `set` Python. Kita bungkus `sorted(...)` agar tampilan stabil karena `set` tidak berurutan. |
 | `r.sinter(a, b)` | Irisan dihitung di server dan dikembalikan sebagai `set`. |
-| `r.sismember(...)` | Mengembalikan `True`/`False` di versi `redis-py` terbaru; versi lama bisa `1`/`0`. |
+| `r.sismember(...)` | Mengembalikan `1`/`0` di `redis-py` 8.1.0 (teramati); versi lain bisa `True`/`False`, jadi jangan membandingkan dengan `is True`. |
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 sadd: 3
 sadd ulang: 0
 anggota: ['budi', 'sari', 'tono']
 irisan: {'sari'}
-budi ada: True
+budi ada: 1
 ```
 
 ### Langkah 4: Sorted Set sebagai papan peringkat
@@ -213,7 +213,7 @@ print("tidak ada:", r.zrevrank("py:papan", "x"))
 r.delete("py:papan")
 ```
 
-Kenapa `+ 1` pada peringkat: peringkat Redis mulai dari 0, sedangkan tampilan ke pengguna biasanya mulai dari 1. **Diharapkan:**
+Kenapa `+ 1` pada peringkat: peringkat Redis mulai dari 0, sedangkan tampilan ke pengguna biasanya mulai dari 1. **Terverifikasi:**
 
 ```text
 zadd: 3
@@ -246,7 +246,7 @@ print(r.hgetall("py:profil"))
 r.delete("py:profil")
 ```
 
-Kenapa langkah ini penting: kesalahan paling umum pemula adalah mengirim `True`, `None`, atau `dict` langsung. `redis-py` menolaknya sebelum menyentuh server. **Diharapkan:**
+Kenapa langkah ini penting: kesalahan paling umum pemula adalah mengirim `True`, `None`, atau `dict` langsung. `redis-py` menolaknya sebelum menyentuh server. **Terverifikasi:**
 
 ```text
 ditolak redis-py: Invalid input of type: 'bool'. Convert to a bytes, string, int or float first.
@@ -282,7 +282,7 @@ r.delete("py:pesanan:7")
 | `json.dumps(pesanan)` | Mengubah `dict` bersarang menjadi teks JSON agar bisa disimpan sebagai String. |
 | `json.loads(r.get(...))` | Mengembalikan teks menjadi `dict` Python. |
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 {'id': 7, 'item': ['kopi', 'teh'], 'total': 45000}
@@ -347,7 +347,7 @@ Penjelasan baris penting:
 
 Cara menjalankan: `python struktur_lengkap.py`.
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 profil: {'nama': 'Budi', 'login': '1'} | login: 1
@@ -372,7 +372,7 @@ tag: ['python', 'redis']
 | `redis.exceptions.ConnectionError` | Container Redis belum berjalan atau port 6379 tidak terbuka. Cek `docker ps`. |
 
 !!! note "Status verifikasi"
-    Nama metode, parameter, dan tipe balikan dicocokkan dengan dokumentasi resmi Redis dan `redis-py`. Skrip hanya diperiksa sintaksnya; belum dijalankan di Redis sungguhan saat bab ini ditulis. Tipe `sismember` (`bool` atau `int`) dan teks `DataError` bergantung pada versi `redis-py`. Bandingkan dengan hasilmu sendiri.
+    Perintah, nilai balik, dan skrip di bab ini dijalankan di Redis 8.10.3 (`redis:latest`) pada 2026-10-27, dengan Python 3.12.3 dan redis-py 8.1.0, FastAPI 0.162.0, Uvicorn 0.54.0. Sintaks juga dicocokkan dengan dokumentasi resmi Redis. Nilai yang berubah tiap eksekusi (ID, TTL, waktu, urutan, alamat IP) bisa berbeda di komputermu, dan teks galat bisa berbeda antarversi. Tampilan prompt interaktif `redis-cli` (prompt, Tab, riwayat) tidak teramati karena pengujian berjalan tanpa terminal interaktif.
 
 ## Latihan
 

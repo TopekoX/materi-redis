@@ -113,8 +113,8 @@ OK
 
 Alurnya selalu sama: kamu mengirim **perintah**, server mengirim **balasan**. Pola "key menunjuk ke nilai" adalah dasar seluruh Redis. Struktur data lain hanya mengganti bentuk nilainya.
 
-!!! info "Output di atas belum diverifikasi di sini"
-    Blok di atas adalah output yang diharapkan berdasarkan dokumentasi, bukan hasil eksekusi di komputermu. Pada bab praktik, kita jalankan dan bandingkan hasilnya.
+!!! info "Output di atas sudah diverifikasi"
+    Blok di atas dijalankan di Redis 8.10.3 pada 2026-10-27 dan hasilnya sama. Pada bab praktik, kamu menjalankannya sendiri dan membandingkan hasilnya.
 
 ## Kesalahan umum dan salah paham
 

@@ -42,7 +42,7 @@ Bitmap seperti deretan lampu bernomor: nyala berarti "ya". HyperLogLog seperti p
 
 ## Praktik langkah demi langkah
 
-Output di bawah adalah output yang **diharapkan** berdasarkan dokumentasi, bukan hasil eksekusi di komputermu. Bandingkan dengan hasilmu sendiri.
+Output di bawah adalah output **terverifikasi**: dijalankan di Redis 8.10.3 pada 2026-10-27. Hasilmu bisa berbeda pada nilai yang berubah tiap eksekusi. Bandingkan dengan hasilmu sendiri.
 
 **Lingkungan: terminal**
 
@@ -70,7 +70,7 @@ Kenapa langkah ini diperlukan: offset dipakai sebagai nomor pengguna (ID 7 dan 1
 | `GETBIT key offset` | Membaca bit; posisi yang belum pernah diatur dianggap `0`.[^2] |
 | `BITCOUNT key` | Menghitung jumlah bit bernilai `1`.[^3] |
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 (integer) 0
@@ -98,7 +98,7 @@ Cara membaca output: dua `SETBIT` pertama membalas `0` karena bit sebelumnya `0`
 | `PFADD key elemen ...` | Memasukkan elemen ke HyperLogLog. Membalas `1` bila perkiraan hitungan berubah, `0` bila tidak.[^4] |
 | `PFCOUNT key` | Membaca perkiraan jumlah elemen unik.[^5] |
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 (integer) 1
@@ -116,7 +116,7 @@ Menggabungkan dua HyperLogLog (misalnya dua hari):
 127.0.0.1:6379> PFCOUNT pengunjung:dua-hari
 ```
 
-**Diharapkan:** `(integer) 1`, `OK`, lalu `(integer) 5` (`u1`, `u2`, `u3`, `u4`, `u9`). `PFMERGE` menimpa key tujuan.[^6]
+**Terverifikasi:** `(integer) 1`, `OK`, lalu `(integer) 5` (`u1`, `u2`, `u3`, `u4`, `u9`). `PFMERGE` menimpa key tujuan.[^6]
 
 ### Langkah 3: Geo, simpan lokasi
 
@@ -126,7 +126,7 @@ Menggabungkan dua HyperLogLog (misalnya dua hari):
 
 Kenapa penting: urutan koordinat adalah **bujur (longitude) dulu, baru lintang (latitude)**, kebalikan dari kebiasaan sebagian peta. Salah urutan tidak menimbulkan galat jika nilainya masih valid, tetapi lokasi akan salah.[^8]
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 (integer) 3
@@ -148,17 +148,17 @@ Batas nilai valid: bujur -180 sampai 180, lintang sekitar -85,05 sampai 85,05.[^
 | `BYRADIUS 80 km` | Cari dalam lingkaran berjari-jari 80 km. |
 | `ASC WITHDIST` | Urutkan dari terdekat dan sertakan jarak. |
 
-**Diharapkan** (angka jarak berupa perkiraan; hasil nyata dihitung Redis):
+**Terverifikasi** (Redis 8.10.3, 2026-10-27; angka jarak dihitung Redis dan bisa berbeda tipis antarversi):
 
 ```text
-"116.xxxx"
+"116.2693"
 1) 1) "jakarta"
    2) "0.0000"
 2) 1) "bogor"
-   2) "4x.xxxx"
+   2) "43.1781"
 ```
 
-Cara membaca output: jarak `jakarta`-`bandung` sekitar 116 km garis lurus, jadi `bandung` tidak masuk radius 80 km. `jakarta` sendiri muncul dengan jarak 0 karena pusatnya termasuk. Pada hasil nyata, `x` diganti angka desimal.
+Cara membaca output: jarak `jakarta`-`bandung` sekitar 116 km garis lurus, jadi `bandung` tidak masuk radius 80 km. `jakarta` sendiri muncul dengan jarak 0 karena pusatnya termasuk.
 
 !!! note "Geo itu Sorted Set"
     Di balik layar Geo disimpan sebagai Sorted Set,[^8] sehingga `ZRANGE kota 0 -1` dan `ZREM kota "bogor"` tetap bekerja. Itu juga berarti menghapus lokasi memakai `ZREM`, bukan perintah `GEO*`.
@@ -169,7 +169,7 @@ Cara membaca output: jarak `jakarta`-`bandung` sekitar 116 km garis lurus, jadi 
 127.0.0.1:6379> DEL login:2026-10-27 pengunjung:hari-ini pengunjung:kemarin pengunjung:dua-hari kota
 ```
 
-**Diharapkan:** `(integer) 5`.
+**Terverifikasi:** `(integer) 5`.
 
 !!! danger "`DEL` tidak bisa dibatalkan"
     Perintah ini menyebut key satu per satu agar tidak ada key lain yang ikut terhapus.
@@ -187,7 +187,7 @@ Cara membaca output: jarak `jakarta`-`bandung` sekitar 116 km garis lurus, jadi 
 | `GEOADD` ulang membalas `0` | Anggota sudah ada sehingga hanya posisinya diperbarui. Normal. |
 
 !!! note "Status verifikasi"
-    Sintaks, nilai balik, dan batas dicocokkan dengan dokumentasi resmi Redis. Blok output belum dijalankan di Redis sungguhan saat bab ini ditulis, dan angka jarak Geo sengaja ditulis sebagai perkiraan. Bandingkan dengan hasilmu sendiri.
+    Perintah, nilai balik, dan skrip di bab ini dijalankan di Redis 8.10.3 (`redis:latest`) pada 2026-10-27, dengan Python 3.12.3 dan redis-py 8.1.0. Sintaks juga dicocokkan dengan dokumentasi resmi Redis. Nilai yang berubah tiap eksekusi (ID, TTL, waktu, urutan, alamat IP) bisa berbeda di komputermu, dan teks galat bisa berbeda antarversi. Tampilan prompt interaktif `redis-cli` (prompt, Tab, riwayat) tidak teramati karena pengujian berjalan tanpa terminal interaktif.
 
 ## Latihan
 

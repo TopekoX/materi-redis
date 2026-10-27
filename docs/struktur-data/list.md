@@ -63,7 +63,7 @@ Indeks dimulai dari `0` (elemen paling kiri). Indeks negatif menghitung dari kan
 
 ## Praktik langkah demi langkah
 
-Output di bawah adalah output yang **diharapkan** berdasarkan dokumentasi, bukan hasil eksekusi di komputermu. Bandingkan dengan hasilmu sendiri.
+Output di bawah adalah output **terverifikasi**: dijalankan di Redis 8.10.3 pada 2026-10-27. Hasilmu bisa berbeda pada nilai yang berubah tiap eksekusi. Bandingkan dengan hasilmu sendiri.
 
 **Lingkungan: terminal**
 
@@ -91,7 +91,7 @@ Kenapa langkah ini diperlukan: kita ingin melihat perilaku FIFO. Tiga tugas dita
 | `LPOP` | Mengambil sekaligus **menghapus** elemen paling kiri. |
 | `LLEN` | Memastikan jumlah berkurang. |
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 (integer) 3
@@ -112,7 +112,7 @@ Cara membaca output: `RPUSH` membalas panjang List. `kirim-A` masuk pertama dan 
 127.0.0.1:6379> LPOP undo:dokumen
 ```
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 (integer) 3
@@ -132,7 +132,7 @@ Cara membaca output: `LPUSH` dengan banyak elemen memasukkannya satu per satu da
 127.0.0.1:6379> RPOP tugas:laporan
 ```
 
-Argumen `count` (Redis 6.2+) mengambil beberapa elemen dalam satu perintah, lebih efisien daripada mengulang `LPOP`. **Diharapkan:** `(integer) 4`, lalu `1) "L1"` `2) "L2"`, lalu `"L4"`.
+Argumen `count` (Redis 6.2+) mengambil beberapa elemen dalam satu perintah, lebih efisien daripada mengulang `LPOP`. **Terverifikasi:** `(integer) 4`, lalu `1) "L1"` `2) "L2"`, lalu `"L4"`.
 
 ### Langkah 4: Rentang indeks dan `LTRIM`
 
@@ -146,7 +146,7 @@ Argumen `count` (Redis 6.2+) mengambil beberapa elemen dalam satu perintah, lebi
 
 Kenapa `LTRIM`: untuk menjaga List tetap pendek, misalnya hanya menyimpan 3 riwayat terbaru. Tanpa pembatas, List terus tumbuh dan memakan memori.
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 (integer) 5
@@ -172,7 +172,7 @@ OK
 127.0.0.1:6379> LPOP sekali
 ```
 
-**Diharapkan:** `(integer) 1`, `"x"`, `(integer) 0`, lalu `(nil)`. Redis menghapus key List yang sudah tidak punya elemen,[^1] dan `LPOP` pada List kosong membalas `(nil)`, bukan galat.
+**Terverifikasi:** `(integer) 1`, `"x"`, `(integer) 0`, lalu `(nil)`. Redis menghapus key List yang sudah tidak punya elemen,[^1] dan `LPOP` pada List kosong membalas `(nil)`, bukan galat.
 
 ### Langkah 6: Peringatan `LRANGE 0 -1` pada List besar
 
@@ -198,9 +198,9 @@ Perintah ini diam menunggu sampai 30 detik. `30` adalah batas waktu dalam detik;
 
 Di sini `LPUSH` + `BRPOP` membentuk antrean FIFO: masuk dari kiri, keluar dari kanan.
 
-**Diharapkan di Terminal B:** `(integer) 1`.
+**Terverifikasi di Terminal B:** `(integer) 1`.
 
-**Diharapkan di Terminal A:**
+**Terverifikasi di Terminal A:**
 
 ```text
 1) "antrean:kerja"
@@ -219,7 +219,7 @@ Cara membaca output: balasan `BRPOP` selalu berisi nama key lalu elemen, karena 
 127.0.0.1:6379> DEL tugas:email undo:dokumen tugas:laporan riwayat:login antrean:kerja
 ```
 
-**Diharapkan:** `(integer)` sejumlah key yang masih ada, maksimal 5.
+**Terverifikasi:** `(integer)` sejumlah key yang masih ada, maksimal 5.
 
 !!! danger "`DEL` tidak bisa dibatalkan"
     Perintah di atas menyebut key satu per satu agar tidak ada key lain yang ikut terhapus.
@@ -264,7 +264,7 @@ Penjelasan baris penting:
 
 Cara menjalankan: `python list_antrean.py`.
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 dikirim tugas 1 | panjang antrean: 1
@@ -287,12 +287,12 @@ Urutan pengerjaan sama dengan urutan pengiriman karena masuk dari kiri dan kelua
 | `LRANGE` membalas `(empty array)` | Key tidak ada, atau rentang di luar List. |
 | Urutan terbalik setelah `LPUSH a b c` | `LPUSH` memasukkan satu per satu dari kiri, hasilnya `c b a`.[^2] |
 | `BRPOP` terasa "menggantung" | Itu memang menunggu. Beri timeout terbatas atau tekan Ctrl+C. |
-| Galat saat `count` pada `LPOP`/`RPOP` atau `timeout` pada `BRPOP` bukan angka | `count` harus bilangan bulat positif dan `timeout` harus angka tidak negatif (desimal diperbolehkan di Redis 6.0+).[^9] Periksa argumen yang kamu kirim; teks galat persisnya bisa berbeda antarversi. |
+| Galat saat `count` pada `LPOP`/`RPOP` atau `timeout` pada `BRPOP` bukan angka | `count` harus bilangan bulat positif dan `timeout` harus angka tidak negatif (desimal diperbolehkan di Redis 6.0+).[^9] Periksa argumen yang kamu kirim. Teramati di Redis 8.10.3: `LPOP k abc` → `(error) ERR value is out of range, must be positive`, `BRPOP k abc` → `(error) ERR timeout is not a float or out of range`; teks bisa berbeda antarversi. |
 | `LPOP key 2` menghasilkan galat syntax di versi lama | Argumen `count` baru ada sejak Redis 6.2.[^4] Perbarui Redis. |
 | List terus membesar | Tidak ada yang mengambil atau memangkas. Pakai `LTRIM` atau pekerja yang cukup. |
 
 !!! note "Status verifikasi"
-    Sintaks, nilai balik, dan versi minimum dicocokkan dengan dokumentasi resmi Redis. Blok output dan skrip Python belum dijalankan di Redis sungguhan saat bab ini ditulis, jadi bandingkan dengan hasilmu sendiri. Teks galat persis dan format waktu bisa berbeda antarversi.
+    Perintah, nilai balik, dan skrip di bab ini dijalankan di Redis 8.10.3 (`redis:latest`) pada 2026-10-27, dengan Python 3.12.3 dan redis-py 8.1.0. Sintaks juga dicocokkan dengan dokumentasi resmi Redis. Nilai yang berubah tiap eksekusi (ID, TTL, waktu, urutan, alamat IP) bisa berbeda di komputermu, dan teks galat bisa berbeda antarversi. Tampilan prompt interaktif `redis-cli` (prompt, Tab, riwayat) tidak teramati karena pengujian berjalan tanpa terminal interaktif.
 
 ## Latihan
 

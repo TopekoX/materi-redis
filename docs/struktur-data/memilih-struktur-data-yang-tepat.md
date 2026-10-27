@@ -65,7 +65,7 @@ Satu aturan praktis tambahan: bila ragu antara beberapa key String dan satu Hash
 
 ## Praktik langkah demi langkah
 
-Kita menyelesaikan satu skenario, **toko online kecil**, dengan memilih struktur untuk tiap kebutuhan lalu mencobanya. Output di bawah adalah output yang **diharapkan** berdasarkan dokumentasi, bukan hasil eksekusi di komputermu. Bandingkan dengan hasilmu sendiri.
+Kita menyelesaikan satu skenario, **toko online kecil**, dengan memilih struktur untuk tiap kebutuhan lalu mencobanya. Output di bawah adalah output **terverifikasi**: dijalankan di Redis 8.10.3 pada 2026-10-27. Hasilmu bisa berbeda pada nilai yang berubah tiap eksekusi. Bandingkan dengan hasilmu sendiri.
 
 **Lingkungan: terminal**
 
@@ -82,7 +82,7 @@ Semua langkah berikutnya di **redis-cli**.
 127.0.0.1:6379> INCR toko:pengunjung
 ```
 
-Kenapa String: hanya satu angka yang terus naik. **Diharapkan:** `(integer) 1`, lalu `(integer) 2`.
+Kenapa String: hanya satu angka yang terus naik. **Terverifikasi:** `(integer) 1`, lalu `(integer) 2`.
 
 ### Langkah 2: Data produk → Hash
 
@@ -91,7 +91,7 @@ Kenapa String: hanya satu angka yang terus naik. **Diharapkan:** `(integer) 1`, 
 127.0.0.1:6379> HINCRBY toko:produk:1 stok -1
 ```
 
-Kenapa Hash: satu produk punya banyak atribut, dan stok perlu diubah tanpa menulis ulang yang lain. **Diharapkan:** `(integer) 3`, lalu `(integer) 9`.
+Kenapa Hash: satu produk punya banyak atribut, dan stok perlu diubah tanpa menulis ulang yang lain. **Terverifikasi:** `(integer) 3`, lalu `(integer) 9`.
 
 ### Langkah 3: Antrean pesanan → List
 
@@ -100,7 +100,7 @@ Kenapa Hash: satu produk punya banyak atribut, dan stok perlu diubah tanpa menul
 127.0.0.1:6379> LPOP toko:antrean
 ```
 
-Kenapa List: pesanan diproses berdasarkan urutan masuk. **Diharapkan:** `(integer) 2`, lalu `"pesanan-1"`.
+Kenapa List: pesanan diproses berdasarkan urutan masuk. **Terverifikasi:** `(integer) 2`, lalu `"pesanan-1"`.
 
 ### Langkah 4: Pelanggan unik dan irisan → Set
 
@@ -110,7 +110,7 @@ Kenapa List: pesanan diproses berdasarkan urutan masuk. **Diharapkan:** `(intege
 127.0.0.1:6379> SINTER toko:beli:kopi toko:beli:teh
 ```
 
-Kenapa Set: kita ingin tahu siapa yang membeli keduanya, tanpa duplikat. **Diharapkan:** `(integer) 2`, `(integer) 2`, lalu `1) "sari"`.
+Kenapa Set: kita ingin tahu siapa yang membeli keduanya, tanpa duplikat. **Terverifikasi:** `(integer) 2`, `(integer) 2`, lalu `1) "sari"`.
 
 ### Langkah 5: Produk terlaris → Sorted Set
 
@@ -120,7 +120,7 @@ Kenapa Set: kita ingin tahu siapa yang membeli keduanya, tanpa duplikat. **Dihar
 127.0.0.1:6379> ZRANGE toko:terlaris 0 0 REV WITHSCORES
 ```
 
-Kenapa Sorted Set: peringkat harus selalu terurut menurut jumlah terjual. **Diharapkan:** `"3"`, `"5"`, lalu `1) "teh"` dan `2) "5"`.
+Kenapa Sorted Set: peringkat harus selalu terurut menurut jumlah terjual. **Terverifikasi:** `"3"`, `"5"`, lalu `1) "teh"` dan `2) "5"`.
 
 ### Langkah 6: Verifikasi pilihan dengan `TYPE`
 
@@ -132,7 +132,7 @@ Kenapa Sorted Set: peringkat harus selalu terurut menurut jumlah terjual. **Diha
 127.0.0.1:6379> TYPE toko:terlaris
 ```
 
-`TYPE` membantu memastikan tiap key bertipe sesuai niatmu dan mencegah galat `WRONGTYPE`.[^3] **Diharapkan:** `string`, `hash`, `list`, `set`, lalu `zset`.
+`TYPE` membantu memastikan tiap key bertipe sesuai niatmu dan mencegah galat `WRONGTYPE`.[^3] **Terverifikasi:** `string`, `hash`, `list`, `set`, lalu `zset`.
 
 ### Langkah 7: Lihat akibat pilihan yang salah
 
@@ -143,7 +143,7 @@ Misalkan kamu menyimpan papan peringkat di Set, lalu ingin tahu juaranya:
 127.0.0.1:6379> SMEMBERS toko:salah
 ```
 
-**Diharapkan:** `(integer) 2`, lalu dua anggota **tanpa skor dan tanpa urutan terjamin**. Set tidak menyimpan jumlah terjual, jadi aplikasimu harus menyimpannya di tempat lain. Itu tanda struktur yang salah: Sorted Set seharusnya dipakai.
+**Terverifikasi:** `(integer) 2`, lalu dua anggota **tanpa skor dan tanpa urutan terjamin**. Set tidak menyimpan jumlah terjual, jadi aplikasimu harus menyimpannya di tempat lain. Itu tanda struktur yang salah: Sorted Set seharusnya dipakai.
 
 ### Langkah 8: Bersihkan data latihan
 
@@ -151,7 +151,7 @@ Misalkan kamu menyimpan papan peringkat di Set, lalu ingin tahu juaranya:
 127.0.0.1:6379> DEL toko:pengunjung toko:produk:1 toko:antrean toko:beli:kopi toko:beli:teh toko:terlaris toko:salah
 ```
 
-**Diharapkan:** `(integer) 7` (atau lebih kecil bila ada key yang sudah tidak ada).
+**Terverifikasi:** `(integer) 7` (atau lebih kecil bila ada key yang sudah tidak ada).
 
 !!! danger "`DEL` tidak bisa dibatalkan"
     Perintah ini menyebut key satu per satu dan semuanya berawalan `toko:` milik latihan ini. Jangan mengganti dengan pola yang bisa menghapus data lain.
@@ -169,7 +169,7 @@ Misalkan kamu menyimpan papan peringkat di Set, lalu ingin tahu juaranya:
 | Banyak key kecil untuk satu entitas | Sulit dikelola. Gabungkan jadi satu Hash. |
 
 !!! note "Status verifikasi"
-    Sintaks perintah dicocokkan dengan dokumentasi resmi Redis dan pembahasan bab sebelumnya. Blok output belum dijalankan di Redis sungguhan saat bab ini ditulis, jadi bandingkan dengan hasilmu sendiri.
+    Perintah, nilai balik, dan skrip di bab ini dijalankan di Redis 8.10.3 (`redis:latest`) pada 2026-10-27, dengan Python 3.12.3 dan redis-py 8.1.0. Sintaks juga dicocokkan dengan dokumentasi resmi Redis. Nilai yang berubah tiap eksekusi (ID, TTL, waktu, urutan, alamat IP) bisa berbeda di komputermu, dan teks galat bisa berbeda antarversi. Tampilan prompt interaktif `redis-cli` (prompt, Tab, riwayat) tidak teramati karena pengujian berjalan tanpa terminal interaktif.
 
 ## Latihan
 

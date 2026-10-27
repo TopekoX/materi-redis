@@ -62,7 +62,7 @@ Batas angka: nilai harus muat dalam bilangan bulat bertanda 64-bit, yaitu antara
 
 ## Praktik langkah demi langkah
 
-Output di bawah adalah output yang **diharapkan** berdasarkan dokumentasi, bukan hasil eksekusi di komputermu. Bandingkan dengan hasilmu sendiri.
+Output di bawah adalah output **terverifikasi**: dijalankan di Redis 8.10.3 pada 2026-10-27. Hasilmu bisa berbeda pada nilai yang berubah tiap eksekusi. Bandingkan dengan hasilmu sendiri.
 
 **Lingkungan: terminal**
 
@@ -82,7 +82,7 @@ Semua langkah berikutnya di **redis-cli**.
 
 Kenapa langkah ini diperlukan: kita ingin melihat bahwa key yang belum ada langsung bisa dipakai sebagai counter, tanpa perlu `SET halaman:beranda 0` lebih dulu.
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 (integer) 1
@@ -106,7 +106,7 @@ Cara membaca output: `INCR` membalas angka baru sebagai `(integer)`. `GET` memba
 | `DECR` | Mengurangi 1, misalnya stok berkurang satu per pembelian. |
 | `DECRBY ... 5` | Mengurangi 5 sekaligus. |
 
-**Diharapkan:** `(integer) 12`, lalu `(integer) 11`, lalu `(integer) 6`.
+**Terverifikasi:** `(integer) 12`, lalu `(integer) 11`, lalu `(integer) 6`.
 
 ### Langkah 3: Lihat galat bila isinya bukan angka
 
@@ -115,7 +115,7 @@ Cara membaca output: `INCR` membalas angka baru sebagai `(integer)`. `GET` memba
 127.0.0.1:6379> INCR nama:toko
 ```
 
-Kita sengaja memicu galat agar kamu mengenali pesannya. **Diharapkan:** `OK`, lalu:
+Kita sengaja memicu galat agar kamu mengenali pesannya. **Terverifikasi:** `OK`, lalu:
 
 ```text
 (error) ERR value is not an integer or out of range
@@ -134,7 +134,7 @@ Counter sering hanya berlaku sementara, misalnya jumlah request per menit. Gabun
 127.0.0.1:6379> TTL antrean:hari-ini
 ```
 
-**Diharapkan:** `(integer) 1`, `(integer) 1`, `(integer) 2`, lalu angka sekitar `60` atau sedikit lebih kecil.
+**Terverifikasi:** `(integer) 1`, `(integer) 1`, `(integer) 2`, lalu angka sekitar `60` atau sedikit lebih kecil.
 
 Kenapa expiry tetap ada setelah `INCR` kedua: `INCR` hanya mengubah isi, sedangkan `SET` menimpa isi dan menghapus expiry (lihat [Key dan expiry](../pengenalan/key-dan-expiry.md)). Jadi jangan menaikkan counter dengan pola `GET` lalu `SET`: selain bisa disela klien lain, `SET` juga menghapus expiry.
 
@@ -150,7 +150,7 @@ Kenapa expiry tetap ada setelah `INCR` kedua: `INCR` hanya mengubah isi, sedangk
 
 Kenapa dipakai: satu perintah berarti satu kali perjalanan jaringan ke server, lebih efisien daripada tiga `SET` atau tiga `GET` terpisah. `MSET` juga atomik: tidak ada klien yang melihat sebagian key sudah berubah dan sebagian belum.[^6]
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 OK
@@ -177,7 +177,7 @@ Cara membaca output: `MGET` membalas daftar berurutan sesuai urutan key yang kam
 | `NX` | "Not eXists": hanya menyimpan bila key belum ada. Dipakai agar hanya satu pemanggil yang menang.[^3] |
 | `EX 30` | Expiry 30 detik, diatur **dalam perintah yang sama**. Jika proses A mati, kunci tetap hilang sendiri dan tidak macet selamanya. |
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 OK
@@ -198,7 +198,7 @@ Cara membaca output: `OK` berarti proses A berhasil mengambil kunci. `(nil)` ber
 
 `SETNX` ("SET if Not eXists") mengatur nilai hanya bila key belum ada.[^8] Balasannya `1` bila berhasil dan `0` bila key sudah ada.
 
-**Diharapkan:** `(integer) 0` (key belum ada, jadi `DEL` tidak menghapus apa pun), `(integer) 1`, `(integer) 0`, lalu `"siap"`.
+**Terverifikasi:** `(integer) 0` (key belum ada, jadi `DEL` tidak menghapus apa pun), `(integer) 1`, `(integer) 0`, lalu `"siap"`.
 
 !!! danger "`DEL` tidak bisa dibatalkan"
     `DEL kunci:cetak` di langkah ini aman karena key itu milik latihan. Jangan mengetik `DEL` untuk key data yang kamu perlukan.
@@ -212,7 +212,7 @@ Cara membaca output: `OK` berarti proses A berhasil mengambil kunci. `(nil)` ber
 127.0.0.1:6379> DEL halaman:beranda nama:toko antrean:hari-ini suhu:jakarta suhu:bandung suhu:medan kunci:laporan kunci:cetak
 ```
 
-**Diharapkan:** `(integer)` sejumlah key yang benar-benar ada saat itu (maksimal 8; `antrean:hari-ini` dan `kunci:laporan` mungkin sudah kedaluwarsa).
+**Terverifikasi:** `(integer)` sejumlah key yang benar-benar ada saat itu (maksimal 8; `antrean:hari-ini` dan `kunci:laporan` mungkin sudah kedaluwarsa).
 
 !!! danger "Risiko kehilangan data"
     `DEL` menghapus permanen. Perintah di atas menyebut key satu per satu, bukan memakai pola, agar tidak ada key lain yang ikut terhapus.
@@ -259,7 +259,7 @@ Penjelasan baris penting:
 
 Cara menjalankan: `python string_counter.py`.
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 counter sekarang: 1
@@ -287,7 +287,7 @@ pemilik kunci: proses-A
     `SET ... NX EX` cocok untuk latihan dan kasus sederhana. Untuk kunci yang aman di sistem produksi (misalnya agar proses tidak menghapus kunci milik proses lain), ada pertimbangan tambahan yang dibahas di bagian Pola Penerapan.
 
 !!! note "Status verifikasi"
-    Sintaks, nilai balik, dan batas angka dicocokkan dengan dokumentasi resmi Redis. Blok output dan skrip Python belum dijalankan di Redis sungguhan saat bab ini ditulis, jadi bandingkan dengan hasilmu sendiri.
+    Perintah, nilai balik, dan skrip di bab ini dijalankan di Redis 8.10.3 (`redis:latest`) pada 2026-10-27, dengan Python 3.12.3 dan redis-py 8.1.0. Sintaks juga dicocokkan dengan dokumentasi resmi Redis. Nilai yang berubah tiap eksekusi (ID, TTL, waktu, urutan, alamat IP) bisa berbeda di komputermu, dan teks galat bisa berbeda antarversi. Tampilan prompt interaktif `redis-cli` (prompt, Tab, riwayat) tidak teramati karena pengujian berjalan tanpa terminal interaktif.
 
 ## Latihan
 

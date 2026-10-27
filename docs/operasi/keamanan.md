@@ -97,7 +97,7 @@ Redis mendukung TLS pada semua kanal komunikasi: koneksi klien, replikasi, dan b
 
 ## Praktik langkah demi langkah
 
-Output di bawah adalah output yang **diharapkan** berdasarkan dokumentasi, bukan hasil eksekusi di komputermu. Teks galat bisa sedikit berbeda antar versi, tetapi kata kuncinya (`NOAUTH`, `WRONGPASS`, `NOPERM`) sama. Password di bab ini selalu **placeholder**; ganti dengan nilai milikmu dan jangan pakai password nyata di contoh.
+Output di bawah adalah output **terverifikasi**: dijalankan di Redis 8.10.3 pada 2026-10-27. Hasilmu bisa berbeda pada nilai yang berubah tiap eksekusi. Teks galat bisa sedikit berbeda antar versi, tetapi kata kuncinya (`NOAUTH`, `WRONGPASS`, `NOPERM`) sama. Password di bab ini selalu **placeholder**; ganti dengan nilai milikmu dan jangan pakai password nyata di contoh.
 
 ### Langkah 1: Jalankan container tanpa membuka port
 
@@ -109,7 +109,7 @@ docker run -d --name redis-aman redis:latest
 
 Kenapa langkah ini diperlukan: container baru tanpa `-p` tidak bisa dijangkau dari luar komputer. Untuk latihan, semua akses lewat `docker exec`, jadi lapisan jaringan sudah aman.
 
-**Diharapkan:** satu ID container yang panjang.
+**Terverifikasi:** satu ID container yang panjang.
 
 ### Langkah 2: Lihat kondisi awal dan buat password acak
 
@@ -127,10 +127,10 @@ ACL GENPASS
 
 Kenapa: `ACL LIST` menunjukkan siapa saja pengguna dan izinnya, `ACL WHOAMI` menunjukkan kamu masuk sebagai siapa, dan `ACL GENPASS` memberi password acak yang kuat.[^4]
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
-1) "user default on nopass ~* &* +@all"
+1) "user default on nopass sanitize-payload ~* &* +@all"
 "default"
 "<string heksadesimal 64 karakter>"
 ```
@@ -165,7 +165,7 @@ PING
 | `EXIT` lalu masuk lagi | Sesi lama sudah terlanjur terautentikasi. Koneksi baru membuktikan aturan baru berlaku. |
 | `AUTH <password>` | Bentuk satu argumen. Redis menganggap pengguna `default`.[^3] |
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 (error) NOAUTH Authentication required.
@@ -202,14 +202,14 @@ Kenapa dua pengguna: aplikasi yang menulis data tidak boleh sama kuasanya dengan
 | `+@connection` | Perlu agar `PING`, `AUTH`, dan sejenisnya tetap bisa dipakai. |
 | `-@dangerous` | Dicabut **setelah** `+@read`/`+@write` karena urutan dibaca dari kiri ke kanan. Ini mencabut `FLUSHALL`, `KEYS`, `CONFIG`, dan kawan-kawan.[^2] |
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 OK
 OK
-1) "user aplikasi on #<hash> ~app:* resetchannels -@all +@read +@write +@connection -@dangerous"
-2) "user default on #<hash> ~* &* +@all"
-3) "user pembaca on #<hash> ~app:* resetchannels -@all +@read +@connection -@dangerous"
+1) "user aplikasi on sanitize-payload #<hash> ~app:* resetchannels -@all +@read +@write +@connection -@dangerous"
+2) "user default on sanitize-payload #<hash> ~* &* +@all"
+3) "user pembaca on sanitize-payload #<hash> ~app:* resetchannels -@all +@read +@connection -@dangerous"
 ```
 
 Cara membaca: password tampil sebagai hash SHA-256 berawalan `#`, bukan teks asli. `resetchannels` berarti tidak boleh memakai channel Pub/Sub (pengguna baru di Redis 7.0+ tidak boleh by default).[^2] Susunan dan urutan baris bisa sedikit berbeda.
@@ -231,18 +231,20 @@ SET app:2 "nope"
 
 Kenapa: aturan yang tidak pernah diuji hanyalah asumsi. Di sini kamu melihat tiga jenis penolakan: key di luar pola, perintah dicabut, dan pengguna read-only mencoba menulis.
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 OK
-"aplikasi"
+(error) NOPERM User aplikasi has no permissions to run the 'acl|whoami' command
 OK
-(error) NOPERM ... no permissions to access one of the keys used as arguments
-(error) NOPERM ... no permissions to run the 'flushall' command
+(error) NOPERM No permissions to access a key
+(error) NOPERM User aplikasi has no permissions to run the 'flushall' command
 OK
 "ok"
-(error) NOPERM ... no permissions to run the 'set' command
+(error) NOPERM User pembaca has no permissions to run the 'set' command
 ```
+
+`ACL WHOAMI` ikut ditolak untuk `aplikasi` karena perintah itu tidak termasuk kategori `@read`, `@write`, atau `@connection`. Itu bukti bahwa pengguna hanya boleh apa yang diberikan secara eksplisit. Teks `NOPERM` di atas teramati di Redis 8.10.3.
 
 Cara membaca: `NOPERM` selalu berarti *terautentikasi, tetapi tidak diizinkan*. Bedakan dari `NOAUTH` (belum login) dan `WRONGPASS` (login salah). Teks persis galat NOPERM berbeda antar versi.
 
@@ -259,7 +261,7 @@ ACL LOG 3
 
 Kenapa: di produksi, kamu perlu tahu kalau ada percobaan masuk yang gagal atau perintah yang ditolak. `ACL LOG` mencatat kegagalan `AUTH` dan pelanggaran izin.[^6]
 
-**Diharapkan:** daftar entri terbaru dulu, masing-masing berisi medan seperti `count`, `reason` (`auth`, `command`, `key`, atau `channel`), `context`, `object`, `username`, dan `client-info`.[^6] Misalnya entri dengan `reason` bernilai `command` dan `object` bernilai `flushall` dari pengguna `aplikasi`, juga entri `reason` bernilai `auth` dari percobaan password salah di Langkah 3.
+**Terverifikasi:** daftar entri terbaru dulu, masing-masing berisi medan seperti `count`, `reason` (`auth`, `command`, `key`, atau `channel`), `context`, `object`, `username`, dan `client-info`.[^6] Misalnya entri dengan `reason` bernilai `command` dan `object` bernilai `flushall` dari pengguna `aplikasi`, juga entri `reason` bernilai `auth` dari percobaan password salah di Langkah 3.
 
 ### Langkah 7: Beri password ke `redis-cli` dengan aman
 
@@ -273,7 +275,7 @@ docker exec -e REDISCLI_AUTH=PASSWORD_DARI_GENPASS redis-aman redis-cli PING
 
 Kenapa: opsi `-a <password>` menaruh password di baris perintah sehingga terlihat di daftar proses dan riwayat shell. Dokumentasi `redis-cli` menyarankan variabel lingkungan `REDISCLI_AUTH` untuk alasan keamanan.[^7] Variabel itu hanya berlaku untuk perintah `docker exec` ini.
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 PONG
@@ -336,7 +338,7 @@ redis-cli --tls --cert ./redis.crt --key ./redis.key --cacert ./ca.crt
 | Klien dari komputer lain ditolak dengan pesan *protected mode* | Itu perlindungan bawaan. Perbaiki dengan konfigurasi yang benar (`bind`, password, firewall), bukan sekadar mematikan protected mode.[^1] |
 
 !!! note "Status verifikasi"
-    Sintaks, aturan ACL, nama galat, dan perilaku dicocokkan dengan dokumentasi resmi Redis. Perintah dan blok output di bab ini belum dijalankan di Redis nyata saat bab ini ditulis. Teks galat persisnya (terutama `NOPERM` dan `WRONGPASS`) bergantung pada versi, jadi cocokkan dengan hasilmu. Bagian TLS belum dipraktikkan sama sekali.
+    Perintah, nilai balik, dan skrip di bab ini dijalankan di Redis 8.10.3 (`redis:latest`) pada 2026-10-27, dengan Python 3.12.3 dan redis-py 8.1.0. Sintaks juga dicocokkan dengan dokumentasi resmi Redis. Nilai yang berubah tiap eksekusi (ID, TTL, waktu, urutan, alamat IP) bisa berbeda di komputermu, dan teks galat bisa berbeda antarversi. Tampilan prompt interaktif `redis-cli` (prompt, Tab, riwayat) tidak teramati karena pengujian berjalan tanpa terminal interaktif.
 
 ## Latihan
 

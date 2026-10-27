@@ -45,4 +45,4 @@ flowchart LR
 | Proyek Akhir | [Perancangan](proyek-akhir/perancangan.md) → [Implementasi API](proyek-akhir/implementasi-api.md) → [Fitur realtime](proyek-akhir/fitur-realtime.md) *(opsional)* → [Operasi dan pengujian](proyek-akhir/operasi-dan-pengujian.md) |
 
 !!! info "Tentang output di bab"
-    Output yang diberi label *diharapkan* berasal dari dokumentasi resmi dan belum tentu sudah dijalankan di Redis nyata. Bandingkan dengan hasil di komputermu.
+    Output berlabel *terverifikasi* dijalankan di Redis 8.10.3 (`redis:latest`) pada 2026-10-27. Nilai seperti TTL dan ID bisa berbeda; bandingkan dengan hasil di komputermu.

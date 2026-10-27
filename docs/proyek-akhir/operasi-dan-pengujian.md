@@ -73,7 +73,7 @@ Keputusan penting dan alasannya:
 
 ## Praktik langkah demi langkah
 
-Output Redis di bawah adalah output yang **diharapkan** berdasarkan dokumentasi, bukan hasil eksekusi di komputermu, kecuali disebut terverifikasi. Semua password di bab ini adalah placeholder atau nilai acak sekali pakai. Jangan menyimpan password asli di berkas yang masuk Git.
+Output Redis di bawah **terverifikasi**: dijalankan di Redis 8.10.3 pada 2026-10-27. Nilai yang berubah tiap eksekusi bisa berbeda di komputermu. Semua password di bab ini adalah placeholder atau nilai acak sekali pakai. Jangan menyimpan password asli di berkas yang masuk Git.
 
 ### Langkah 1: Buat password dan hash-nya
 
@@ -100,7 +100,7 @@ Kenapa langkah ini diperlukan: password acak yang panjang tahan terhadap tebakan
 | `secrets.token_hex(32)` | 32 byte acak dari generator kriptografis, menjadi 64 karakter heksadesimal (bentuk yang sama dengan `ACL GENPASS`). |
 | `hashlib.sha256(kata_sandi.encode()).hexdigest()` | SHA-256 dari password dalam heksadesimal huruf kecil, persis format `#<hash>` yang diterima ACL. |
 
-**Diharapkan** (nilai acak, berbeda tiap kali):
+**Terverifikasi** (nilai acak, berbeda tiap kali):
 
 ```text
 api-katalog
@@ -184,7 +184,7 @@ volumes:
 | `127.0.0.1:6379:6379` | Port hanya terbuka di komputer sendiri. |
 | `redis-data:/data` | Volume bernama untuk persistence, agar data bertahan walau container dibuat ulang. |
 | `./redis.conf ...:ro` dan `./users.acl ...:ro` | Berkas dipasang **hanya-baca**, jadi proses di container tidak bisa mengubahnya. |
-| `restart: unless-stopped` | Container menyala lagi sendiri setelah crash atau reboot Docker. Aman karena persistence aktif. |
+| `restart: unless-stopped` | Container menyala lagi sendiri setelah crash atau reboot Docker. Perintah `docker kill` manual tidak dihitung sebagai crash: di uji, container tetap `Exited (137)` sampai kamu menjalankan `docker compose up -d`. Aman karena persistence aktif. |
 
 Sintaks berkas Compose mengikuti referensi resmi.[^6] **Terverifikasi:** `docker compose config` mengurai berkas ini tanpa galat (dijalankan pada 27 Oktober 2026, Docker Compose v5.0.2). Itu hanya memeriksa sintaks Compose, bukan bahwa Redis berhasil start.
 
@@ -198,7 +198,7 @@ docker compose ps
 docker compose logs redis
 ```
 
-**Diharapkan:** `docker compose ps` menampilkan `redis-katalog` berstatus `Up`, dan log memuat baris yang menyatakan server siap menerima koneksi tanpa galat soal berkas ACL atau konfigurasi.
+**Terverifikasi:** `docker compose ps` menampilkan `redis-katalog` berstatus `Up`, dan log memuat baris yang menyatakan server siap menerima koneksi tanpa galat soal berkas ACL atau konfigurasi.
 
 Lalu masuk dan uji hak akses:
 
@@ -224,19 +224,19 @@ INFO persistence
 
 Kenapa: aturan yang tidak diuji hanyalah asumsi. Setiap baris membuktikan satu keputusan ACL.
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 (error) NOAUTH Authentication required.
 OK
 OK
-(error) NOPERM ... no permissions to access one of the keys used as arguments
+(error) NOPERM No permissions to access a key
 (integer) 1
-(error) NOPERM ... no permissions to run the 'flushall' command
-(error) NOPERM ... no permissions to run the 'info' command
+(error) NOPERM User api-katalog has no permissions to run the 'flushall' command
+(error) NOPERM User api-katalog has no permissions to run the 'info' command
 OK
 PONG
-(error) NOPERM ... no permissions to run the 'get' command
+(error) NOPERM User pemantau has no permissions to run the 'get' command
 # Persistence
 aof_enabled:1
 ...
@@ -257,7 +257,7 @@ Di terminal lain jalankan `python uji_katalog.py` (dari bab [Implementasi API](i
 
 Kenapa: ini membuktikan aplikasi cukup dengan hak `api-katalog`. Bila ada perintah yang kurang izinnya, API akan mengembalikan galat, dan itu justru temuan berharga.
 
-**Diharapkan:** keluaran sama dengan Langkah 6 bab Implementasi API (MISS lalu HIT, `banjir 8 permintaan: [200, 200, 200, 200, 429, 429, 429, 429]`, dan seterusnya), tanpa galat `NOPERM`.
+**Terverifikasi:** keluaran sama dengan Langkah 6 bab Implementasi API (MISS lalu HIT, `banjir 8 permintaan: [200, 200, 200, 200, 429, 429, 429, 429]`, dan seterusnya), tanpa galat `NOPERM`.
 
 ### Langkah 6: Buktikan data bertahan setelah crash
 
@@ -281,7 +281,7 @@ XLEN katalog:peristiwa
 
 Kenapa: `docker kill` mengirim `SIGKILL`, mensimulasikan listrik padam. Bila persistence bekerja, peringkat dan Stream yang tanpa TTL kembali utuh setelah Redis hidup lagi. `docker compose up -d` memastikan container menyala (aman walau sudah dinyalakan ulang otomatis).
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 OK
@@ -319,7 +319,7 @@ Kenapa: ini kumpulan pemeriksaan harian. Indikator yang layak diperhatikan untuk
 | `latest_fork_usec` | `INFO stats` | Lama `fork` terakhir; membesar bersama ukuran dataset. |
 | Entri `SLOWLOG` | `SLOWLOG GET` | Perintah lambat; di proyek ini waspadai `ZRANGE` atau `XRANGE` pada rentang besar. |
 
-**Diharapkan:** bagian `INFO` yang terbaca dan `SLOWLOG GET 5` berupa daftar (mungkin kosong). Angkanya milik komputermu. Ambang peringatan (mis. memori di atas 80% batas) adalah **pilihanmu**, bukan aturan Redis.
+**Terverifikasi:** bagian `INFO` yang terbaca dan `SLOWLOG GET 5` berupa daftar (mungkin kosong). Angkanya milik komputermu. Ambang peringatan (mis. memori di atas 80% batas) adalah **pilihanmu**, bukan aturan Redis.
 
 ### Langkah 8: Jalankan tes otomatis
 
@@ -362,7 +362,7 @@ docker compose down
 ```
 
 !!! danger "Jangan tambahkan `-v` sebelum yakin"
-    `docker compose down` menghapus container tetapi **mempertahankan volume** `redis-data`, jadi data persistence tetap ada. `docker compose down -v` juga menghapus volume dan **semua data permanen** (peringkat, Stream, `dump.rdb`, AOF). Pakai `-v` hanya bila kamu memang ingin membuang semuanya.
+    `docker compose down` menghapus container tetapi **mempertahankan volume** `redis-data` (nama sebenarnya diberi awalan nama folder proyek, mis. `ah_redis-data`; lihat `docker volume ls`), jadi data persistence tetap ada. `docker compose down -v` juga menghapus volume dan **semua data permanen** (peringkat, Stream, `dump.rdb`, AOF). Pakai `-v` hanya bila kamu memang ingin membuang semuanya.
 
 ## Contoh lengkap
 
@@ -506,8 +506,7 @@ Cara menjalankan: `python -m pytest -v test_katalog.py`. Hasil yang diharapkan s
 | Tes saling memengaruhi | Status bersama (`PANGGILAN`, harga, server palsu) tidak direset. Gunakan fixture seperti `lingkungan`. |
 
 !!! note "Status verifikasi"
-    **Dijalankan dan terverifikasi:** `buat_rahasia.py`; berkas Compose lewat `docker compose config`; sembilan tes pytest (lolos) beserta uji perusakan satu baris (tes gagal lalu lolos setelah dipulihkan). Semua dengan Python 3.14.7, pytest 9.1.1, fakeredis 2.40.0.
-    **Belum dijalankan:** seluruh perintah `docker compose up`, `redis-cli`, dan skenario `docker kill` di Langkah 4 sampai 7, karena Docker tidak aktif saat bab ditulis. Karena itu perilaku ACL (termasuk apakah `redis-py` tetap bekerja dengan `-@dangerous`, yang menutup `CLIENT SETINFO`), perilaku `user default off`, dan persistence setelah crash berstatus *diharapkan*. Sintaks dan aturannya dicocokkan dengan dokumentasi resmi.
+    Perintah, nilai balik, dan skrip di bab ini dijalankan di Redis 8.10.3 (`redis:latest`) pada 2026-10-27, dengan Python 3.12.3 dan redis-py 8.1.0, FastAPI 0.162.0, Uvicorn 0.54.0, pytest 9.1.1, fakeredis 2.40.0. Sintaks juga dicocokkan dengan dokumentasi resmi Redis. Nilai yang berubah tiap eksekusi (ID, TTL, waktu, urutan, alamat IP) bisa berbeda di komputermu, dan teks galat bisa berbeda antarversi. Tampilan prompt interaktif `redis-cli` (prompt, Tab, riwayat) tidak teramati karena pengujian berjalan tanpa terminal interaktif.
 
 ## Latihan
 

@@ -67,7 +67,7 @@ flowchart TD
 
 ## Praktik langkah demi langkah
 
-Output di bawah adalah output yang **diharapkan** berdasarkan dokumentasi, bukan hasil eksekusi di komputermu. Angka waktu pasti berbeda.
+Output di bawah adalah output **terverifikasi**: dijalankan di Redis 8.10.3 pada 2026-10-27. Hasilmu bisa berbeda pada nilai yang berubah tiap eksekusi. Angka waktu pasti berbeda.
 
 ### Langkah 1: Siapkan berkas dasar
 
@@ -115,7 +115,7 @@ for kelas in (RedisConnectionError, RedisTimeoutError):
     app.add_exception_handler(kelas, redis_tidak_tersedia)
 ```
 
-Bagian ini sama dengan bab sebelumnya: klien dibuat di lifespan dan dibagikan lewat `get_redis`, dan galat koneksi menjadi `503`.[^4] Berkas ini akan kita lengkapi pada langkah-langkah berikutnya. **Diharapkan:** belum ada endpoint, jadi belum ada yang diuji.
+Bagian ini sama dengan bab sebelumnya: klien dibuat di lifespan dan dibagikan lewat `get_redis`, dan galat koneksi menjadi `503`.[^4] Berkas ini akan kita lengkapi pada langkah-langkah berikutnya. **Terverifikasi:** belum ada endpoint, jadi belum ada yang diuji.
 
 ### Langkah 2: Endpoint produk dengan cache-aside
 
@@ -294,7 +294,7 @@ with httpx.Client(base_url="http://127.0.0.1:8000") as c:
     print("panggilan db:", c.get("/statistik").json())
 ```
 
-**Diharapkan** (waktu dan jumlah panggilan db bergantung pada `STATISTIK` sejak server mulai; pada server yang baru dinyalakan):
+**Terverifikasi** (waktu dan jumlah panggilan db bergantung pada `STATISTIK` sejak server mulai; pada server yang baru dinyalakan):
 
 ```text
 1 200 MISS {'nama': 'Kopi', 'harga': 25000} 1.0x dtk
@@ -332,7 +332,7 @@ with httpx.Client(base_url="http://127.0.0.1:8000") as c:
     print("setelah jendela berakhir:", r.status_code)
 ```
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 1 200 sisa: 4 tunggu: None
@@ -359,7 +359,7 @@ Sebelum jendela berakhir, di `redis-cli`:
 127.0.0.1:6379> TTL api:cache:produk:1
 ```
 
-**Diharapkan:** hitungan (mis. `"7"`), sisa detik jendela (maksimal 10), dan sisa detik cache (maksimal 60). Ini membuktikan bahwa kuota dan cache memang tersimpan di Redis, bukan di memori Python.
+**Terverifikasi:** hitungan (mis. `"7"`), sisa detik jendela (maksimal 10), dan sisa detik cache (maksimal 60). Ini membuktikan bahwa kuota dan cache memang tersimpan di Redis, bukan di memori Python.
 
 ### Langkah 8: Bersihkan data latihan
 
@@ -367,7 +367,7 @@ Sebelum jendela berakhir, di `redis-cli`:
 127.0.0.1:6379> DEL api:cache:produk:1 api:rate:127.0.0.1
 ```
 
-**Diharapkan:** `(integer)` sejumlah key yang masih ada (0 sampai 2). Hentikan server dengan Ctrl+C.
+**Terverifikasi:** `(integer)` sejumlah key yang masih ada (0 sampai 2). Hentikan server dengan Ctrl+C.
 
 !!! danger "`DEL` tidak bisa dibatalkan"
     Perintah ini menyebut key satu per satu agar tidak ada key lain yang ikut terhapus.
@@ -527,7 +527,7 @@ Cara menjalankan: `fastapi dev main.py`, lalu `python uji_cache.py` dan `python 
     Jangan menyimpan respons yang berbeda per pengguna (misalnya profil pribadi) dengan key yang sama untuk semua pengguna. Sertakan identitas pengguna di key, atau jangan di-cache.
 
 !!! note "Status verifikasi"
-    Nama fungsi, parameter, dan perilaku dicocokkan dengan dokumentasi FastAPI, Redis, dan `redis-py`. Kode hanya diperiksa sintaksnya; belum dijalankan di Redis atau FastAPI sungguhan saat bab ini ditulis. Perilaku header pada respons, urutan kunci JSON, angka waktu, dan teks galat bisa berbeda antarversi. Bandingkan dengan hasilmu sendiri.
+    Perintah, nilai balik, dan skrip di bab ini dijalankan di Redis 8.10.3 (`redis:latest`) pada 2026-10-27, dengan Python 3.12.3 dan redis-py 8.1.0, FastAPI 0.162.0, Uvicorn 0.54.0. Sintaks juga dicocokkan dengan dokumentasi resmi Redis. Nilai yang berubah tiap eksekusi (ID, TTL, waktu, urutan, alamat IP) bisa berbeda di komputermu, dan teks galat bisa berbeda antarversi. Tampilan prompt interaktif `redis-cli` (prompt, Tab, riwayat) tidak teramati karena pengujian berjalan tanpa terminal interaktif.
 
 ## Latihan
 

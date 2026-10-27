@@ -138,7 +138,7 @@ redis-cli --cluster create 127.0.0.1:7000 127.0.0.1:7001 127.0.0.1:7002 \
 
 ## Praktik langkah demi langkah
 
-Praktik ini hanya mencakup **replikasi**. Output di bawah adalah output yang **diharapkan** berdasarkan dokumentasi, bukan hasil eksekusi di komputermu. Alamat IP, offset, dan nilai lain pasti berbeda. Kedua container tidak memakai volume, jadi data hilang saat container dihapus. Perintah `docker exec` tanpa `-it` tidak berjalan di terminal, sehingga `redis-cli` memakai *raw output* (string tanpa tanda kutip, angka tanpa `(integer)`).[^5] Karena itu perintah dengan balasan bersarang atau galat (`ROLE` dan `SET` ke replika) memakai `-it` agar bentuknya sama dengan blok di bawah.
+Praktik ini hanya mencakup **replikasi**. Output di bawah adalah output **terverifikasi**: dijalankan di Redis 8.10.3 pada 2026-10-27. Hasilmu bisa berbeda pada nilai yang berubah tiap eksekusi. Alamat IP, offset, dan nilai lain pasti berbeda. Kedua container tidak memakai volume, jadi data hilang saat container dihapus. Perintah `docker exec` tanpa `-it` tidak berjalan di terminal, sehingga `redis-cli` memakai *raw output* (string tanpa tanda kutip, angka tanpa `(integer)`).[^5] Karena itu perintah dengan balasan bersarang atau galat (`ROLE` dan `SET` ke replika) memakai `-it` agar bentuknya sama dengan blok di bawah.
 
 ### Langkah 1: Buat jaringan dan jalankan primary
 
@@ -151,7 +151,7 @@ docker run -d --name redis-utama --network redis-ha redis:latest
 
 Kenapa langkah ini diperlukan: container pada jaringan buatan sendiri bisa saling menemukan lewat **nama container**, sehingga replika cukup menulis `redis-utama` sebagai alamat primary tanpa mencari IP. Tidak ada `-p`, jadi tidak ada yang terbuka ke luar komputer.
 
-**Diharapkan:** ID jaringan lalu ID container.
+**Terverifikasi:** ID jaringan lalu ID container.
 
 ### Langkah 2: Jalankan replika
 
@@ -165,7 +165,7 @@ docker run -d --name redis-replika --network redis-ha redis:latest redis-server 
 |---|---|
 | `redis-server --replicaof redis-utama 6379` | Menjalankan Redis sebagai replika dari host `redis-utama` port `6379`. Setara dengan baris `replicaof <host> <port>` di `redis.conf`.[^1] Argumen baris perintah memakai format yang sama dengan berkas konfigurasi, diawali `--`.[^6] |
 
-**Diharapkan:** satu ID container.
+**Terverifikasi:** satu ID container.
 
 ### Langkah 3: Periksa peran dengan `ROLE` dan `INFO replication`
 
@@ -177,9 +177,9 @@ docker exec -it redis-replika redis-cli ROLE
 docker exec redis-replika sh -c "redis-cli INFO replication | grep -E 'role|master_host|master_link_status'"
 ```
 
-Kenapa: jangan menganggap replikasi jalan hanya karena container hidup. `ROLE` memberi status ringkas yang ramah mesin, sedangkan `INFO replication` memberi rincian.[^1]
+Kenapa: jangan menganggap replikasi jalan hanya karena container hidup. Sinkronisasi pertama di Redis 8.10.3 butuh sekitar 5 detik; sebelum itu replika menampilkan `handshake` pada `ROLE` dan `master_link_status:down`, jadi ulangi perintah beberapa detik kemudian. `ROLE` memberi status ringkas yang ramah mesin, sedangkan `INFO replication` memberi rincian.[^1]
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 1) "master"
@@ -211,7 +211,7 @@ docker exec -it redis-replika redis-cli SET kota "Jakarta"
 
 Kenapa: perintah pertama menulis ke primary, yang kedua membaca dari replika untuk membuktikan salinan, dan yang ketiga mencoba menulis ke replika untuk membuktikan perlindungan hanya-baca.
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 OK
@@ -235,7 +235,7 @@ docker exec redis-replika redis-cli GET kota
 
 Kenapa: ini yang dilakukan administrator saat primary mati. `REPLICAOF NO ONE` menghentikan replikasi dan menjadikan server sebagai primary **tanpa membuang data yang sudah tersalin**.[^8] Sentinel mengotomatiskan langkah ini.
 
-**Diharapkan:**
+**Terverifikasi:**
 
 ```text
 redis-utama
@@ -276,7 +276,7 @@ docker network rm redis-ha
 | Replika memakai memori lebih besar dari `maxmemory` | Replika mengabaikan `maxmemory` secara bawaan. Pantau memorinya sendiri (lihat [Monitoring](monitoring.md)).[^1] |
 
 !!! note "Status verifikasi"
-    Sintaks, nama pengaturan, dan perilaku dicocokkan dengan dokumentasi resmi Redis. Perintah dan blok output di bab ini belum dijalankan di Redis nyata saat bab ini ditulis. Teks galat `READONLY` dan nilai `ROLE`/`INFO` perlu dicocokkan dengan hasilmu. Bagian Sentinel dan Cluster tidak dipraktikkan.
+    Perintah, nilai balik, dan skrip di bab ini dijalankan di Redis 8.10.3 (`redis:latest`) pada 2026-10-27, dengan Python 3.12.3 dan redis-py 8.1.0. Sintaks juga dicocokkan dengan dokumentasi resmi Redis. Nilai yang berubah tiap eksekusi (ID, TTL, waktu, urutan, alamat IP) bisa berbeda di komputermu, dan teks galat bisa berbeda antarversi. Tampilan prompt interaktif `redis-cli` (prompt, Tab, riwayat) tidak teramati karena pengujian berjalan tanpa terminal interaktif.
 
 ## Latihan
 
