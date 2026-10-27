@@ -1,8 +1,5 @@
 # Struktur Data
 
-!!! info "Belum ditulis"
-    Bab-bab bagian ini sedang direncanakan. Daftar di bawah adalah rencana, belum berupa tautan.
-
 Redis menyimpan nilai dalam struktur data siap pakai, bukan hanya teks. Bagian ini mengenalkan struktur yang paling sering dipakai, satu per bab, dan diakhiri panduan memilih yang tepat.
 
 ## Tujuan bagian
@@ -17,17 +14,17 @@ Setelah menyelesaikan bagian ini kamu bisa:
 
 - Sudah menyelesaikan bagian [Pengenalan](../pengenalan/index.md), terutama [Key dan expiry](../pengenalan/key-dan-expiry.md).
 
-## Rencana bab
+## Daftar bab
 
-| Urutan | Bab | Yang akan dipelajari |
+| Urutan | Bab | Yang dipelajari |
 |---|---|---|
-| 1 | String | `INCR`, `MSET`, `SETNX`, dan counter |
-| 2 | Hash | Menyimpan objek dengan `HSET` dan `HGETALL` |
-| 3 | List | Antrean dan tumpukan dengan `LPUSH` dan `BRPOP` |
-| 4 | Set | Data unik dan irisan dengan `SINTER` |
-| 5 | Sorted Set | Papan peringkat dengan `ZADD` dan `ZRANGE` |
-| 6 | Bitmap, HyperLogLog, dan Geo *(opsional)* | Menghitung data unik dan kueri lokasi |
-| 7 | Memilih struktur data | Panduan memilih struktur untuk suatu kasus |
+| 1 | [String](string.md) | `INCR`, `MSET`, `SET ... NX`, `SETNX`, dan counter |
+| 2 | [Hash](hash.md) | Menyimpan objek dengan `HSET` dan `HGETALL` |
+| 3 | [List](list.md) | Antrean dan tumpukan dengan `LPUSH` dan `BRPOP` |
+| 4 | [Set](set.md) | Data unik dan irisan dengan `SINTER` |
+| 5 | [Sorted Set](sorted-set.md) | Papan peringkat dengan `ZADD` dan `ZRANGE` |
+| 6 | [Bitmap, HyperLogLog, dan Geo](bitmap-hyperloglog-geo.md) *(opsional)* | Menghitung data unik dan kueri lokasi |
+| 7 | [Memilih struktur data yang tepat](memilih-struktur-data-yang-tepat.md) | Panduan memilih struktur untuk suatu kasus |
 
 ## Setelah bagian ini
 
