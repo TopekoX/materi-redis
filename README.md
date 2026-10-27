@@ -8,14 +8,14 @@ Rujukan teknis utama adalah dokumentasi resmi: <https://redis.io/docs/latest/>.
 
 | Bagian | Bab | Status |
 |---|---|---|
-| Pengenalan | Apa itu Redis, Instalasi dengan Docker, `redis-cli` pertama kali, Key dan expiry | Ditulis (perintah belum diuji di Redis, lihat di bawah) |
-| Struktur Data | String, Hash, List, Set, Sorted Set, dan lainnya | Belum |
-| Pola Penerapan | Caching, Session dan rate limiting, Pub/Sub, Streams, Transaksi | Belum |
-| Python dan FastAPI | `redis-py`, FastAPI, caching, rate limit | Belum |
-| Operasi | Persistence, Keamanan, Monitoring | Belum |
-| Proyek Akhir | Perancangan sampai pengujian | Belum |
+| Pengenalan | Apa itu Redis, Instalasi dengan Docker, `redis-cli` pertama kali, Key dan expiry | Ditulis dan diuji di Redis 8.10.3 |
+| Struktur Data | String, Hash, List, Set, Sorted Set, Bitmap/HyperLogLog/Geo, memilih struktur | Ditulis dan diuji di Redis 8.10.3 |
+| Pola Penerapan | Caching, Session dan rate limiting, Pub/Sub, Streams, Transaksi, Lua script | Ditulis dan diuji di Redis 8.10.3 |
+| Python dan FastAPI | `redis-py`, pipeline, caching, rate limit, SSE | Ditulis dan diuji (redis-py 8.1.0, FastAPI 0.162.0) |
+| Operasi | Persistence, Keamanan, Monitoring, Replikasi/Sentinel/Cluster | Ditulis dan diuji; Sentinel dan Cluster hanya konsep |
+| Proyek Akhir | Perancangan sampai operasi dan pengujian | Ditulis dan diuji di Redis 8.10.3 |
 
-Semua blok "Output yang diharapkan" di bab yang sudah ditulis masih berstatus **diharapkan**, bukan terverifikasi. Daftar uji di komputer ber-Docker ada di `TASK_VERIFIKASI_DOCKER.md`.
+Blok output berlabel **terverifikasi** dijalankan di Redis 8.10.3 (`redis:latest`) pada 2026-10-27. Yang belum teruji: tampilan di browser, prompt interaktif `redis-cli` (Tab, riwayat), dan beberapa klaim kecil; lihat `VALIDATION_REPORT.md`.
 
 ## Isi repository
 
@@ -26,7 +26,6 @@ CLAUDE.md                      aturan penulisan materi (standar bab, kode, Markd
 PRD.md                         kebutuhan produk
 TECHNICAL_DESIGN.md            rancangan teknis
 VALIDATION_REPORT.md           hasil validasi yang benar-benar dijalankan
-TASK_VERIFIKASI_DOCKER.md      daftar uji untuk komputer yang punya Docker
 docs/                          semua konten yang dipublikasikan
   index.md
   pengenalan/                  index.md (halaman pembuka) dan bab-bab bagian Pengenalan

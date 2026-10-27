@@ -96,7 +96,7 @@ Jalur aset relatif sehingga situs berjalan di sub-path GitHub Pages. Pages diara
 | Render | periksa HTML hasil build: tidak ada sisa `!!!`, `???`, `[^`; footnote dan admonition muncul |
 | Struktur bab | tinjauan terhadap standar `CLAUDE.md` |
 | Akurasi perintah | cocokkan dengan halaman perintah di redis.io |
-| Keteruji | jalankan perintah di Redis nyata (`TASK_VERIFIKASI_DOCKER.md`) |
+| Keteruji | jalankan perintah di Redis nyata (hasil di `VALIDATION_REPORT.md`) |
 | Tampilan | browser: sidebar, diagram, tema, lebar ponsel |
 
 Apa yang sudah dan belum dijalankan dicatat di `VALIDATION_REPORT.md`.

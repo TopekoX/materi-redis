@@ -1,6 +1,6 @@
 # Validation Report: Belajar Redis
 
-Diperbarui: 2026-10-27 · Platform: Windows 10 · Tidak ada commit, push, atau deploy.
+Diperbarui: 2026-10-27 · Platform: Windows 10 (build awal) dan Pop!_OS 24.04 (verifikasi Docker) · Tidak ada commit, push, atau deploy.
 
 Laporan ini hanya memuat pemeriksaan yang benar-benar dijalankan. Bagian "Belum diverifikasi" adalah daftar yang menunggu uji.
 
@@ -23,7 +23,7 @@ Rentang di `requirements.txt` (`mkdocs>=1.6,<2`, `mkdocs-material>=9.5,<10`, `py
 
 ## Cakupan
 
-Empat bab di `docs/pengenalan/`: Apa itu Redis, Instalasi dengan Docker, Menjalankan redis-cli pertama kali, Key dan expiry; serta konfigurasi yang terpengaruh (`mkdocs.yml`).
+Seluruh bab di `docs/` (Pengenalan, Struktur Data, Pola Penerapan, Python dan FastAPI, Operasi, Proyek Akhir) serta konfigurasi yang terpengaruh (`mkdocs.yml`).
 
 ## Pemeriksaan yang dijalankan
 
@@ -41,12 +41,24 @@ Empat bab di `docs/pengenalan/`: Apa itu Redis, Instalasi dengan Docker, Menjala
 | Kecocokan sintaks dengan dokumentasi resmi | `EXPIRE`, `TTL`, `SCAN`, `KEYS`, `redis-cli`, `docker run` dan `docker exec` dibandingkan dengan halaman redis.io |
 | `docker info` | Dijalankan: klien Docker ada, tetapi daemon tidak berjalan; pesan galat tercatat dan dipakai di troubleshooting bab 2 |
 
+## Verifikasi perintah di Docker (2026-10-27)
+
+Dijalankan di Pop!_OS 24.04 dengan Docker 29.9.2, `redis:latest` (Redis 8.10.3), Python 3.12.3, redis-py 8.1.0, FastAPI 0.162.0, Uvicorn 0.54.0, httpx 0.28.1, pytest 9.1.1, fakeredis 2.40.0. `mkdocs build --strict` tetap berhasil setelah perubahan.
+
+| Cakupan | Hasil |
+|---|---|
+| Perintah `redis-cli`, skrip Python, FastAPI, SSE | Dijalankan terhadap Redis nyata; hasil sama dengan bab setelah koreksi |
+| `docker compose` (ACL, persistence, `volatile-lru`), replikasi dua container, persistence RDB/AOF | Dijalankan; perilaku dicatat di bab |
+| `pytest test_katalog.py` | 9 lulus bila `realtime` terdaftar; 8 lulus dan 1 gagal bila belum |
+
+Koreksi yang dihasilkan: `sismember` mengembalikan `1`, placeholder jarak Geo diganti angka nyata, `ACL LIST` memuat `sanitize-payload`, `ACL WHOAMI` ditolak untuk pengguna terbatas, angka dan bentuk slowlog di Monitoring, `docker kill` tidak memicu `restart: unless-stopped`, serta nama volume Compose berawalan nama folder.
+
 ## Belum diverifikasi
 
-- **Semua perintah Redis dan Docker pada bab.** Docker tidak tersedia saat bab ditulis, jadi seluruh blok "Output yang diharapkan" berstatus *diharapkan*. Daftar uji lengkap: `TASK_VERIFIKASI_DOCKER.md`.
-- Kalimat persis pesan galat Docker dan `redis-cli` (selain pesan daemon Docker yang teramati).
-- Perintah `exit` untuk keluar dari `redis-cli` (tidak ada di halaman dokumentasi yang dibaca).
-- Klaim bahwa `docker rm` menghilangkan data tanpa volume (image resmi mungkin membuat volume anonim di `/data`).
+- **Prompt interaktif `redis-cli`** (prompt `127.0.0.1:6379>`, Tab, riwayat, `exit`, `not connected>`, sesi `SUBSCRIBE` dan Ctrl-C): pengujian berjalan tanpa terminal interaktif.
+- `redis-cli` terpasang di komputer (di luar container) dan pesan galat saat daemon Docker mati.
+- Nama key rate limit untuk klien IPv6 (`::1`) dan tes proyek akhir terhadap Redis asli (bukan fakeredis).
+- Tampilan fitur realtime di browser (`EventSource`, `Last-Event-ID` saat sambung ulang).
 - Tampilan di browser: sidebar buka-tutup, diagram Mermaid (terang dan gelap), tema System/Light/Dark, lebar ponsel, tombol salin, pencarian, kontras. Tidak ada browser yang dijalankan untuk repository ini.
 - Instalasi di venv baru (`pip check`), Python 3.12, browser selain yang akan dipakai penulis.
 - `mkdocs gh-deploy` dan hosting GitHub Pages: sengaja tidak dijalankan; `site_url` perlu dipastikan sebelum deploy.
@@ -56,8 +68,7 @@ Empat bab di `docs/pengenalan/`: Apa itu Redis, Instalasi dengan Docker, Menjala
 - MathJax dimuat dari CDN di setiap halaman, walau bab saat ini belum memakai rumus.
 - Mermaid (sekitar 3,5 MB) diunduh di setiap halaman karena dimuat lewat `extra_javascript` (di-cache setelah pertama kali).
 - Material for MkDocs 9.x berada dalam mode pemeliharaan upstream.
-- Bagian Struktur Data sampai Proyek Akhir belum ditulis.
 
 ## Catatan: hasil validasi template lama
 
-Versi sebelumnya dari berkas ini melaporkan pengujian browser pada template (MathJax, Mermaid, tema, pencarian, 2026-10-17, Windows 11, Chrome headless). Pengujian itu dilakukan pada halaman contoh yang sudah dihapus, jadi hasilnya tidak diwarisi di sini. Infrastruktur yang sama (Mermaid yang disertakan, tema, skrip) tetap dipakai, tetapi perlu diuji ulang pada halaman Redis lewat `TASK_VERIFIKASI_DOCKER.md` bagian E.
+Versi sebelumnya dari berkas ini melaporkan pengujian browser pada template (MathJax, Mermaid, tema, pencarian, 2026-10-17, Windows 11, Chrome headless). Pengujian itu dilakukan pada halaman contoh yang sudah dihapus, jadi hasilnya tidak diwarisi di sini. Infrastruktur yang sama (Mermaid yang disertakan, tema, skrip) tetap dipakai, tetapi masih perlu diuji ulang pada halaman Redis di browser.

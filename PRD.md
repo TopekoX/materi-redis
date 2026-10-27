@@ -74,7 +74,7 @@ Python 3.12+ (dikembangkan di 3.14); `mkdocs>=1.6,<2`; `mkdocs-material>=9.5,<10
 | Tautan dan nav | tidak ada tautan rusak; setiap bab ada di `nav` | build strict |
 | Struktur | 10 unsur wajib ada; satu judul `#` | tinjauan |
 | Akurasi | sintaks dan nilai balik cocok dengan redis.io | tinjauan terhadap dokumentasi resmi |
-| Keteruji | perintah dijalankan di Redis nyata, hasil dicatat | `TASK_VERIFIKASI_DOCKER.md` |
+| Keteruji | perintah dijalankan di Redis nyata, hasil dicatat | `VALIDATION_REPORT.md` |
 | Tampilan | sidebar, diagram, footnote, lebar ponsel | browser |
 
 ## 10. Deployment
@@ -83,7 +83,7 @@ Kompatibel dengan `mkdocs gh-deploy` (belum dijalankan). `site_url` harus `https
 
 ## 11. Risiko dan asumsi
 
-- Perintah pada bab yang sudah ditulis belum dijalankan (Docker tidak tersedia saat penulisan); lihat `TASK_VERIFIKASI_DOCKER.md`.
+- Perintah pada bab sudah dijalankan di Redis 8.10.3 (2026-10-27). Yang belum teruji: tampilan di browser dan prompt interaktif `redis-cli`; lihat `VALIDATION_REPORT.md`.
 - Material for MkDocs 9.x berada dalam mode pemeliharaan upstream; `mkdocs<2` dipatok.
 - MathJax dimuat dari CDN pihak ketiga dan hanya dibutuhkan jika bab memakai rumus.
 - Versi Redis target belum dikunci; bab menyebut versi minimum bila relevan dan memakai `redis:latest` hanya untuk belajar.
